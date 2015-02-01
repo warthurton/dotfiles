@@ -1,0 +1,10 @@
+AwesomePrint.defaults = {
+  :indent => -2,
+  :index      => true,   # Display array indices.
+  :html       => false,  # Use ANSI color codes rather than HTML.
+  :multiline  => true,   # Display in multiple lines.
+  :plain      => false,  # Use colors.
+  :raw        => false,  # Do not recursively format object instance variables.
+  :sort_keys  => true,   # Do not sort hash keys.
+  :limit      => 10,     # Limit large output for arrays and hashes. Set to a boolean or integer.
+}
