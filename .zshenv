@@ -29,6 +29,7 @@ export PATH=${__PATH#:}
 # --------------------------------------------------------------------------
 autoload -Uz colors && colors
 autoload -Uz compinit
+autoload -Uz bashcompinit
 autoload -Uz vcs_info
 autoload -Uz zmv
 autoload -Uz zcp

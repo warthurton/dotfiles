@@ -20,6 +20,7 @@ bindkey -M vicmd 'j' history-substring-search-down
 # --------------------------------------------------------------------------
 zstyle ':completion::complete:*' use-cache on
 compinit
+bashcompinit
 # --------------------------------------------------------------------------
 zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:*' get-revision true
