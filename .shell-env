@@ -1,0 +1,36 @@
+# --------------------------------------------------------------------------
+umask 022
+
+export BROWSER=open
+export EDITOR=vim
+export VISUAL=vim
+export PAGER=less
+export LSCOLORS="Gxfxcxdxbxegedabagacad"
+export LESS="iRQXF"
+export GREP_OPTIONS='--color=auto'
+export HISTSIZE=100000
+
+# --------------------------------------------------------------------------
+if [[ -d "$HOME/.rvm/bin" ]] ; then
+  export PATH="$PATH:$HOME/.rvm/bin"
+  source "$HOME/.rvm/scripts/rvm"
+elif [[ -d "/usr/local/opt/rbenv/bin" ]] ; then
+  export RBENV_ROOT="/usr/local/opt/rbenv"
+elif [[ -d "$HOME/.rbenv/bin" ]] ; then
+  export RBENV_ROOT="$HOME/.rbenv"
+fi
+
+if [[ -n $RBENV_ROOT ]] ; then
+  export PATH="$PATH:$RBENV_ROOT/bin"
+  if [[ -n $ZSH_VERSION ]] ; then
+    eval "$(rbenv init - zsh)"
+  else
+    eval "$(rbenv init -)"
+  fi
+fi
+# --------------------------------------------------------------------------
+
+[[ -d "/usr/syno" ]] && export TERM=${TERM:-cons25}
+
+# --------------------------------------------------------------------------
+# vim: ft=sh sw=2 ts=2 et

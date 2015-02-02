@@ -1,5 +1,13 @@
 # --------------------------------------------------------------------------
-umask 022
+set -o emacs -o monitor -o notify
+shopt -qs autocd checkwinsize cmdhist expand_aliases histappend hostcomplete interactive_comments nocaseglob nocasematch no_empty_cmd_completion progcomp promptvars sourcepath checkjobs
+shopt -qu mailwarn
+
+export HISTCONTROL=ignoreboth
+export HISTFILE="$HOME/.bash_history"
+export HISTFILESIZE=10000000
+export INPUTRC="$HOME/.bash_inputrc"
+export PS1='\t \u@\h \w \$ '
 
 unset __messy_path
 unset __cleaned_path
@@ -19,36 +27,10 @@ done
 export PATH=$(IFS=:; echo "${__cleaned_path[*]}")
 
 # --------------------------------------------------------------------------
-if [[ -d "$HOME/.rvm/bin" ]] ; then
-  export PATH="$PATH:$HOME/.rvm/bin"
-  source "$HOME/.rvm/scripts/rvm"
-elif [[ -d "$HOME/.rbenv/bin" ]] ; then
-  export RBENV_ROOT="$HOME/.rbenv"
-  export PATH="$PATH:$HOME/.rbenv/bin"
-  eval "$(rbenv init -)"
-elif [[ -d "/usr/local/opt/rbenv/bin" ]] ; then
-  export RBENV_ROOT="/usr/local/opt/rbenv"
-  export PATH="$PATH:/usr/local/opt/rbenv/bin"
-  eval "$(rbenv init -)"
-fi
-#-----------------------------------------------------------------------------
-
-set -o emacs -o monitor -o notify
-shopt -qs autocd checkwinsize cmdhist expand_aliases histappend hostcomplete interactive_comments nocaseglob nocasematch no_empty_cmd_completion progcomp promptvars sourcepath checkjobs
-shopt -qu mailwarn
-
-export HISTCONTROL=ignoreboth
-export HISTFILE="$HOME/.bash_history"
-export HISTFILESIZE=10000000
-export INPUTRC="$HOME/.bash_inputrc"
-export PS1='\t \u@\h \w \$ '
-
-# --------------------------------------------------------------------------
+[[ -s "$HOME/.shell-env" ]] && source "$HOME/.shell-env"
+[ -z "$PS1" ] && return
 [[ -s "$HOME/.shell-common" ]] && source "$HOME/.shell-common"
 # --------------------------------------------------------------------------
-# Interactive
-
-[ -z "$PS1" ] && return
 
 lm() { ls -lF $2 | $PAGER; }
 pw() { p | $PAGER; }
