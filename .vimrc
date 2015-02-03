@@ -1,5 +1,5 @@
 
-let config_dirs = ['~/.vim/tmp', '~/.vim/undo', '~/.vim/cache', '~/.vim/autoload', '~/.vim/plugged']
+let config_dirs = ['~/.vim/tmp', '~/.vim/undo', '~/.vim/cache', '~/.vim/autoload', '~/.vim/plugged', '~/.vim/backup', '~/.vim/swap']
 
 for dir in config_dirs
   try
@@ -12,12 +12,13 @@ endfor
 
 let mapleader = ","
 set autoindent
-set backupdir=~/.vim/tmp
+set backupdir=~/.vim/backup//
 set background=dark
 set backspace=indent,eol,start
 set binary
 set clipboard+=unnamed
 set nocompatible
+set directory=~/.vim/swap//
 set noex
 set encoding=utf-8
 set noerrorbells
@@ -63,7 +64,7 @@ set viminfo+=n~/.vim/viminfo
 set visualbell
 set t_Co=256
 set t_vb=
-set undodir='~/.vim/undo
+set undodir=~/.vim/undo//
 set undolevels=1000
 set undoreload=10000
 set wildignore+=*/.cache/*,*/tmp/*,*/.git/*,*/.neocon/*,*.log,*.so,*.swp,*.zip,*.gz,*.bz2,*.bmp,*.ppt
