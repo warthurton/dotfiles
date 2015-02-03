@@ -1,0 +1,207 @@
+# Aliases & Functions for Interactive shells -------------------------------
+
+[[ -z "$PS1" ]] && return
+
+# OS X ---------------------------------------------------------------------
+if [ "${OSTYPE:0:6}" = "darwin" ] ; then
+  alias ls="/bin/ls -FG"
+  alias l="ls -lO"
+  alias p="ps -Af"
+  alias update_brew="brew update && brew upgrade && brew prune && brew cleanup && brew outdated"
+  alias start="simple_launchctl load"
+  alias stop="simple_launchctl unload"
+  simple_launchctl() { find $HOME/Library/LaunchAgents -name '*.plist' -name '*'$2'*' -ok launchctl $1 -w {} \; ; }
+  [[ -x "/Applications/LibreOffice.app/Contents/MacOS/soffice" ]] && alias soffice="/Applications/LibreOffice.app/Contents/MacOS/soffice"
+  [[ -x "/usr/local/opt/macvim/MacVim.app/Contents/MacOS/Vim"  ]] && alias vim="/usr/local/opt/macvim/MacVim.app/Contents/MacOS/Vim"
+# Linux ---------------------------------------------------------------------
+elif [ "${OSTYPE:0:5}" = "linux" ] ; then
+  alias ls="/bin/ls --color=auto -F"
+  alias l="ls -l"
+  alias p="ps auxOU"
+  alias agu="sudo apt-get update -qq; sudo aptitude safe-upgrade"
+  alias ubuntu_add_key='sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80'
+fi
+# ---------------------------------------------------------------------------
+if [[ -d "/usr/syno" ]] ; then
+  alias p="ps w"
+fi
+# ---------------------------------------------------------------------------
+
+alias m='$PAGER'
+alias g='ag'
+alias l1="ls -1"
+alias ll="l -A"
+alias la="ls -A"
+alias datafart='curl --data-binary @- datafart.com'
+alias live_ip='dig +short myip.opendns.com @resolver1.opendns.com || curl -f4L http://ifconfig.me'
+alias to_csv='soffice --convert-to csv --headless'
+alias pubgit='git --git-dir="$HOME/.git-pub-dotfiles" --work-tree="$HOME"'
+alias prvgit='git --git-dir="$HOME/.git-prv-dotfiles" --work-tree="$HOME"'
+
+# MySQL ---------------------------------------------------------------------
+alias mydump="mysqldump --allow-keywords --add-locks --hex-blob --max_allowed_packet=1G --lock-tables=false --lock-all-tables=false --quick --quote-names --complete-insert=false --extended-insert=false"
+# Ruby ---------------------------------------------------------------------
+alias be="bundle exec"
+alias berc="bundle exec rails c"
+alias gs="gem server"
+
+rebundle() {
+  local start=$(pwd)
+  find . -maxdepth 3 -type f -name Gemfile -exec dirname "{}" \; | while read dir ; do
+    echo "${dir}"
+    cd "${dir}" && bundle
+    cd "${start}"
+  done
+}
+
+httpd() {
+  port="${1:-8000}"
+  command -v open >/dev/null 2>/dev/null && (sleep 1 && open "http://127.0.0.1:$port" &)
+  ruby -run -e httpd . -p $port
+}
+# Git ---------------------------------------------------------------------
+alias gst='git status'
+alias gcam='git commit --all --verbose --message'
+alias gco='git checkout'
+alias gps='git push'
+alias gpl='git pull'
+alias gg='git grep'
+alias grb='git rebase'
+alias gr='git remote --verbose'
+alias gl='git log --topo-order --pretty=format:${_git_log_medium_format}'
+alias gls='git log --topo-order --stat --pretty=format:${_git_log_medium_format}'
+alias glc='git shortlog --summary --numbered'
+
+kernel_purge() {
+  local _removed=($(dpkg -l 'linux-*' | grep '^rc' | cut -f 3 -d ' '))
+  local _vcurrent=$(uname -r | sed -re 's/-[a-z]+$//')
+  local _vnewest=$(dpkg -l 'linux-image-*' | grep -E '^ii +linux-image-[[:digit:]]+\.[[:digit:]]+\.' | sed -e 's/^.*linux-image-//' -e 's/ .*$//' | tail -1 | sed -re 's/-[a-z]+$//')
+  local _old=($(dpkg -l 'linux-*' | grep -E '^ii +linux-[^ ]+-[[:digit:]]+\.[[:digit:]]+\.' | grep -Ev "(${_vcurrent}|${_vnewest})" | cut -f 3 -d ' '))
+
+  [[ -n ${_removed[@]} ]] && sudo apt-get purge ${_removed[@]}
+  [[ -n ${_old[@]} ]]     && sudo apt-get purge ${_old[@]}
+}
+# tmux ---------------------------------------------------------------------
+tnew() {
+  local h="$1"
+  [[ -z $h ]] && return
+  tmux neww -n ${h} "exec ssh ${h}"
+}
+
+tneww() {
+  local h="$1"
+  [[ -z $h ]] && return
+  tmux neww -n ${h}.1 "exec ssh ${h}"
+  tmux neww -n ${h}.2 "exec ssh ${h}"
+}
+# openssl ---------------------------------------------------------------------
+newssl() {
+  local h="$1"
+  [[ -z $h ]] && return
+  local key="${h}.key"
+  local req="${h}.req"
+  local crt="${h}.crt"
+  local pem="${h}.pem"
+  cat <<-REQ > "${req}"
+      [req]
+      distinguished_name = dn
+      x509_extensions    = exts
+      prompt             = no
+      [dn]
+      C                  = US
+      ST                 = New York
+      L                  = Rochester
+      OU                 = ${h}
+      CN                 = ${h}
+      [exts]
+      subjectAltName     = @alts
+      [alts]
+      DNS.1              = ${h}
+REQ
+
+  openssl genrsa -out $key 4096 >&/dev/null
+  openssl req -new -x509 -days 3650 -utf8 -sha512 -key "${key}" -out "${crt}" -reqexts exts -batch -config "${req}"
+  cat $crt $key > $pem && rm $key $crt $req
+}
+#-----------------------------------------------------------------------------
+date2stamp() {
+  local _date="date"
+  command -v gdate >/dev/null 2>/dev/null && _date="gdate"
+  $_date --utc --date "$1" +%s
+}
+
+stamp2date() {
+  local _date="date"
+  command -v gdate >/dev/null 2>/dev/null && _date="gdate"
+  $_date --utc --date "1970-01-01 $1 sec" "+%Y-%m-%d %T"
+}
+
+date_diff() {
+ case $1 in
+       -s)   sec=1;      shift;;
+       -m)   sec=60;     shift;;
+       -h)   sec=3600;   shift;;
+       -d)   sec=86400;  shift;;
+       -w)   sec=604800; shift;;
+       *)    sec=86400;;
+ esac
+
+ local date1=$(date2stamp $1)
+ local date2=$(date2stamp $2)
+ local diff_secs=$((date2-date1))
+ if ((diff_secs < 0)); then abs=-1; else abs=1; fi
+ echo $((diff_secs / sec * abs))
+}
+
+date_range() {
+local _date="date"
+command -v gdate >/dev/null 2>/dev/null && _date="gdate"
+ local range=$(date_diff -d $1 $2)
+ for i in $(seq 0 $range) ; do
+   $_date --date "$1 $i day" +'%Y-%m-%d'
+ done
+}
+#-----------------------------------------------------------------------------
+confsync() {
+  cd $HOME
+  for host in $* ; do
+    (pubgit ls-files; prvgit ls-files) | rsync -vaxR --files-from=- . ${host//":"/}:
+  done
+}
+
+megadump_table() {
+  local _db="$1"
+  local _tbl="$2"
+  local _file="${_db}___${_tbl}.sql"
+  mysqldump --allow-keywords --lock-tables=false --lock-all-tables=false --complete-insert=false --extended-insert=false ${_db} "${_tbl}" -tKqQ -r "${_file}"
+
+}
+
+megadump_table_and_split() {
+  local _db="$1"
+  local _tbl="$2"
+  local _file="${_db}___${_tbl}.sql"
+  mysqldump --allow-keywords --lock-tables=false --lock-all-tables=false --complete-insert=false --extended-insert=false ${_db} "${_tbl}" -tKqQ -r "${_file}"
+  split --lines=250000 --unbuffered --additional-suffix=.sql --numeric-suffixes=1 --suffix-length=3 "${_file}" "${_db}___${_tbl}___"
+  rm -f "${_file}"
+}
+
+megadump() {
+  local -i _max=500000
+  local _db="$1"
+  mysqldump --allow-keywords --lock-tables=false --lock-all-tables=false "${_db}" -dqQ -r "schema___${_db}.sql"
+  while read _tbl ; do
+    local -i _size=$(mysql "${_db}" -BNe "SELECT COUNT(*) FROM ${_tbl}" | sed -e 's/^ *//')
+    if (( _size > _max )) ; then
+      megadump_table_and_split "${_db}" "${_tbl}" &
+    else
+      megadump_table "${_db}" "${_tbl}" &
+    fi
+  done < <(mysql "${_db}" -BNe "SHOW TABLES")
+
+}
+
+#-----------------------------------------------------------------------------
+[[ -s "$HOME/.shell-prv" ]] && source "$HOME/.shell-prv"
+# --------------------------------------------------------------------------
+# vim: ft=sh sw=2 ts=2 et
