@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+declare -i defcon="$1"
+
+((defcon >= 1 && defcon <= 5 )) || exit 1
+
+case $defcon in
+	1)
+		defaults write com.apple.screensaver askForPassword -int 1
+		defaults write com.apple.screensaver askForPasswordDelay -int 0
+		;;
+	2)
+		defaults write com.apple.screensaver askForPassword -int 1
+		defaults write com.apple.screensaver askForPasswordDelay -int 0
+		;;
+	3)
+		defaults write com.apple.screensaver askForPassword -int 1
+		defaults write com.apple.screensaver askForPasswordDelay -int 0
+		;;
+	4)
+		defaults write com.apple.screensaver askForPassword -int 1
+		defaults write com.apple.screensaver askForPasswordDelay -int 0
+		;;
+	5)
+		defaults write com.apple.screensaver askForPassword -int 0
+		defaults write com.apple.screensaver askForPasswordDelay -int 0
+		;;
+	*)
+		echo $defcon
+		;;
+esac
+

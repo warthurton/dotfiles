@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# for f in $* ; do
+#   for sep in "," ";" ":" "~" "\t" ; do
+#     declare -i count=$(head -1 $f | tr -C "${sep}" '\n'| grep -c "${sep}")
+#     printf "%02d %s\n" $count $sep
+#   done | sort -rn | head -1
+# done
+
+f=$*
+
+for sep in "," ";" ":" "~" "\t" ; do declare -i count=$(head -1 $f | tr -C "${sep}" '\n'| grep -c "${sep}") ; printf "%02d %s\n" $count $sep ; done | sort -rn | head -1

@@ -1,0 +1,546 @@
+#!/usr/bin/perl
+
+use strict;
+use diagnostics;
+use Data::Dumper;
+use Text::Wrap qw/wrap 40 wrap/;
+use XML::Simple;
+
+my $nam =
+{
+  'gnome1' => {
+    'e' => [
+      'bryn', 'c', 'cyn', 'dd', 'ddry', 'ddyn', 'doc', 'dry', 'gwyn', 'llyn', 'myr', 'n', 'nnyn', 'nry', 'nvan', 'nyc', 'r', 'rcyn', 'rraent', 'ran', 'ryn'
+     ],
+    'm' => [
+      'a', 'ae', 'e', 'eo', 'i', 'o', 'u', 'y'
+     ],
+    's' => [
+      'aeth', 'addr', 'bl', 'c', 'car', 'd', 'g', 'gl', 'gw', 'l', 'm', 'ow', 'r', 'rh', 's', 't', 'v', 'yr'
+     ]
+   },
+  'hober2' => {
+    'e' => [
+      'brylla', 'cla', 'dda', 'll', 'lla', 'llyra', 'lonna', 'lyan', 'na', 'ngwen', 'niver', 'noic', 'ra', 'rka', 'ryan', 'ssa', 'vyan'
+     ],
+    'm' => [
+      'a', 'ae', 'e', 'ea', 'i', 'o', 'u', 'y', 'w'
+     ],
+    's' => [
+      'al', 'br', 'c', 'cl', 'd', 'el', 'gw', 'j', 'l', 'm', 'n', 'mer', 's', 'r', 'ys'
+     ]
+   },
+  'dragon' => {
+    'm' => [
+      'star', 'moon', 'wind'
+     ],
+    's' => [
+      'gold', 'silver', 'diamond', 'steel', 'iron'
+     ]
+   },
+  'orc1' => {
+    'e' => [
+      'dash', 'dish', 'dush', 'gar', 'gor', 'gdush', 'lo', 'gdish', 'k', 'lg', 'nak', 'rag', 'rbag', 'rg', 'rk', 'ng', 'nk', 'rt', 'ol', 'urk', 'shnak'
+     ],
+    'm' => [
+      'a', 'i', 'o', 'u'
+     ],
+    's' => [
+      'b', 'er', 'g', 'gr', 'h', 'p', 'pr', 'r', 'v', 'vr'
+     ]
+   },
+  'kender2' => {
+    'e' => [
+      'beth', 'cia', 'cien', 'clya', 'de', 'dia', 'dda', 'dien', 'dith', 'dia', 'lind', 'lith', 'lia', 'lian', 'lla', 'llan', 'lle', 'm', 'm', 'ma', 'mma', 'mwen', 'meth', 'n', 'n', 'n', 'nna', 'ndra', 'ng', 'ni', 'nia', 'niel', 'rith', 'rien', 'ria', 'ri', 'rwen', 'sa', 'sien', 'ssa', 'ssi', 'swen', 'thien', 'thiel', 'viel', 'via', 'ven', 'veth', 'wen', 'wen', 'wen', 'wen', 'wia', 'weth', 'wien', 'wiel'
+     ],
+    'm' => [
+      'a', 'a', 'a', 'ae', 'ae', 'au', 'ao', 'are', 'ale', 'ali', 'ay', 'ardo', 'e', 'e', 'e', 'ei', 'ea', 'ea', 'eri', 'era', 'ela', 'eli', 'enda', 'erra', 'i', 'i', 'i', 'ia', 'ie', 'ire', 'ira', 'ila', 'ili', 'ira', 'igo', 'o', 'oa', 'oi', 'oe', 'ore', 'u', 'y'
+     ],
+    's' => [
+      'a', 'ab', 'ac', 'ad', 'af', 'agr', 'ast', 'as', 'al', 'adw', 'adr', 'ar', 'b', 'br', 'c', 'c', 'c', 'cr', 'ch', 'cad', 'd', 'dr', 'dw', 'ed', 'eth', 'et', 'er', 'el', 'eow', 'f', 'fr', 'g', 'gr', 'gw', 'gw', 'gal', 'gl', 'h', 'ha', 'ib', 'jer', 'k', 'ka', 'ked', 'l', 'loth', 'lar', 'leg', 'm', 'mir', 'n', 'nyd', 'ol', 'oc', 'on', 'p', 'pr', 'q', 'r', 'rh', 's', 'sev', 't', 'tr', 'th', 'th', 'ul', 'um', 'un', 'v', 'y', 'yb', 'z', 'w', 'w', 'wic'
+     ]
+   },
+  'hober' => {
+    'e' => [
+      'bo', 'do', 'doc', 'go', 'grin', 'm', 'ppi', 'rry'
+     ],
+    'm' => [
+      'a', 'e', 'i', 'ia', 'o', 'oi', 'u'
+     ],
+    's' => [
+      'b', 'dr', 'fr', 'mer', 'per', 'r', 's'
+     ]
+   },
+  'kender1' => {
+    'e' => [
+      'a', 'and', 'b', 'bwyn', 'baen', 'bard', 'c', 'ctred', 'cred', 'ch', 'can', 'd', 'dan', 'don', 'der', 'dric', 'dfrid', 'dus', 'f', 'g', 'gord', 'gan', 'l', 'li', 'lgrin', 'lin', 'lith', 'lath', 'loth', 'ld', 'ldric', 'ldan', 'm', 'mas', 'mos', 'mar', 'mond', 'n', 'nydd', 'nidd', 'nnon', 'nwan', 'nyth', 'nad', 'nn', 'nnor', 'nd', 'p', 'r', 'ron', 'rd', 's', 'sh', 'seth', 'sean', 't', 'th', 'th', 'tha', 'tlan', 'trem', 'tram', 'v', 'vudd', 'w', 'wan', 'win', 'win', 'wyn', 'wyn', 'wyr', 'wyr', 'wyth'
+     ],
+    'm' => [
+      'a', 'ae', 'ae', 'au', 'ao', 'are', 'ale', 'ali', 'ay', 'ardo', 'e', 'ei', 'ea', 'ea', 'eri', 'era', 'ela', 'eli', 'enda', 'erra', 'i', 'ia', 'ie', 'ire', 'ira', 'ila', 'ili', 'ira', 'igo', 'o', 'oa', 'oi', 'oe', 'ore', 'u', 'y'
+     ],
+    's' => [
+      'a', 'ab', 'ac', 'ad', 'af', 'agr', 'ast', 'as', 'al', 'adw', 'adr', 'ar', 'b', 'br', 'c', 'c', 'c', 'cr', 'ch', 'cad', 'd', 'dr', 'dw', 'ed', 'eth', 'et', 'er', 'el', 'eow', 'f', 'fr', 'g', 'gr', 'gw', 'gw', 'gal', 'gl', 'h', 'ha', 'ib', 'jer', 'k', 'ka', 'ked', 'l', 'loth', 'lar', 'leg', 'm', 'mir', 'n', 'nyd', 'ol', 'oc', 'on', 'p', 'pr', 'q', 'r', 'rh', 's', 'sev', 't', 'tr', 'th', 'th', 'ul', 'um', 'un', 'v', 'y', 'yb', 'z', 'w', 'w', 'wic'
+     ]
+   },
+  'dvargar1' => {
+    'e' => [
+      'bur', 'fur', 'gan', 'gnus', 'gnar', 'li', 'lin', 'lir', 'mli', 'nar', 'nus', 'rin', 'ran', 'sin', 'sil', 'sur'
+     ],
+    'm' => [
+      'a', 'e', 'i', 'o', 'oi', 'u'
+     ],
+    's' => [
+      'b', 'd', 'f', 'g', 'gl', 'h', 'k', 'l', 'm', 'n', 'r', 's', 't', 'v'
+     ]
+   },
+  'hober1' => {
+    'e' => [
+      'bo', 'do', 'doc', 'go', 'grin', 'm'
+     ],
+    'm' => [
+      'a', 'e', 'i', 'ia', 'o', 'oi', 'u'
+     ],
+    's' => [
+      'b', 'dr', 'fr', 'mer', 'per', 's'
+     ]
+   },
+  'albion2' => {
+    'e' => [
+      'a', 'and', 'b', 'bwyn', 'baen', 'bard', 'c', 'ctred', 'cred', 'ch', 'can', 'd', 'dan', 'don', 'der', 'dric', 'dfrid', 'dus', 'f', 'g', 'gord', 'gan', 'l', 'li', 'lgrin', 'lin', 'lith', 'lath', 'loth', 'ld', 'ldric', 'ldan', 'm', 'mas', 'mos', 'mar', 'mond', 'n', 'nydd', 'nidd', 'nnon', 'nwan', 'nyth', 'nad', 'nn', 'nnor', 'nd', 'p', 'r', 'ron', 'rd', 's', 'sh', 'seth', 'sean', 't', 'th', 'th', 'tha', 'tlan', 'trem', 'tram', 'v', 'vudd', 'w', 'wan', 'win', 'win', 'wyn', 'wyn', 'wyr', 'wyr', 'wyth'
+     ],
+    'm' => [
+      'a', 'ae', 'ae', 'au', 'ao', 'are', 'ale', 'ali', 'ay', 'ardo', 'e', 'ei', 'ea', 'ea', 'eri', 'era', 'ela', 'eli', 'enda', 'erra', 'i', 'ia', 'ie', 'ire', 'ira', 'ila', 'ili', 'ira', 'igo', 'o', 'oa', 'oi', 'oe', 'ore', 'u', 'y'
+     ],
+    's' => [
+      'a', 'ab', 'ac', 'ad', 'af', 'agr', 'ast', 'as', 'al', 'adw', 'adr', 'ar', 'b', 'br', 'c', 'c', 'c', 'cr', 'ch', 'cad', 'd', 'dr', 'dw', 'ed', 'eth', 'et', 'er', 'el', 'eow', 'f', 'fr', 'g', 'gr', 'gw', 'gw', 'gal', 'gl', 'h', 'ha', 'ib', 'jer', 'k', 'ka', 'ked', 'l', 'loth', 'lar', 'leg', 'm', 'mir', 'n', 'nyd', 'ol', 'oc', 'on', 'p', 'pr', 'q', 'r', 'rh', 's', 'sev', 't', 'tr', 'th', 'th', 'ul', 'um', 'un', 'v', 'y', 'yb', 'z', 'w', 'w', 'wic'
+     ]
+   },
+  'f_female' => {
+    'e' => [
+      'beth', 'cia', 'cien', 'clya', 'de', 'dia', 'dda', 'dien', 'dith', 'dia', 'lind', 'lith', 'lia', 'lian', 'lla', 'llan', 'lle', 'ma', 'mma', 'mwen', 'meth', 'n', 'n', 'n', 'nna', 'ndra', 'ng', 'ni', 'nia', 'niel', 'rith', 'rien', 'ria', 'ri', 'rwen', 'sa', 'sien', 'ssa', 'ssi', 'swen', 'thien', 'thiel', 'viel', 'via', 'ven', 'veth', 'wen', 'wen', 'wen', 'wen', 'wia', 'weth', 'wien', 'wiel'
+     ],
+    'm' => [
+      'a', 'a', 'a', 'ae', 'ae', 'au', 'ao', 'are', 'ale', 'ali', 'ay', 'ardo', 'e', 'e', 'e', 'ei', 'ea', 'ea', 'eri', 'era', 'ela', 'eli', 'enda', 'erra', 'i', 'i', 'i', 'ia', 'ie', 'ire', 'ira', 'ila', 'ili', 'ira', 'igo', 'o', 'oa', 'oi', 'oe', 'ore', 'u', 'y'
+     ],
+    's' => [
+      'a', 'ab', 'ac', 'ad', 'af', 'agr', 'ast', 'as', 'al', 'adw', 'adr', 'ar', 'b', 'br', 'c', 'c', 'c', 'cr', 'ch', 'cad', 'd', 'dr', 'dw', 'ed', 'eth', 'et', 'er', 'el', 'eow', 'f', 'fr', 'g', 'gr', 'gw', 'gw', 'gal', 'gl', 'h', 'ha', 'ib', 'jer', 'k', 'ka', 'ked', 'l', 'loth', 'lar', 'leg', 'm', 'mir', 'n', 'nyd', 'ol', 'oc', 'on', 'p', 'pr', 'q', 'r', 'rh', 's', 'sev', 't', 'tr', 'th', 'th', 'ul', 'um', 'un', 'v', 'y', 'yb', 'z', 'w', 'w', 'wic'
+     ]
+   },
+  'gnome2' => {
+    'e' => [
+      'brylla', 'cla', 'dda', 'll', 'lla', 'llyra', 'lonna', 'lyan', 'na', 'ngwen', 'niver', 'noic', 'ra', 'rka', 'ryan', 'ssa', 'vyan'
+     ],
+    'm' => [
+      'a', 'ae', 'e', 'ea', 'i', 'o', 'u', 'y', 'w'
+     ],
+    's' => [
+      'al', 'br', 'c', 'cl', 'd', 'el', 'gw', 'j', 'l', 'm', 'n', 'mer', 's', 'r', 'ys'
+     ]
+   },
+  'galler' => {
+    'e' => [
+      'dix', 'fax', 'fix', 'lix', 'rix', 'stix'
+     ],
+    'm' => [
+      'aku', 'e', 'eli', 'eri', 'o', 'uba'
+     ],
+    's' => [
+      'a', 'ab', 'ac', 'ad', 'af', 'ast', 'al', 'adw', 'adr', 'ar', 'b', 'br', 'c', 'cr', 'd', 'dr', 'ed', 'et', 'er', 'el', 'f', 'fr', 'g', 'gr', 'gal', 'gl', 'h', 'hal', 'ib', 'id', 'j', 'k', 'ka', 'ked', 'l', 'lar', 'leg', 'm', 'maj', 'mir', 'n', 'ol', 'oc', 'on', 'p', 'pr', 'r', 's', 'sl', 't', 'tr', 'ul', 'v', 'y', 'yb', 'z', 'w'
+     ]
+   },
+  'sparhawk' => {
+    'e' => [
+      'n', 'nia', 'len', 'ger', 'gne', 'dere', 'rik', 'lman', 'door', 'bian', 'l', 'sta', 'tras', 'gen', 'lten', 'lad', 'rit'
+     ],
+    'm' => [
+      'a', 'a', 'ae', 'anae', 'e', 'io', 'o', 'i', 'u'
+     ],
+    's' => [
+      'k', 'kh', 'ber', 'sar', 'str', 'cal', 'kur', 'kr', 'd', 'osc', 'zal', 'b', 'it', 'mel', 'z', 's', 't', 'van', 'emb', 'aphr', 'sephr'
+     ]
+   },
+  'f_male' => {
+    'e' => [
+      'a', 'and', 'b', 'bwyn', 'baen', 'bard', 'c', 'ch', 'can', 'd', 'dan', 'don', 'der', 'dric', 'dus', 'f', 'g', 'gord', 'gan', 'han', 'har', 'jar', 'jan', 'k', 'kin', 'kith', 'kath', 'koth', 'kor', 'kon', 'l', 'li', 'lin', 'lith', 'lath', 'loth', 'ld', 'ldan', 'm', 'mas', 'mos', 'mar', 'mond', 'n', 'nydd', 'nidd', 'nnon', 'nwan', 'nyth', 'nad', 'nn', 'nnor', 'nd', 'p', 'r', 'red', 'ric', 'rid', 'rin', 'ron', 'rd', 's', 'sh', 'seth', 'sean', 't', 'th', 'th', 'tha', 'tlan', 'trem', 'tram', 'v', 'vudd', 'w', 'wan', 'win', 'win', 'wyn', 'wyn', 'wyr', 'wyr', 'wyth'
+   ],
+    'm' => [
+      'a', 'ae', 'ae', 'au', 'ao', 'are', 'ale', 'ali', 'ay', 'ardo', 'e', 'edri', 'ei', 'ea', 'ea', 'eri', 'era', 'ela', 'eli', 'enda', 'erra', 'i', 'ia', 'ie', 'ire', 'ira', 'ila', 'ili', 'ira', 'igo', 'o', 'oha', 'oma', 'oa', 'oi', 'oe', 'ore', 'u', 'y'
+     ],
+    's' => [
+      'a', 'ab', 'ac', 'ad', 'af', 'agr', 'ast', 'as', 'al', 'adw', 'adr', 'ar', 'b', 'br', 'c', 'c', 'c', 'cr', 'ch', 'cad', 'd', 'dr', 'dw', 'ed', 'eth', 'et', 'er', 'el', 'eow', 'f', 'fr', 'g', 'gr', 'gw', 'gw', 'gal', 'gl', 'h', 'ha', 'ib', 'j', 'jer', 'k', 'ka', 'ked', 'l', 'loth', 'lar', 'leg', 'm', 'mir', 'n', 'nyd', 'ol', 'oc', 'on', 'p', 'pr', 'q', 'r', 'rh', 's', 'sev', 't', 'tr', 'th', 'th', 'ul', 'um', 'un', 'v', 'y', 'yb', 'z', 'w', 'w', 'wic'
+     ]
+   },
+  'alver1' => {
+    'e' => [
+      'l', 'las', 'lad', 'ldor', 'ldur', 'lith', 'mir', 'n', 'nd', 'ndel', 'ndil', 'ndir', 'nduil', 'ng', 'mbor', 'r', 'ril', 'riand', 'rion', 'wyn'
+     ],
+    'm' => [
+      'a', 'a', 'adrie', 'ara', 'e', 'e', 'ebri', 'i', 'io', 'ithra', 'ilma', 'il-ga', 'o', 'orfi', 'o', 'u', 'y'
+     ],
+    's' => [
+      'an', 'am', 'bel', 'cel', 'c', 'cal', 'del', 'el', 'elr', 'elv', 'eow', 'ear', 'f', 'g', 'gal', 'gl', 'h', 'is', 'leg', 'lom', 'm', 'n', 'p', 'r', 's', 't', 'thr', 'tin', 'ur', 'un', 'v'
+     ]
+   },
+  'orc2' => {
+    'e' => [
+      'killer', 'crucher', 'lover', 'thrower', 'throttler', 'eater', 'hammer', 'kicker', 'walker', 'punsher', 'dragger', 'stomper', 'torturer', 'ripper', 'mangler', 'hater', 'poker', 'chewer', 'cutter', 'slicer', 'juggler', 'raper', 'smasher', 'shooter', 'drinker', 'crawler'
+     ],
+    's' => [
+      'head', 'face', 'eye', 'arm', 'foot', 'toe', 'ear', 'nose', 'hair', 'blood', 'nail', 'snotling', 'enemy', 'public', 'beast', 'man', 'finger', 'goblin', 'gretchin', 'hobbit', 'teeth', 'elf', 'rat', 'ball', 'ghoul', 'knife', 'axe', 'wraith', 'deamon', 'dragon', 'tooth', 'death', 'mother', 'horse', 'moon', 'dwarf', 'earth', 'human', 'grass'
+     ]
+   },
+  'deverry1' => {
+    'e' => [
+      'bryn', 'c', 'cyn', 'dd', 'ddry', 'ddyn', 'doc', 'dry', 'gwyn', 'llyn', 'myr', 'n', 'nnyn', 'nry', 'nvan', 'nyc', 'r', 'rcyn', 'rraent', 'ran', 'ryn'
+     ],
+    'm' => [
+      'a', 'ae', 'e', 'eo', 'i', 'o', 'u', 'y'
+     ],
+    's' => [
+      'aeth', 'addr', 'bl', 'c', 'car', 'd', 'g', 'gl', 'gw', 'l', 'm', 'ow', 'r', 'rh', 's', 't', 'v', 'yr'
+     ]
+   },
+  'felana' => {
+    'e' => [
+      'dar', 'mir', 'nir', 'nor', 'nar', 'ish', 'ash', 'osh', 'esh', 'isha', 'asha', 'esha', 'osha', 'orsha', 'a', 'e', 'i', 'o', 'u', 'y', 'sar', 'ser', 'sor', 'sir', 'der', 'sham', 'shor', 'shen', 'as', 'es', 'ys', 'seth', 'san', 'sin', 'sil', 'sur', 'sen', 'sean', 'dor'
+   ],
+    'm' => [
+      'a', 'ar', 'as', 'e', 'es', 'i', 'is', 'o', 'os', 'u', 'us', 'y', 'ys', 'er', 'or', 'ur', 'yr', 'ir', 'eri', 'ari', 'osh', 'ash', 'esh', 'ish', 'ush', 'ysh', 'en', 'an', 'in', 'on', 'un', 'yn'
+     ],
+    's' => [
+      'am', 'an', 'as', 'ash', 'ast', 'c', 'chen', 'chan', 'char', 'cher', 'cer', 'es', 'esh', 'is', 'ish', 'os', 'osh', 'us', 'ush', 'ys', 'ysh', 'h', 'ch', 's', 'shen', 'sar', 'sol', 'shar', 'shan', 'sher', 'shim', 'sim', 'sin', 'san', 'sar', 'ser', 'sor', 'shor', 'sham', 'sh'
+     ]
+   },
+  'deverry2' => {
+    'e' => [
+      'brylla', 'cla', 'dda', 'll', 'lla', 'llyra', 'lonna', 'lyan', 'na', 'ngwen', 'niver', 'noic', 'ra', 'rka', 'ryan', 'ssa', 'vyan'
+     ],
+    'm' => [
+      'a', 'ae', 'e', 'ea', 'i', 'o', 'u', 'y', 'w'
+     ],
+    's' => [
+      'al', 'br', 'c', 'cl', 'd', 'el', 'gw', 'j', 'l', 'm', 'n', 'mer', 's', 'r', 'ys'
+     ]
+   },
+  'orc' => {
+    'e' => [
+      'dak', 'dash', 'dish', 'dush', 'gak', 'gar', 'gor', 'gdush', 'hai', 'l', 'lo', 'lok', 'gdish', 'k', 'kar', 'kor', 'lg', 'mak', 'nak', 'nai', 'ng', 'nk', 'rag', 'rbag', 'rg', 'rk', 'rt', 'ruk', 'shnak'
+     ],
+    'm' => [
+      'a', 'i', 'o', 'u'
+     ],
+    's' => [
+      'b', 'c', 'd', 'er', 'f', 'g', 'gr', 'h', 'k', 'l', 'm', 'n', 'p', 'pr', 'r', 's', 't', 'v', 'vr'
+     ]
+   },
+  'albion1' => {
+    'e' => [
+      'a', 'clya', 'lind', 'de', 'dien', 'dith', 'dia', 'lith', 'lia', 'lian', 'lla', 'llan', 'lle', 'n', 'n', 'n', 'ndra', 'ng', 'nia', 'niel', 'rith', 'thien', 'thiel', 'viel', 'wen', 'wien', 'wiel'
+     ],
+    'm' => [
+      'a', 'ae', 'ae', 'au', 'ao', 'are', 'ale', 'ali', 'ay', 'ardo', 'e', 'ei', 'ea', 'ea', 'eri', 'era', 'ela', 'eli', 'enda', 'erra', 'i', 'ia', 'ie', 'ire', 'ira', 'ila', 'ili', 'ira', 'igo', 'o', 'oa', 'oi', 'oe', 'ore', 'u', 'y'
+     ],
+    's' => [
+      'a', 'ab', 'ac', 'ad', 'af', 'agr', 'ast', 'as', 'al', 'adw', 'adr', 'ar', 'b', 'br', 'c', 'c', 'c', 'cr', 'ch', 'cad', 'd', 'dr', 'dw', 'ed', 'eth', 'et', 'er', 'el', 'eow', 'f', 'fr', 'g', 'gr', 'gw', 'gw', 'gal', 'gl', 'h', 'ha', 'ib', 'jer', 'k', 'ka', 'ked', 'l', 'loth', 'lar', 'leg', 'm', 'mir', 'n', 'nyd', 'ol', 'oc', 'on', 'p', 'pr', 'q', 'r', 'rh', 's', 'sev', 't', 'tr', 'th', 'th', 'ul', 'um', 'un', 'v', 'y', 'yb', 'z', 'w', 'w', 'wic'
+     ]
+   },
+  'alver2' => {
+    'e' => [
+      'clya', 'linde', 'de', 'dien', 'dith', 'dia', 'lith', 'lia', 'ndra', 'ng', 'nia', 'niel', 'rith', 'thien', 'thiel', 'viel', 'wen', 'wien', 'wiel'
+     ],
+    'm' => [
+      'a', 'a', 'adrie', 'ara', 'e', 'e', 'ebri', 'i', 'io', 'ithra', 'ilma', 'il-ga', 'o', 'orfi', 'o', 'u', 'y'
+     ],
+    's' => [
+      'an', 'am', 'bel', 'cel', 'c', 'cal', 'del', 'el', 'elr', 'elv', 'eow', 'ear', 'f', 'g', 'gal', 'gl', 'h', 'is', 'leg', 'lom', 'm', 'n', 'p', 'r', 's', 't', 'thr', 'tin', 'ur', 'un', 'v'
+     ]
+   },
+  'kerrel' => {
+    'e' => [
+      'beriel', 'clya', 'danten', 'dar', 'ddlaen', 'gyn', 'ladar', 'ldar', 'lden', 'lia', 'mario', 'na', 'ndar', 'ndario', 'nderiel', 'ndra', 'nnon', 'nna', 'ntar', 'ntariel', 'nteriel', 'ny', 'raen', 'rel', 'ria', 'riel', 'ryn', 'ssi', 'teriel', 'ver'
+     ],
+    'm' => [
+      'a', 'a', 'abe', 'abri', 'ae', 'ae', 'ala', 'alae', 'ale', 'ama', 'amae', 'ana', 'e', 'e', 'ede', 'ena', 'ere', 'o', 'oba', 'obre'
+     ],
+    's' => [
+      'ad', 'adr', 'al', 'alb', 'alod', 'ann', 'b', 'ban', 'ber', 'cal', 'car', 'carr', 'cont', 'dall', 'dar', 'dev', 'eb', 'el', 'elb', 'en', 'far', 'gann', 'gav', 'hal', 'jav', 'jenn', 'l', 'land', 'man', 'mer', 'nan', 'ran', 'tal', 'tal', 'val', 'wyl'
+     ]
+   },
+  'dvargar' => {
+    'e' => [
+      'bur', 'fur', 'gan', 'gnus', 'gnar', 'li', 'lin', 'lir', 'mli', 'nar', 'nus', 'rin', 'ran', 'sin', 'sil', 'sur'
+     ],
+    'm' => [
+      'a', 'e', 'i', 'o', 'oi', 'u'
+     ],
+    's' => [
+      'b', 'd', 'f', 'g', 'gl', 'h', 'k', 'l', 'm', 'n', 'r', 's', 't', 'v'
+     ]
+   },
+  'albion' => {
+    'e' => [
+      'a', 'and', 'b', 'bwyn', 'baen', 'bard', 'c', 'ctred', 'cred', 'ch', 'can', 'd', 'dan', 'don', 'der', 'dric', 'dfrid', 'dus', 'f', 'g', 'gord', 'gan', 'l', 'li', 'lgrin', 'lin', 'lith', 'lath', 'loth', 'ld', 'ldric', 'ldan', 'm', 'mas', 'mos', 'mar', 'mond', 'n', 'nydd', 'nidd', 'nnon', 'nwan', 'nyth', 'nad', 'nn', 'nnor', 'nd', 'p', 'r', 'ron', 'rd', 's', 'sh', 'seth', 'sean', 't', 'th', 'th', 'tha', 'tlan', 'trem', 'tram', 'v', 'vudd', 'w', 'wan', 'win', 'win', 'wyn', 'wyn', 'wyr', 'wyr', 'wyth'
+   ],
+    'm' => [
+      'a', 'ae', 'ae', 'au', 'ao', 'are', 'ale', 'ali', 'ay', 'ardo', 'e', 'ei', 'ea', 'ea', 'eri', 'era', 'ela', 'eli', 'enda', 'erra', 'i', 'ia', 'ie', 'ire', 'ira', 'ila', 'ili', 'ira', 'igo', 'o', 'oa', 'oi', 'oe', 'ore', 'u', 'y'
+     ],
+    's' => [
+      'a', 'ab', 'ac', 'ad', 'af', 'agr', 'ast', 'as', 'al', 'adw', 'adr', 'ar', 'b', 'br', 'c', 'c', 'c', 'cr', 'ch', 'cad', 'd', 'dr', 'dw', 'ed', 'eth', 'et', 'er', 'el', 'eow', 'f', 'fr', 'g', 'gr', 'gw', 'gw', 'gal', 'gl', 'h', 'ha', 'ib', 'jer', 'k', 'ka', 'ked', 'l', 'loth', 'lar', 'leg', 'm', 'mir', 'n', 'nyd', 'ol', 'oc', 'on', 'p', 'pr', 'r', 'rh', 's', 'sev', 't', 'tr', 'th', 'th', 'v', 'y', 'yb', 'z', 'w', 'w', 'wic'
+     ]
+   },
+  'alver' => {
+    'e' => [
+      'l', 'las', 'lad', 'ldor', 'ldur', 'linde', 'lith', 'mir', 'n', 'nd', 'ndel', 'ndil', 'ndir', 'nduil', 'ng', 'mbor', 'r', 'rith', 'ril', 'riand', 'rion', 'thien', 'viel', 'wen', 'wyn'
+     ],
+    'm' => [
+      'a', 'a', 'adrie', 'ara', 'e', 'e', 'ebri', 'i', 'io', 'ithra', 'ilma', 'il-ga', 'o', 'orfi', 'o', 'u', 'y'
+     ],
+    's' => [
+      'an', 'bel', 'cel', 'el', 'elr', 'elv', 'eow', 'ear', 'f', 'g', 'gal', 'gl', 'is', 'leg', 'lom', 'n', 's', 't', 'thr', 'tin'
+     ]
+   },
+  'dvargar2' => {
+    'e' => [
+      'brylla', 'cla', 'dda', 'll', 'lla', 'llyra', 'lonna', 'lyan', 'na', 'ngwen', 'niver', 'noic', 'ra', 'rka', 'ryan', 'ssa', 'vyan'
+     ],
+    'm' => [
+      'a', 'ae', 'e', 'ea', 'i', 'o', 'u', 'y', 'w'
+     ],'s' => [
+       'al', 'br', 'c', 'cl', 'd', 'el', 'gw', 'j', 'l', 'm', 'n', 'mer', 's', 'r', 'ys'
+      ]
+    }
+};
+
+if(grep /\-/, @ARGV)
+{
+  print "Usage: $0 [kind] [kind] [...]\n";
+  print wrap("  ", "  ", join(' ', (sort keys %{$nam}))) . "\n";
+  exit 0;
+}
+
+push @ARGV, sort keys %{$nam} if(!@ARGV);
+
+for my $key (sort keys %{$nam})
+{
+  if(grep /^$key$/, @ARGV)
+  {
+    print ucfirst($nam->{$key}->{'s'}->[int(rand(@{$nam->{$key}->{'s'}}))]) if(defined $nam->{$key}->{'s'});
+    print $nam->{$key}->{'m'}->[int(rand(@{$nam->{$key}->{'m'}}))] if(defined $nam->{$key}->{'m'});
+    print $nam->{$key}->{'e'}->[int(rand(@{$nam->{$key}->{'e'}}))] if(defined $nam->{$key}->{'e'}); print "\n";
+  }
+}
+
+__DATA__ 
+<?xml version='1.0' standalone='yes'?>
+<nam> <gnome1> <e>bryn</e> <e>c</e> <e>cyn</e> <e>dd</e> <e>ddry</e> <e>ddyn</e> <e>doc</e>
+<e>dry</e> <e>gwyn</e> <e>llyn</e> <e>myr</e> <e>n</e> <e>nnyn</e> <e>nry</e> <e>nvan</e> <e>nyc</e> <e>r</e> <e>rcyn</e>
+<e>rraent</e> <e>ran</e> <e>ryn</e> <m>a</m> <m>ae</m> <m>e</m> <m>eo</m> <m>i</m> <m>o</m> <m>u</m> <m>y</m> <s>aeth</s>
+<s>addr</s> <s>bl</s> <s>c</s> <s>car</s> <s>d</s> <s>g</s> <s>gl</s> <s>gw</s> <s>l</s> <s>m</s> <s>ow</s> <s>r</s> <s>rh</s>
+<s>s</s> <s>t</s> <s>v</s> <s>yr</s> </gnome1> <hober2> <e>brylla</e> <e>cla</e> <e>dda</e> <e>ll</e> <e>lla</e> <e>llyra</e>
+<e>lonna</e> <e>lyan</e> <e>na</e> <e>ngwen</e> <e>niver</e> <e>noic</e> <e>ra</e> <e>rka</e> <e>ryan</e> <e>ssa</e> <e>vyan</e>
+<m>a</m> <m>ae</m> <m>e</m> <m>ea</m> <m>i</m> <m>o</m> <m>u</m> <m>y</m> <m>w</m> <s>al</s> <s>br</s> <s>c</s> <s>cl</s> <s>d</s>
+<s>el</s> <s>gw</s> <s>j</s> <s>l</s> <s>m</s> <s>n</s> <s>mer</s> <s>s</s> <s>r</s> <s>ys</s> </hober2> <hober> <e>bo</e>
+<e>do</e> <e>doc</e> <e>go</e> <e>grin</e> <e>m</e> <e>ppi</e> <e>rry</e> <m>a</m> <m>e</m> <m>i</m> <m>ia</m> <m>o</m> <m>oi</m>
+<m>u</m> <s>b</s> <s>dr</s> <s>fr</s> <s>mer</s> <s>per</s> <s>r</s> <s>s</s> </hober> <kender2> <e>beth</e> <e>cia</e>
+<e>cien</e> <e>clya</e> <e>de</e> <e>dia</e> <e>dda</e> <e>dien</e> <e>dith</e> <e>dia</e> <e>lind</e> <e>lith</e> <e>lia</e>
+<e>lian</e> <e>lla</e> <e>llan</e> <e>lle</e> <e>m</e> <e>m</e> <e>ma</e> <e>mma</e> <e>mwen</e> <e>meth</e> <e>n</e> <e>n</e>
+<e>n</e> <e>nna</e> <e>ndra</e> <e>ng</e> <e>ni</e> <e>nia</e> <e>niel</e> <e>rith</e> <e>rien</e> <e>ria</e> <e>ri</e>
+<e>rwen</e> <e>sa</e> <e>sien</e> <e>ssa</e> <e>ssi</e> <e>swen</e> <e>thien</e> <e>thiel</e> <e>viel</e> <e>via</e> <e>ven</e>
+<e>veth</e> <e>wen</e> <e>wen</e> <e>wen</e> <e>wen</e> <e>wia</e> <e>weth</e> <e>wien</e> <e>wiel</e> <m>a</m> <m>a</m> <m>a</m>
+<m>ae</m> <m>ae</m> <m>au</m> <m>ao</m> <m>are</m> <m>ale</m> <m>ali</m> <m>ay</m> <m>ardo</m> <m>e</m> <m>e</m> <m>e</m>
+<m>ei</m> <m>ea</m> <m>ea</m> <m>eri</m> <m>era</m> <m>ela</m> <m>eli</m> <m>enda</m> <m>erra</m> <m>i</m> <m>i</m> <m>i</m>
+<m>ia</m> <m>ie</m> <m>ire</m> <m>ira</m> <m>ila</m> <m>ili</m> <m>ira</m> <m>igo</m> <m>o</m> <m>oa</m> <m>oi</m> <m>oe</m>
+<m>ore</m> <m>u</m> <m>y</m> <s>a</s> <s>ab</s> <s>ac</s> <s>ad</s> <s>af</s> <s>agr</s> <s>ast</s> <s>as</s> <s>al</s> <s>adw</s>
+<s>adr</s> <s>ar</s> <s>b</s> <s>br</s> <s>c</s> <s>c</s> <s>c</s> <s>cr</s> <s>ch</s> <s>cad</s> <s>d</s> <s>dr</s> <s>dw</s>
+<s>ed</s> <s>eth</s> <s>et</s> <s>er</s> <s>el</s> <s>eow</s> <s>f</s> <s>fr</s> <s>g</s> <s>gr</s> <s>gw</s> <s>gw</s> <s>gal</s>
+<s>gl</s> <s>h</s> <s>ha</s> <s>ib</s> <s>jer</s> <s>k</s> <s>ka</s> <s>ked</s> <s>l</s> <s>loth</s> <s>lar</s> <s>leg</s>
+<s>m</s> <s>mir</s> <s>n</s> <s>nyd</s> <s>ol</s> <s>oc</s> <s>on</s> <s>p</s> <s>pr</s> <s>q</s> <s>r</s> <s>rh</s> <s>s</s>
+<s>sev</s> <s>t</s> <s>tr</s> <s>th</s> <s>th</s> <s>ul</s> <s>um</s> <s>un</s> <s>v</s> <s>y</s> <s>yb</s> <s>z</s> <s>w</s>
+<s>w</s> <s>wic</s> </kender2> <orc1> <e>dash</e> <e>dish</e> <e>dush</e> <e>gar</e> <e>gor</e> <e>gdush</e> <e>lo</e>
+<e>gdish</e> <e>k</e> <e>lg</e> <e>nak</e> <e>rag</e> <e>rbag</e> <e>rg</e> <e>rk</e> <e>ng</e> <e>nk</e> <e>rt</e> <e>ol</e>
+<e>urk</e> <e>shnak</e> <m>a</m> <m>i</m> <m>o</m> <m>u</m> <s>b</s> <s>er</s> <s>g</s> <s>gr</s> <s>h</s> <s>p</s> <s>pr</s>
+<s>r</s> <s>v</s> <s>vr</s> </orc1> <kender1> <e></e> <e></e> <e></e> <e></e> <e></e> <e></e> <e></e> <e>a</e> <e>and</e> <e>b</e>
+<e>bwyn</e> <e>baen</e> <e>bard</e> <e>c</e> <e>ctred</e> <e>cred</e> <e>ch</e> <e>can</e> <e>d</e> <e>dan</e> <e>don</e>
+<e>der</e> <e>dric</e> <e>dfrid</e> <e>dus</e> <e>f</e> <e>g</e> <e>gord</e> <e>gan</e> <e>l</e> <e>li</e> <e>lgrin</e> <e>lin</e>
+<e>lith</e> <e>lath</e> <e>loth</e> <e>ld</e> <e>ldric</e> <e>ldan</e> <e>m</e> <e>mas</e> <e>mos</e> <e>mar</e> <e>mond</e>
+<e>n</e> <e>nydd</e> <e>nidd</e> <e>nnon</e> <e>nwan</e> <e>nyth</e> <e>nad</e> <e>nn</e> <e>nnor</e> <e>nd</e> <e>p</e> <e>r</e>
+<e>ron</e> <e>rd</e> <e>s</e> <e>sh</e> <e>seth</e> <e>sean</e> <e>t</e> <e>th</e> <e>th</e> <e>tha</e> <e>tlan</e> <e>trem</e>
+<e>tram</e> <e>v</e> <e>vudd</e> <e>w</e> <e>wan</e> <e>win</e> <e>win</e> <e>wyn</e> <e>wyn</e> <e>wyr</e> <e>wyr</e> <e>wyth</e>
+<m>a</m> <m>ae</m> <m>ae</m> <m>au</m> <m>ao</m> <m>are</m> <m>ale</m> <m>ali</m> <m>ay</m> <m>ardo</m> <m>e</m> <m>ei</m>
+<m>ea</m> <m>ea</m> <m>eri</m> <m>era</m> <m>ela</m> <m>eli</m> <m>enda</m> <m>erra</m> <m>i</m> <m>ia</m> <m>ie</m> <m>ire</m>
+<m>ira</m> <m>ila</m> <m>ili</m> <m>ira</m> <m>igo</m> <m>o</m> <m>oa</m> <m>oi</m> <m>oe</m> <m>ore</m> <m>u</m> <m>y</m>
+<s>a</s> <s>ab</s> <s>ac</s> <s>ad</s> <s>af</s> <s>agr</s> <s>ast</s> <s>as</s> <s>al</s> <s>adw</s> <s>adr</s> <s>ar</s>
+<s>b</s> <s>br</s> <s>c</s> <s>c</s> <s>c</s> <s>cr</s> <s>ch</s> <s>cad</s> <s>d</s> <s>dr</s> <s>dw</s> <s>ed</s> <s>eth</s>
+<s>et</s> <s>er</s> <s>el</s> <s>eow</s> <s>f</s> <s>fr</s> <s>g</s> <s>gr</s> <s>gw</s> <s>gw</s> <s>gal</s> <s>gl</s> <s>h</s>
+<s>ha</s> <s>ib</s> <s>jer</s> <s>k</s> <s>ka</s> <s>ked</s> <s>l</s> <s>loth</s> <s>lar</s> <s>leg</s> <s>m</s> <s>mir</s>
+<s>n</s> <s>nyd</s> <s>ol</s> <s>oc</s> <s>on</s> <s>p</s> <s>pr</s> <s>q</s> <s>r</s> <s>rh</s> <s>s</s> <s>sev</s> <s>t</s>
+<s>tr</s> <s>th</s> <s>th</s> <s>ul</s> <s>um</s> <s>un</s> <s>v</s> <s>y</s> <s>yb</s> <s>z</s> <s>w</s> <s>w</s> <s>wic</s>
+</kender1> <dvargar1> <e>bur</e> <e>fur</e> <e>gan</e> <e>gnus</e> <e>gnar</e> <e>li</e> <e>lin</e> <e>lir</e> <e>mli</e>
+<e>nar</e> <e>nus</e> <e>rin</e> <e>ran</e> <e>sin</e> <e>sil</e> <e>sur</e> <m>a</m> <m>e</m> <m>i</m> <m>o</m> <m>oi</m>
+<m>u</m> <s>b</s> <s>d</s> <s>f</s> <s>g</s> <s>gl</s> <s>h</s> <s>k</s> <s>l</s> <s>m</s> <s>n</s> <s>r</s> <s>s</s> <s>t</s>
+<s>v</s> </dvargar1> <hober1> <e>bo</e> <e>do</e> <e>doc</e> <e>go</e> <e>grin</e> <e>m</e> <m>a</m> <m>e</m> <m>i</m> <m>ia</m>
+<m>o</m> <m>oi</m> <m>u</m> <s>b</s> <s>dr</s> <s>fr</s> <s>mer</s> <s>per</s> <s>s</s> </hober1> <albion2> <e></e> <e></e>
+<e></e> <e></e> <e></e> <e></e> <e></e> <e>a</e> <e>and</e> <e>b</e> <e>bwyn</e> <e>baen</e> <e>bard</e> <e>c</e> <e>ctred</e>
+<e>cred</e> <e>ch</e> <e>can</e> <e>d</e> <e>dan</e> <e>don</e> <e>der</e> <e>dric</e> <e>dfrid</e> <e>dus</e> <e>f</e> <e>g</e>
+<e>gord</e> <e>gan</e> <e>l</e> <e>li</e> <e>lgrin</e> <e>lin</e> <e>lith</e> <e>lath</e> <e>loth</e> <e>ld</e> <e>ldric</e>
+<e>ldan</e> <e>m</e> <e>mas</e> <e>mos</e> <e>mar</e> <e>mond</e> <e>n</e> <e>nydd</e> <e>nidd</e> <e>nnon</e> <e>nwan</e>
+<e>nyth</e> <e>nad</e> <e>nn</e> <e>nnor</e> <e>nd</e> <e>p</e> <e>r</e> <e>ron</e> <e>rd</e> <e>s</e> <e>sh</e> <e>seth</e>
+<e>sean</e> <e>t</e> <e>th</e> <e>th</e> <e>tha</e> <e>tlan</e> <e>trem</e> <e>tram</e> <e>v</e> <e>vudd</e> <e>w</e> <e>wan</e>
+<e>win</e> <e>win</e> <e>wyn</e> <e>wyn</e> <e>wyr</e> <e>wyr</e> <e>wyth</e> <m>a</m> <m>ae</m> <m>ae</m> <m>au</m> <m>ao</m>
+<m>are</m> <m>ale</m> <m>ali</m> <m>ay</m> <m>ardo</m> <m>e</m> <m>ei</m> <m>ea</m> <m>ea</m> <m>eri</m> <m>era</m> <m>ela</m>
+<m>eli</m> <m>enda</m> <m>erra</m> <m>i</m> <m>ia</m> <m>ie</m> <m>ire</m> <m>ira</m> <m>ila</m> <m>ili</m> <m>ira</m> <m>igo</m>
+<m>o</m> <m>oa</m> <m>oi</m> <m>oe</m> <m>ore</m> <m>u</m> <m>y</m> <s>a</s> <s>ab</s> <s>ac</s> <s>ad</s> <s>af</s> <s>agr</s>
+<s>ast</s> <s>as</s> <s>al</s> <s>adw</s> <s>adr</s> <s>ar</s> <s>b</s> <s>br</s> <s>c</s> <s>c</s> <s>c</s> <s>cr</s> <s>ch</s>
+<s>cad</s> <s>d</s> <s>dr</s> <s>dw</s> <s>ed</s> <s>eth</s> <s>et</s> <s>er</s> <s>el</s> <s>eow</s> <s>f</s> <s>fr</s> <s>g</s>
+<s>gr</s> <s>gw</s> <s>gw</s> <s>gal</s> <s>gl</s> <s>h</s> <s>ha</s> <s>ib</s> <s>jer</s> <s>k</s> <s>ka</s> <s>ked</s> <s>l</s>
+<s>loth</s> <s>lar</s> <s>leg</s> <s>m</s> <s>mir</s> <s>n</s> <s>nyd</s> <s>ol</s> <s>oc</s> <s>on</s> <s>p</s> <s>pr</s>
+<s>q</s> <s>r</s> <s>rh</s> <s>s</s> <s>sev</s> <s>t</s> <s>tr</s> <s>th</s> <s>th</s> <s>ul</s> <s>um</s> <s>un</s> <s>v</s>
+<s>y</s> <s>yb</s> <s>z</s> <s>w</s> <s>w</s> <s>wic</s> </albion2> <sample> <e>a</e> <e>ab</e> <e>ac</e> <e>ad</e> <e>af</e>
+<e>agr</e> <e>ast</e> <e>as</e> <e>al</e> <e>adw</e> <e>adr</e> <e>ar</e> <e>b</e> <e>br</e> <e>c</e> <e>c</e> <e>c</e> <e>cr</e>
+<e>ch</e> <e>cad</e> <e>d</e> <e>dr</e> <e>dw</e> <e>ed</e> <e>eth</e> <e>et</e> <e>er</e> <e>el</e> <e>eow</e> <e>f</e> <e>fr</e>
+<e>g</e> <e>gr</e> <e>gw</e> <e>gw</e> <e>gal</e> <e>gl</e> <e>h</e> <e>ha</e> <e>ib</e> <e>jer</e> <e>k</e> <e>ka</e> <e>ked</e>
+<e>l</e> <e>loth</e> <e>lar</e> <e>leg</e> <e>m</e> <e>mir</e> <e>n</e> <e>nyd</e> <e>ol</e> <e>oc</e> <e>on</e> <e>p</e>
+<e>pr</e> <e>r</e> <e>rh</e> <e>s</e> <e>sev</e> <e>t</e> <e>tr</e> <e>th</e> <e>th</e> <e>v</e> <e>y</e> <e>yb</e> <e>z</e>
+<e>w</e> <e>w</e> <e>wic</e> <e>a</e> <e>ae</e> <e>ae</e> <e>au</e> <e>ao</e> <e>are</e> <e>ale</e> <e>ali</e> <e>ay</e>
+<e>ardo</e> <e>e</e> <e>ei</e> <e>ea</e> <e>ea</e> <e>eri</e> <e>era</e> <e>ela</e> <e>eli</e> <e>enda</e> <e>erra</e> <e>i</e>
+<e>ia</e> <e>ie</e> <e>ire</e> <e>ira</e> <e>ila</e> <e>ili</e> <e>ira</e> <e>igo</e> <e>o</e> <e>oa</e> <e>oi</e> <e>oe</e>
+<e>ore</e> <e>u</e> <e>y</e> <e></e> <e></e> <e></e> <e></e> <e></e> <e></e> <e></e> <e>a</e> <e>and</e> <e>b</e> <e>bwyn</e>
+<e>baen</e> <e>bard</e> <e>c</e> <e>ctred</e> <e>cred</e> <e>ch</e> <e>can</e> <e>d</e> <e>dan</e> <e>don</e> <e>der</e>
+<e>dric</e> <e>dfrid</e> <e>dus</e> <e>f</e> <e>g</e> <e>gord</e> <e>gan</e> <e>l</e> <e>li</e> <e>lgrin</e> <e>lin</e>
+<e>lith</e> <e>lath</e> <e>loth</e> <e>ld</e> <e>ldric</e> <e>ldan</e> <e>m</e> <e>mas</e> <e>mos</e> <e>mar</e> <e>mond</e>
+<e>n</e> <e>nydd</e> <e>nidd</e> <e>nnon</e> <e>nwan</e> <e>nyth</e> <e>nad</e> <e>nn</e> <e>nnor</e> <e>nd</e> <e>p</e> <e>r</e>
+<e>ron</e> <e>rd</e> <e>s</e> <e>sh</e> <e>seth</e> <e>sean</e> <e>t</e> <e>th</e> <e>th</e> <e>tha</e> <e>tlan</e> <e>trem</e>
+<e>tram</e> <e>v</e> <e>vudd</e> <e>w</e> <e>wan</e> <e>win</e> <e>win</e> <e>wyn</e> <e>wyn</e> <e>wyr</e> <e>wyr</e> <e>wyth</e>
+</sample> <f_female> <e>beth</e> <e>cia</e> <e>cien</e> <e>clya</e> <e>de</e> <e>dia</e> <e>dda</e> <e>dien</e> <e>dith</e>
+<e>dia</e> <e>lind</e> <e>lith</e> <e>lia</e> <e>lian</e> <e>lla</e> <e>llan</e> <e>lle</e> <e>ma</e> <e>mma</e> <e>mwen</e>
+<e>meth</e> <e>n</e> <e>n</e> <e>n</e> <e>nna</e> <e>ndra</e> <e>ng</e> <e>ni</e> <e>nia</e> <e>niel</e> <e>rith</e> <e>rien</e>
+<e>ria</e> <e>ri</e> <e>rwen</e> <e>sa</e> <e>sien</e> <e>ssa</e> <e>ssi</e> <e>swen</e> <e>thien</e> <e>thiel</e> <e>viel</e>
+<e>via</e> <e>ven</e> <e>veth</e> <e>wen</e> <e>wen</e> <e>wen</e> <e>wen</e> <e>wia</e> <e>weth</e> <e>wien</e> <e>wiel</e>
+<m>a</m> <m>a</m> <m>a</m> <m>ae</m> <m>ae</m> <m>au</m> <m>ao</m> <m>are</m> <m>ale</m> <m>ali</m> <m>ay</m> <m>ardo</m> <m>e</m>
+<m>e</m> <m>e</m> <m>ei</m> <m>ea</m> <m>ea</m> <m>eri</m> <m>era</m> <m>ela</m> <m>eli</m> <m>enda</m> <m>erra</m> <m>i</m>
+<m>i</m> <m>i</m> <m>ia</m> <m>ie</m> <m>ire</m> <m>ira</m> <m>ila</m> <m>ili</m> <m>ira</m> <m>igo</m> <m>o</m> <m>oa</m>
+<m>oi</m> <m>oe</m> <m>ore</m> <m>u</m> <m>y</m> <s>a</s> <s>ab</s> <s>ac</s> <s>ad</s> <s>af</s> <s>agr</s> <s>ast</s> <s>as</s>
+<s>al</s> <s>adw</s> <s>adr</s> <s>ar</s> <s>b</s> <s>br</s> <s>c</s> <s>c</s> <s>c</s> <s>cr</s> <s>ch</s> <s>cad</s> <s>d</s>
+<s>dr</s> <s>dw</s> <s>ed</s> <s>eth</s> <s>et</s> <s>er</s> <s>el</s> <s>eow</s> <s>f</s> <s>fr</s> <s>g</s> <s>gr</s> <s>gw</s>
+<s>gw</s> <s>gal</s> <s>gl</s> <s>h</s> <s>ha</s> <s>ib</s> <s>jer</s> <s>k</s> <s>ka</s> <s>ked</s> <s>l</s> <s>loth</s>
+<s>lar</s> <s>leg</s> <s>m</s> <s>mir</s> <s>n</s> <s>nyd</s> <s>ol</s> <s>oc</s> <s>on</s> <s>p</s> <s>pr</s> <s>q</s> <s>r</s>
+<s>rh</s> <s>s</s> <s>sev</s> <s>t</s> <s>tr</s> <s>th</s> <s>th</s> <s>ul</s> <s>um</s> <s>un</s> <s>v</s> <s>y</s> <s>yb</s>
+<s>z</s> <s>w</s> <s>w</s> <s>wic</s> </f_female> <gnome2> <e>brylla</e> <e>cla</e> <e>dda</e> <e>ll</e> <e>lla</e> <e>llyra</e>
+<e>lonna</e> <e>lyan</e> <e>na</e> <e>ngwen</e> <e>niver</e> <e>noic</e> <e>ra</e> <e>rka</e> <e>ryan</e> <e>ssa</e> <e>vyan</e>
+<m>a</m> <m>ae</m> <m>e</m> <m>ea</m> <m>i</m> <m>o</m> <m>u</m> <m>y</m> <m>w</m> <s>al</s> <s>br</s> <s>c</s> <s>cl</s> <s>d</s>
+<s>el</s> <s>gw</s> <s>j</s> <s>l</s> <s>m</s> <s>n</s> <s>mer</s> <s>s</s> <s>r</s> <s>ys</s> </gnome2> <galler> <e>dix</e>
+<e>fax</e> <e>fix</e> <e>lix</e> <e>rix</e> <e>stix</e> <m>aku</m> <m>e</m> <m>eli</m> <m>eri</m> <m>o</m> <m>uba</m> <s>a</s>
+<s>ab</s> <s>ac</s> <s>ad</s> <s>af</s> <s>ast</s> <s>al</s> <s>adw</s> <s>adr</s> <s>ar</s> <s>b</s> <s>br</s> <s>c</s> <s>cr</s>
+<s>d</s> <s>dr</s> <s>ed</s> <s>et</s> <s>er</s> <s>el</s> <s>f</s> <s>fr</s> <s>g</s> <s>gr</s> <s>gal</s> <s>gl</s> <s>h</s>
+<s>hal</s> <s>ib</s> <s>id</s> <s>j</s> <s>k</s> <s>ka</s> <s>ked</s> <s>l</s> <s>lar</s> <s>leg</s> <s>m</s> <s>maj</s>
+<s>mir</s> <s>n</s> <s>ol</s> <s>oc</s> <s>on</s> <s>p</s> <s>pr</s> <s>r</s> <s>s</s> <s>sl</s> <s>t</s> <s>tr</s> <s>ul</s>
+<s>v</s> <s>y</s> <s>yb</s> <s>z</s> <s>w</s> </galler> <sparhawk> <e></e> <e></e> <e>n</e> <e>nia</e> <e>len</e> <e>ger</e>
+<e>gne</e> <e>dere</e> <e>rik</e> <e>lman</e> <e>door</e> <e>bian</e> <e>l</e> <e>sta</e> <e>tras</e> <e>gen</e> <e>lten</e>
+<e>lad</e> <e>rit</e> <m>a</m> <m>a</m> <m>ae</m> <m>anae</m> <m>e</m> <m>io</m> <m>o</m> <m>i</m> <m>u</m> <s>k</s> <s>kh</s>
+<s>ber</s> <s>sar</s> <s>str</s> <s>cal</s> <s>kur</s> <s>kr</s> <s>d</s> <s>osc</s> <s>zal</s> <s>b</s> <s>it</s> <s>mel</s>
+<s>z</s> <s>s</s> <s>t</s> <s>van</s> <s>emb</s> <s>aphr</s> <s>sephr</s> </sparhawk> <f_male> <e></e> <e></e> <e></e> <e></e>
+<e></e> <e></e> <e></e> <e>a</e> <e>and</e> <e>b</e> <e>bwyn</e> <e>baen</e> <e>bard</e> <e>c</e> <e>ch</e> <e>can</e> <e>d</e>
+<e>dan</e> <e>don</e> <e>der</e> <e>dric</e> <e>dus</e> <e>f</e> <e>g</e> <e>gord</e> <e>gan</e> <e>han</e> <e>har</e> <e>jar</e>
+<e>jan</e> <e>k</e> <e>kin</e> <e>kith</e> <e>kath</e> <e>koth</e> <e>kor</e> <e>kon</e> <e>l</e> <e>li</e> <e>lin</e> <e>lith</e>
+<e>lath</e> <e>loth</e> <e>ld</e> <e>ldan</e> <e>m</e> <e>mas</e> <e>mos</e> <e>mar</e> <e>mond</e> <e>n</e> <e>nydd</e>
+<e>nidd</e> <e>nnon</e> <e>nwan</e> <e>nyth</e> <e>nad</e> <e>nn</e> <e>nnor</e> <e>nd</e> <e>p</e> <e>r</e> <e>red</e> <e>ric</e>
+<e>rid</e> <e>rin</e> <e>ron</e> <e>rd</e> <e>s</e> <e>sh</e> <e>seth</e> <e>sean</e> <e>t</e> <e>th</e> <e>th</e> <e>tha</e>
+<e>tlan</e> <e>trem</e> <e>tram</e> <e>v</e> <e>vudd</e> <e>w</e> <e>wan</e> <e>win</e> <e>win</e> <e>wyn</e> <e>wyn</e>
+<e>wyr</e> <e>wyr</e> <e>wyth</e> <m>a</m> <m>ae</m> <m>ae</m> <m>au</m> <m>ao</m> <m>are</m> <m>ale</m> <m>ali</m> <m>ay</m>
+<m>ardo</m> <m>e</m> <m>edri</m> <m>ei</m> <m>ea</m> <m>ea</m> <m>eri</m> <m>era</m> <m>ela</m> <m>eli</m> <m>enda</m> <m>erra</m>
+<m>i</m> <m>ia</m> <m>ie</m> <m>ire</m> <m>ira</m> <m>ila</m> <m>ili</m> <m>ira</m> <m>igo</m> <m>o</m> <m>oha</m> <m>oma</m>
+<m>oa</m> <m>oi</m> <m>oe</m> <m>ore</m> <m>u</m> <m>y</m> <s>a</s> <s>ab</s> <s>ac</s> <s>ad</s> <s>af</s> <s>agr</s> <s>ast</s>
+<s>as</s> <s>al</s> <s>adw</s> <s>adr</s> <s>ar</s> <s>b</s> <s>br</s> <s>c</s> <s>c</s> <s>c</s> <s>cr</s> <s>ch</s> <s>cad</s>
+<s>d</s> <s>dr</s> <s>dw</s> <s>ed</s> <s>eth</s> <s>et</s> <s>er</s> <s>el</s> <s>eow</s> <s>f</s> <s>fr</s> <s>g</s> <s>gr</s>
+<s>gw</s> <s>gw</s> <s>gal</s> <s>gl</s> <s>h</s> <s>ha</s> <s>ib</s> <s>j</s> <s>jer</s> <s>k</s> <s>ka</s> <s>ked</s> <s>l</s>
+<s>loth</s> <s>lar</s> <s>leg</s> <s>m</s> <s>mir</s> <s>n</s> <s>nyd</s> <s>ol</s> <s>oc</s> <s>on</s> <s>p</s> <s>pr</s>
+<s>q</s> <s>r</s> <s>rh</s> <s>s</s> <s>sev</s> <s>t</s> <s>tr</s> <s>th</s> <s>th</s> <s>ul</s> <s>um</s> <s>un</s> <s>v</s>
+<s>y</s> <s>yb</s> <s>z</s> <s>w</s> <s>w</s> <s>wic</s> </f_male> <deverry1> <e>bryn</e> <e>c</e> <e>cyn</e> <e>dd</e>
+<e>ddry</e> <e>ddyn</e> <e>doc</e> <e>dry</e> <e>gwyn</e> <e>llyn</e> <e>myr</e> <e>n</e> <e>nnyn</e> <e>nry</e> <e>nvan</e>
+<e>nyc</e> <e>r</e> <e>rcyn</e> <e>rraent</e> <e>ran</e> <e>ryn</e> <m>a</m> <m>ae</m> <m>e</m> <m>eo</m> <m>i</m> <m>o</m>
+<m>u</m> <m>y</m> <s>aeth</s> <s>addr</s> <s>bl</s> <s>c</s> <s>car</s> <s>d</s> <s>g</s> <s>gl</s> <s>gw</s> <s>l</s> <s>m</s>
+<s>ow</s> <s>r</s> <s>rh</s> <s>s</s> <s>t</s> <s>v</s> <s>yr</s> </deverry1> <orc2> <e>killer</e> <e>crucher</e> <e>lover</e>
+<e>thrower</e> <e>throttler</e> <e>eater</e> <e>hammer</e> <e>kicker</e> <e>walker</e> <e>punsher</e> <e>dragger</e>
+<e>stomper</e> <e>torturer</e> <e>ripper</e> <e>mangler</e> <e>hater</e> <e>poker</e> <e>chewer</e> <e>cutter</e> <e>slicer</e>
+<e>juggler</e> <e>raper</e> <e>smasher</e> <e>shooter</e> <e>drinker</e> <e>crawler</e> <s>head</s> <s>face</s> <s>eye</s>
+<s>arm</s> <s>foot</s> <s>toe</s> <s>ear</s> <s>nose</s> <s>hair</s> <s>blood</s> <s>nail</s> <s>snotling</s> <s>enemy</s>
+<s>public</s> <s>beast</s> <s>man</s> <s>finger</s> <s>goblin</s> <s>gretchin</s> <s>hobbit</s> <s>teeth</s> <s>elf</s> <s>rat</s>
+<s>ball</s> <s>ghoul</s> <s>knife</s> <s>axe</s> <s>wraith</s> <s>deamon</s> <s>dragon</s> <s>tooth</s> <s>death</s> <s>mother</s>
+<s>horse</s> <s>moon</s> <s>dwarf</s> <s>earth</s> <s>human</s> <s>grass</s> </orc2> <felana> <e></e> <e></e> <e></e> <e></e>
+<e></e> <e></e> <e></e> <e></e> <e>dar</e> <e>mir</e> <e>nir</e> <e>nor</e> <e>nar</e> <e>ish</e> <e>ash</e> <e>osh</e> <e>esh</e>
+<e>isha</e> <e>asha</e> <e>esha</e> <e>osha</e> <e>orsha</e> <e>a</e> <e>e</e> <e>i</e> <e>o</e> <e>u</e> <e>y</e> <e>sar</e>
+<e>ser</e> <e>sor</e> <e>sir</e> <e>der</e> <e>sham</e> <e>shor</e> <e>shen</e> <e>as</e> <e>es</e> <e>ys</e> <e>seth</e>
+<e>san</e> <e>sin</e> <e>sil</e> <e>sur</e> <e>sen</e> <e>sean</e> <e>dor</e> <m>a</m> <m>ar</m> <m>as</m> <m>e</m> <m>es</m>
+<m>i</m> <m>is</m> <m>o</m> <m>os</m> <m>u</m> <m>us</m> <m>y</m> <m>ys</m> <m>er</m> <m>or</m> <m>ur</m> <m>yr</m> <m>ir</m>
+<m>eri</m> <m>ari</m> <m>osh</m> <m>ash</m> <m>esh</m> <m>ish</m> <m>ush</m> <m>ysh</m> <m>en</m> <m>an</m> <m>in</m> <m>on</m>
+<m>un</m> <m>yn</m> <s>am</s> <s>an</s> <s>as</s> <s>ash</s> <s>ast</s> <s>c</s> <s>chen</s> <s>chan</s> <s>char</s> <s>cher</s>
+<s>cer</s> <s>es</s> <s>esh</s> <s>is</s> <s>ish</s> <s>os</s> <s>osh</s> <s>us</s> <s>ush</s> <s>ys</s> <s>ysh</s> <s>h</s>
+<s>ch</s> <s>s</s> <s>shen</s> <s>sar</s> <s>sol</s> <s>shar</s> <s>shan</s> <s>sher</s> <s>shim</s> <s>sim</s> <s>sin</s>
+<s>san</s> <s>sar</s> <s>ser</s> <s>sor</s> <s>shor</s> <s>sham</s> <s>sh</s> </felana> <deverry2> <e>brylla</e> <e>cla</e>
+<e>dda</e> <e>ll</e> <e>lla</e> <e>llyra</e> <e>lonna</e> <e>lyan</e> <e>na</e> <e>ngwen</e> <e>niver</e> <e>noic</e> <e>ra</e>
+<e>rka</e> <e>ryan</e> <e>ssa</e> <e>vyan</e> <m>a</m> <m>ae</m> <m>e</m> <m>ea</m> <m>i</m> <m>o</m> <m>u</m> <m>y</m> <m>w</m>
+<s>al</s> <s>br</s> <s>c</s> <s>cl</s> <s>d</s> <s>el</s> <s>gw</s> <s>j</s> <s>l</s> <s>m</s> <s>n</s> <s>mer</s> <s>s</s>
+<s>r</s> <s>ys</s> </deverry2> <orc> <e>dak</e> <e>dash</e> <e>dish</e> <e>dush</e> <e>gak</e> <e>gar</e> <e>gor</e> <e>gdush</e>
+<e>hai</e> <e>l</e> <e>lo</e> <e>lok</e> <e>gdish</e> <e>k</e> <e>kar</e> <e>kor</e> <e>lg</e> <e>mak</e> <e>nak</e> <e>nai</e>
+<e>ng</e> <e>nk</e> <e>rag</e> <e>rbag</e> <e>rg</e> <e>rk</e> <e>rt</e> <e>ruk</e> <e>shnak</e> <m>a</m> <m>i</m> <m>o</m>
+<m>u</m> <s>b</s> <s>c</s> <s>d</s> <s>er</s> <s>f</s> <s>g</s> <s>gr</s> <s>h</s> <s>k</s> <s>l</s> <s>m</s> <s>n</s> <s>p</s>
+<s>pr</s> <s>r</s> <s>s</s> <s>t</s> <s>v</s> <s>vr</s> </orc> <albion1> <e>a</e> <e>clya</e> <e>lind</e> <e>de</e> <e>dien</e>
+<e>dith</e> <e>dia</e> <e>lith</e> <e>lia</e> <e>lian</e> <e>lla</e> <e>llan</e> <e>lle</e> <e>n</e> <e>n</e> <e>n</e> <e>ndra</e>
+<e>ng</e> <e>nia</e> <e>niel</e> <e>rith</e> <e>thien</e> <e>thiel</e> <e>viel</e> <e>wen</e> <e>wien</e> <e>wiel</e> <m>a</m>
+<m>ae</m> <m>ae</m> <m>au</m> <m>ao</m> <m>are</m> <m>ale</m> <m>ali</m> <m>ay</m> <m>ardo</m> <m>e</m> <m>ei</m> <m>ea</m>
+<m>ea</m> <m>eri</m> <m>era</m> <m>ela</m> <m>eli</m> <m>enda</m> <m>erra</m> <m>i</m> <m>ia</m> <m>ie</m> <m>ire</m> <m>ira</m>
+<m>ila</m> <m>ili</m> <m>ira</m> <m>igo</m> <m>o</m> <m>oa</m> <m>oi</m> <m>oe</m> <m>ore</m> <m>u</m> <m>y</m> <s>a</s> <s>ab</s>
+<s>ac</s> <s>ad</s> <s>af</s> <s>agr</s> <s>ast</s> <s>as</s> <s>al</s> <s>adw</s> <s>adr</s> <s>ar</s> <s>b</s> <s>br</s>
+<s>c</s> <s>c</s> <s>c</s> <s>cr</s> <s>ch</s> <s>cad</s> <s>d</s> <s>dr</s> <s>dw</s> <s>ed</s> <s>eth</s> <s>et</s> <s>er</s>
+<s>el</s> <s>eow</s> <s>f</s> <s>fr</s> <s>g</s> <s>gr</s> <s>gw</s> <s>gw</s> <s>gal</s> <s>gl</s> <s>h</s> <s>ha</s> <s>ib</s>
+<s>jer</s> <s>k</s> <s>ka</s> <s>ked</s> <s>l</s> <s>loth</s> <s>lar</s> <s>leg</s> <s>m</s> <s>mir</s> <s>n</s> <s>nyd</s>
+<s>ol</s> <s>oc</s> <s>on</s> <s>p</s> <s>pr</s> <s>q</s> <s>r</s> <s>rh</s> <s>s</s> <s>sev</s> <s>t</s> <s>tr</s> <s>th</s>
+<s>th</s> <s>ul</s> <s>um</s> <s>un</s> <s>v</s> <s>y</s> <s>yb</s> <s>z</s> <s>w</s> <s>w</s> <s>wic</s> </albion1> <dvargar>
+<e>bur</e> <e>fur</e> <e>gan</e> <e>gnus</e> <e>gnar</e> <e>li</e> <e>lin</e> <e>lir</e> <e>mli</e> <e>nar</e> <e>nus</e>
+<e>rin</e> <e>ran</e> <e>sin</e> <e>sil</e> <e>sur</e> <m>a</m> <m>e</m> <m>i</m> <m>o</m> <m>oi</m> <m>u</m> <s>b</s> <s>d</s>
+<s>f</s> <s>g</s> <s>gl</s> <s>h</s> <s>k</s> <s>l</s> <s>m</s> <s>n</s> <s>r</s> <s>s</s> <s>t</s> <s>v</s> </dvargar> <kerrel>
+<e>beriel</e> <e>clya</e> <e>danten</e> <e>dar</e> <e>ddlaen</e> <e>gyn</e> <e>ladar</e> <e>ldar</e> <e>lden</e> <e>lia</e>
+<e>mario</e> <e>na</e> <e>ndar</e> <e>ndario</e> <e>nderiel</e> <e>ndra</e> <e>nnon</e> <e>nna</e> <e>ntar</e> <e>ntariel</e>
+<e>nteriel</e> <e>ny</e> <e>raen</e> <e>rel</e> <e>ria</e> <e>riel</e> <e>ryn</e> <e>ssi</e> <e>teriel</e> <e>ver</e> <m>a</m>
+<m>a</m> <m>abe</m> <m>abri</m> <m>ae</m> <m>ae</m> <m>ala</m> <m>alae</m> <m>ale</m> <m>ama</m> <m>amae</m> <m>ana</m> <m>e</m>
+<m>e</m> <m>ede</m> <m>ena</m> <m>ere</m> <m>o</m> <m>oba</m> <m>obre</m> <s>ad</s> <s>adr</s> <s>al</s> <s>alb</s> <s>alod</s>
+<s>ann</s> <s>b</s> <s>ban</s> <s>ber</s> <s>cal</s> <s>car</s> <s>carr</s> <s>cont</s> <s>dall</s> <s>dar</s> <s>dev</s>
+<s>eb</s> <s>el</s> <s>elb</s> <s>en</s> <s>far</s> <s>gann</s> <s>gav</s> <s>hal</s> <s>jav</s> <s>jenn</s> <s>l</s> <s>land</s>
+<s>man</s> <s>mer</s> <s>nan</s> <s>ran</s> <s>tal</s> <s>tal</s> <s>val</s> <s>wyl</s> </kerrel> <albion> <e></e> <e></e> <e></e>
+<e></e> <e></e> <e></e> <e></e> <e>a</e> <e>and</e> <e>b</e> <e>bwyn</e> <e>baen</e> <e>bard</e> <e>c</e> <e>ctred</e> <e>cred</e>
+<e>ch</e> <e>can</e> <e>d</e> <e>dan</e> <e>don</e> <e>der</e> <e>dric</e> <e>dfrid</e> <e>dus</e> <e>f</e> <e>g</e> <e>gord</e>
+<e>gan</e> <e>l</e> <e>li</e> <e>lgrin</e> <e>lin</e> <e>lith</e> <e>lath</e> <e>loth</e> <e>ld</e> <e>ldric</e> <e>ldan</e>
+<e>m</e> <e>mas</e> <e>mos</e> <e>mar</e> <e>mond</e> <e>n</e> <e>nydd</e> <e>nidd</e> <e>nnon</e> <e>nwan</e> <e>nyth</e>
+<e>nad</e> <e>nn</e> <e>nnor</e> <e>nd</e> <e>p</e> <e>r</e> <e>ron</e> <e>rd</e> <e>s</e> <e>sh</e> <e>seth</e> <e>sean</e>
+<e>t</e> <e>th</e> <e>th</e> <e>tha</e> <e>tlan</e> <e>trem</e> <e>tram</e> <e>v</e> <e>vudd</e> <e>w</e> <e>wan</e> <e>win</e>
+<e>win</e> <e>wyn</e> <e>wyn</e> <e>wyr</e> <e>wyr</e> <e>wyth</e> <m>a</m> <m>ae</m> <m>ae</m> <m>au</m> <m>ao</m> <m>are</m>
+<m>ale</m> <m>ali</m> <m>ay</m> <m>ardo</m> <m>e</m> <m>ei</m> <m>ea</m> <m>ea</m> <m>eri</m> <m>era</m> <m>ela</m> <m>eli</m>
+<m>enda</m> <m>erra</m> <m>i</m> <m>ia</m> <m>ie</m> <m>ire</m> <m>ira</m> <m>ila</m> <m>ili</m> <m>ira</m> <m>igo</m> <m>o</m>
+<m>oa</m> <m>oi</m> <m>oe</m> <m>ore</m> <m>u</m> <m>y</m> <s>a</s> <s>ab</s> <s>ac</s> <s>ad</s> <s>af</s> <s>agr</s> <s>ast</s>
+<s>as</s> <s>al</s> <s>adw</s> <s>adr</s> <s>ar</s> <s>b</s> <s>br</s> <s>c</s> <s>c</s> <s>c</s> <s>cr</s> <s>ch</s> <s>cad</s>
+<s>d</s> <s>dr</s> <s>dw</s> <s>ed</s> <s>eth</s> <s>et</s> <s>er</s> <s>el</s> <s>eow</s> <s>f</s> <s>fr</s> <s>g</s> <s>gr</s>
+<s>gw</s> <s>gw</s> <s>gal</s> <s>gl</s> <s>h</s> <s>ha</s> <s>ib</s> <s>jer</s> <s>k</s> <s>ka</s> <s>ked</s> <s>l</s>
+<s>loth</s> <s>lar</s> <s>leg</s> <s>m</s> <s>mir</s> <s>n</s> <s>nyd</s> <s>ol</s> <s>oc</s> <s>on</s> <s>p</s> <s>pr</s>
+<s>r</s> <s>rh</s> <s>s</s> <s>sev</s> <s>t</s> <s>tr</s> <s>th</s> <s>th</s> <s>v</s> <s>y</s> <s>yb</s> <s>z</s> <s>w</s>
+<s>w</s> <s>wic</s> </albion> <dragon> <m>star</m> <m>moon</m> <m>wind</m> <s>gold</s> <s>silver</s> <s>diamond</s> <s>steel</s>
+<s>iron</s> </dragon> <dvargar2> <e>brylla</e> <e>cla</e> <e>dda</e> <e>ll</e> <e>lla</e> <e>llyra</e> <e>lonna</e> <e>lyan</e>
+<e>na</e> <e>ngwen</e> <e>niver</e> <e>noic</e> <e>ra</e> <e>rka</e> <e>ryan</e> <e>ssa</e> <e>vyan</e> <m>a</m> <m>ae</m>
+<m>e</m> <m>ea</m> <m>i</m> <m>o</m> <m>u</m> <m>y</m> <m>w</m> <s>al</s> <s>br</s> <s>c</s> <s>cl</s> <s>d</s> <s>el</s>
+<s>gw</s> <s>j</s> <s>l</s> <s>m</s> <s>n</s> <s>mer</s> <s>s</s> <s>r</s> <s>ys</s> </dvargar2> <alver> <e>l</e> <e>las</e>
+<e>lad</e> <e>ldor</e> <e>ldur</e> <e>linde</e> <e>lith</e> <e>mir</e> <e>n</e> <e>nd</e> <e>ndel</e> <e>ndil</e> <e>ndir</e>
+<e>nduil</e> <e>ng</e> <e>mbor</e> <e>r</e> <e>rith</e> <e>ril</e> <e>riand</e> <e>rion</e> <e>thien</e> <e>viel</e> <e>wen</e>
+<e>wyn</e> <m>a</m> <m>a</m> <m>adrie</m> <m>ara</m> <m>e</m> <m>e</m> <m>ebri</m> <m>i</m> <m>io</m> <m>ithra</m> <m>ilma</m>
+<m>il-ga</m> <m>o</m> <m>orfi</m> <m>o</m> <m>u</m> <m>y</m> <s>an</s> <s>bel</s> <s>cel</s> <s>el</s> <s>elr</s> <s>elv</s>
+<s>eow</s> <s>ear</s> <s>f</s> <s>g</s> <s>gal</s> <s>gl</s> <s>is</s> <s>leg</s> <s>lom</s> <s>n</s> <s>s</s> <s>t</s> <s>thr</s>
+<s>tin</s> </alver> <alver1> <e>l</e> <e>las</e> <e>lad</e> <e>ldor</e> <e>ldur</e> <e>lith</e> <e>mir</e> <e>n</e> <e>nd</e>
+<e>ndel</e> <e>ndil</e> <e>ndir</e> <e>nduil</e> <e>ng</e> <e>mbor</e> <e>r</e> <e>ril</e> <e>riand</e> <e>rion</e> <e>wyn</e>
+<m>a</m> <m>a</m> <m>adrie</m> <m>ara</m> <m>e</m> <m>e</m> <m>ebri</m> <m>i</m> <m>io</m> <m>ithra</m> <m>ilma</m> <m>il-ga</m>
+<m>o</m> <m>orfi</m> <m>o</m> <m>u</m> <m>y</m> <s>an</s> <s>am</s> <s>bel</s> <s>cel</s> <s>c</s> <s>cal</s> <s>del</s> <s>el</s>
+<s>elr</s> <s>elv</s> <s>eow</s> <s>ear</s> <s>f</s> <s>g</s> <s>gal</s> <s>gl</s> <s>h</s> <s>is</s> <s>leg</s> <s>lom</s>
+<s>m</s> <s>n</s> <s>p</s> <s>r</s> <s>s</s> <s>t</s> <s>thr</s> <s>tin</s> <s>ur</s> <s>un</s> <s>v</s> </alver1> <alver2>
+<e>clya</e> <e>linde</e> <e>de</e> <e>dien</e> <e>dith</e> <e>dia</e> <e>lith</e> <e>lia</e> <e>ndra</e> <e>ng</e> <e>nia</e>
+<e>niel</e> <e>rith</e> <e>thien</e> <e>thiel</e> <e>viel</e> <e>wen</e> <e>wien</e> <e>wiel</e> <m>a</m> <m>a</m> <m>adrie</m>
+<m>ara</m> <m>e</m> <m>e</m> <m>ebri</m> <m>i</m> <m>io</m> <m>ithra</m> <m>ilma</m> <m>il-ga</m> <m>o</m> <m>orfi</m> <m>o</m>
+<m>u</m> <m>y</m> <s>an</s> <s>am</s> <s>bel</s> <s>cel</s> <s>c</s> <s>cal</s> <s>del</s> <s>el</s> <s>elr</s> <s>elv</s>
+<s>eow</s> <s>ear</s> <s>f</s> <s>g</s> <s>gal</s> <s>gl</s> <s>h</s> <s>is</s> <s>leg</s> <s>lom</s> <s>m</s> <s>n</s> <s>p</s>
+<s>r</s> <s>s</s> <s>t</s> <s>thr</s> <s>tin</s> <s>ur</s> <s>un</s> <s>v</s> </alver2> </nam>

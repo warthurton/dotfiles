@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+
+declare -i _COLUMNS=$(sh -O checkwinsize -i -c 'echo $COLUMNS')
+((_COLUMNS > 80)) || _COLUMNS=80
+declare -i _PIDW=7
+declare -i _USERW=15
+declare -i _PORTW=$(($_COLUMNS / 6))
+declare -i _CMDW=_COLUMNS-_PIDW-_USERW-_PORTW-_PORTW-7
+
+_truncate_cmd=3
+
+udp_ports=($(netstat -nap udp -f inet | grep '\.[0-9]' | sed -Ee 's/^(tcp|udp)[46]+[[:blank:]]+[[:digit:]]+[[:blank:]]+[[:digit:]]+[[:blank:]]+([^[:blank:]]+)\.([[:digit:]]+)[[:blank:]].*$/\3/' | sort -n | uniq) )
+
+_user=""
+_proto=""
+declare -i _pid
+declare -a _tcp_ports
+declare -a _udp_ports
+declare -a __tcp
+declare -a __udp
+declare -a __cmd
+declare -i count
+
+dump() {
+  printf "%-${_PIDW}s|%-${_USERW}s|%-${_PORTW}s|%-${_PORTW}s|%-${_CMDW}s\n" "$1" "$2" "$3" "$4" "$5"
+}
+
+strip_sort_fold() {
+
+  case $1 in
+    tcp) _list="${_tcp_ports[@]}" ;;
+    udp) _list="${_udp_ports[@]}" ;;
+  esac
+
+  echo "$_list" | sed -e 's/\*://g' | tr ' ' '\n' | sort -n | uniq | tr '\n' ' ' | fold -s -w ${_PORTW} ; echo
+}
+
+dump "PID" "USER" "TCP" "UDP" "COMMAND"
+
+while read line ; do
+  case $line in
+  p*)
+    if [[ -n $_pid ]] ; then
+      __tcp=()
+      __udp=()
+      __cmd=()
+      count=0
+      while read folded ; do
+        __cmd[count++]="${folded}"
+      done < <(/bin/ps -ww -ocommand= ${_pid} | fold -w ${_CMDW} | head -${_truncate_cmd} ; echo)
+
+      if [[ ${#_tcp_ports[@]} -gt 0 ]] ; then
+        count=0
+        while read folded ; do
+          __tcp[count++]="$folded"
+        done < <(strip_sort_fold tcp)
+      fi
+
+      if [[ ${#_udp_ports[@]} -gt 0 ]] ; then
+        count=0
+        while read folded ; do
+          __udp[count++]="${folded}"
+        done < <(strip_sort_fold udp)
+      fi
+
+      dump "${_pid}" "${_user}" "${__tcp[0]}" "${__udp[0]}" "${__cmd[0]}"
+      for i in 1 2 3 4 5 6 7 ; do
+        [[ -n "${__tcp[$i]}" || -n "${__udp[$i]}" || -n "${__cmd[$i]}" ]] && dump "" "" "${__tcp[$i]}" "${__udp[$i]}" "     ${__cmd[$i]}"
+      done
+
+      _user=""
+      _proto=""
+      _tcp_ports=()
+      _udp_ports=()
+    fi
+    _pid=${line##p}
+    ;;
+  P*) _proto=${line##P} ;;
+  L*) _user=${line##L} ;;
+  n*) if [[ "${_proto}" == "TCP" ]] ; then
+        _tcp_ports+=(${line##n})
+      else
+        _udp_ports+=(${line##n})
+      fi
+      ;;
+  *) ;;
+  esac
+
+done < <(sudo lsof -PnbwM -i4TCP -sTCP:LISTEN -FLpnP -i4UDP:$(IFS=,; echo "${udp_ports[*]}") -FLpnP)
+
+# ports=$( (netstat -nap tcp -f inet | grep LISTEN ; netstat -nap udp -f inet | grep '\.[0-9]' ) | sed -Ee 's/^(tcp|udp)[46][[:blank:]]+[[:digit:]]+[[:blank:]]+[[:digit:]]+[[:blank:]]+([^[:blank:]]+)\.([[:digit:]]+)[[:blank:]].*$/\1 \2 \3/' | sort )
+# tcp_ports=( $(netstat -nap tcp -f inet | grep LISTEN | sed -Ee 's/^(tcp|udp)[46][[:blank:]]+[[:digit:]]+[[:blank:]]+[[:digit:]]+[[:blank:]]+([^[:blank:]]+)\.([[:digit:]]+)[[:blank:]].*$/\3/' | sort -u) )
