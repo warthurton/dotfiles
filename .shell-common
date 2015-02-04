@@ -165,8 +165,13 @@ command -v gdate >/dev/null 2>/dev/null && _date="gdate"
 confsync() {
   cd $HOME
   for host in $* ; do
-    (pubgit ls-files; prvgit ls-files) | rsync -vaxR --files-from=- . ${host//":"/}:
+    (pubgit ls-files; prvgit ls-files) | rsync -iaxR --files-from=- . ${host//":"/}:
   done
+}
+
+confbackup() {
+  cd $HOME
+  find .* -not -name '.DS_Store' -not -path '.dropbox*' -not -path '.Trash*' | rsync -iaxR --files-from=- . $*
 }
 
 megadump_table() {
@@ -174,7 +179,6 @@ megadump_table() {
   local _tbl="$2"
   local _file="${_db}___${_tbl}.sql"
   mysqldump --allow-keywords --lock-tables=false --lock-all-tables=false --complete-insert=false --extended-insert=false ${_db} "${_tbl}" -tKqQ -r "${_file}"
-
 }
 
 megadump_table_and_split() {
