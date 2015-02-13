@@ -35,7 +35,7 @@ set lazyredraw
 set linespace=0
 set list
 set listchars=""          " Reset the listchars
-set listchars+=tab:\ \     " a tab should display as "  ", trailing whitespace as "."
+set listchars+=tab:\ \    " a tab should display as "  ", trailing whitespace as "."
 set listchars+=trail:.    " show trailing spaces as dots
 set listchars+=extends:>
 set listchars+=precedes:<
@@ -87,6 +87,8 @@ endif
 
 if has("lua") && version >= 704
   let g:use_neocomplete = 1
+else
+  let g:use_neocomplete = 0
 endif
 
 let g:cachedir = expand('~/.vim/cache')
