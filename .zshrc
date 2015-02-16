@@ -131,14 +131,14 @@ export PROMPT="%f%b%k%u%s\$(build_lprompt)%f%b%k%u%s"
 export RPROMPT="%f%b%k%u%s\$(build_rprompt)%f%b%k%u%s"
 
 #-----------------------------------------------------------------------------
-if [ "${OSTYPE:0:6}" = "darwin" ] ; then
-  declare -i _ssh_major_ver
-  declare -i _ssh_minor_ver
-  ssh -V 2>&1 | sed -e 's/^[a-zA-Z]*_\([1-9][0-9]*\)\.\([0-9][0-9]*\).*$/\1 \2/' | read _ssh_major_ver _ssh_minor_ver
-
-  if (( (_ssh_major_ver = 6 && _ssh_minor_ver >= 6) || _ssh_major_ver >= 7 )) ; then
-    ssh-add -l -M >&/dev/null
-  fi
-fi
+# if [ "${OSTYPE:0:6}" = "darwin" ] ; then
+#   declare -i _ssh_major_ver
+#   declare -i _ssh_minor_ver
+#   ssh -V 2>&1 | sed -e 's/^[a-zA-Z]*_\([1-9][0-9]*\)\.\([0-9][0-9]*\).*$/\1 \2/' | read _ssh_major_ver _ssh_minor_ver
+#
+#   if (( (_ssh_major_ver = 6 && _ssh_minor_ver >= 6) || _ssh_major_ver >= 7 )) ; then
+#     ssh-add -l -M >&/dev/null
+#   fi
+# fi
 # --------------------------------------------------------------------------
 # vim: ft=zsh sw=2 ts=2 et

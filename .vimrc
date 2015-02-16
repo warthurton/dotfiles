@@ -96,7 +96,11 @@ endif
 let g:cachedir = expand(vimhome . 'cache')
 
 if empty(glob(vimhome . 'autoload/plug.vim'))
-  silent !curl -sfLo ~/.vim/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim
+  if v:progname == 'nvim'
+    silent !curl -sfLo ~/.nvim/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim
+  else
+    silent !curl -sfLo ~/.vim/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim
+  endif
   autocmd VimEnter * PlugInstall
 endif
 
