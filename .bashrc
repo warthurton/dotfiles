@@ -119,3 +119,4 @@ if command -v git >/dev/null 2>/dev/null ; then
   }
 fi
 
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

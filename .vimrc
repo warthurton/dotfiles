@@ -1,10 +1,20 @@
 
-let config_dirs = ['~/.vim/tmp', '~/.vim/undo', '~/.vim/cache', '~/.vim/autoload', '~/.vim/plugged', '~/.vim/backup', '~/.vim/swap']
+if v:progname == 'nvim'
+  let vimhome = '~/.nvim/'
+  set clipboard+=unnamedplus
+  set viminfo='512,<4096,s512,/512,:512,n~/.nvim/viminfo
+else
+  let vimhome = '~/.vim/'
+  set clipboard+=unnamed
+  set viminfo='512,<4096,s512,/512,:512,n~/.vim/viminfo
+  set nocompatible
+endif
 
+let config_dirs = ['tmp', 'undo', 'cache', 'autoload', 'plugged', 'backup', 'swap']
 for dir in config_dirs
   try
-    if !isdirectory(expand(dir))
-      call mkdir(expand(dir), "p")
+    if !isdirectory(expand(vimhome . dir))
+      call mkdir(expand(vimhome . dir), "p")
     endif
   catch
   endtry
@@ -12,13 +22,11 @@ endfor
 
 let mapleader = ","
 set autoindent
-set backupdir=~/.vim/backup//
+let &backupdir = expand(vimhome . 'backup')
 set background=dark
 set backspace=indent,eol,start
 set binary
-set clipboard+=unnamed
-set nocompatible
-set directory=~/.vim/swap//
+let &directory = expand(vimhome . 'swap')
 set noex
 set encoding=utf-8
 set noerrorbells
@@ -26,7 +34,7 @@ set expandtab
 set nofoldenable
 set formatoptions=rq
 set nohidden
-set history=5000
+set history=32768
 set hls
 set ignorecase
 set incsearch
@@ -57,14 +65,12 @@ set softtabstop=2
 set splitbelow
 set splitright
 set tabstop=2
-set tags=./tags
+" set tags=./tags
 set noterse
-set ttyfast
-set viminfo+=n~/.vim/viminfo
 set visualbell
 set t_Co=256
 set t_vb=
-set undodir=~/.vim/undo//
+let &undodir = expand(vimhome . 'undo')
 set undolevels=1000
 set undoreload=10000
 set wildignore+=*/.cache/*,*/tmp/*,*/.git/*,*/.neocon/*,*.log,*.so,*.swp,*.zip,*.gz,*.bz2,*.bmp,*.ppt
@@ -77,10 +83,6 @@ set winheight=5
 set winminheight=5
 set winheight=999
 
-if &term =~ '^screen'
-  set ttymouse=xterm2
-endif
-
 if has("ruby")
   compiler ruby
 endif
@@ -91,14 +93,14 @@ else
   let g:use_neocomplete = 0
 endif
 
-let g:cachedir = expand('~/.vim/cache')
+let g:cachedir = expand(vimhome . 'cache')
 
-if empty(glob("~/.vim/autoload/plug.vim"))
+if empty(glob(vimhome . 'autoload/plug.vim'))
   silent !curl -sfLo ~/.vim/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim
   autocmd VimEnter * PlugInstall
 endif
 
-call plug#begin('~/.vim/plugged')
+call plug#begin(vimhome . 'plugged')
 
 Plug 'tpope/vim-haml',                { 'for': 'haml' }
 Plug 'othree/html5.vim',              { 'for': 'html' }
@@ -140,6 +142,10 @@ Plug 't9md/vim-ruby-xmpfilter',       { 'for': 'ruby' }
 Plug 'gcmt/wildfire.vim'
 Plug 'kana/vim-textobj-user'
 Plug 'nelstrom/vim-textobj-rubyblock'
+
+if v:progname == 'nvim'
+  Plug 'floobits/floobits-neovim'
+endif
 
 Plug 'tpope/vim-git'
 Plug 'AndrewRadev/splitjoin.vim'
@@ -297,7 +303,7 @@ if g:use_neocomplete
 
   let g:neocomplete#sources#dictionary#dictionaries = {
       \ 'default' : '',
-      \ 'vimshell' : expand('~/.vim/vimshell')
+      \ 'vimshell' : expand(vimhome . 'vimshell')
       \ }
 
   inoremap <expr><C-g> neocomplete#undo_completion()
