@@ -34,7 +34,7 @@ set expandtab
 set nofoldenable
 set formatoptions=rq
 set nohidden
-set history=32768
+set history=8192
 set hls
 set ignorecase
 set incsearch
@@ -106,6 +106,7 @@ endif
 
 call plug#begin(vimhome . 'plugged')
 
+Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-haml',                { 'for': 'haml' }
 Plug 'othree/html5.vim',              { 'for': 'html' }
 Plug 'StanAngeloff/php.vim',          { 'for': 'php' }
@@ -186,7 +187,7 @@ call plug#end()
 
 filetype plugin indent on
 syntax on
-silent colorscheme vividchalk
+silent! colorscheme vividchalk
 
 " airline
 let g:airline_theme                       = 'murmur'
@@ -221,6 +222,7 @@ nmap <leader>n :NERDTreeToggle<CR>
 vmap <leader>n :NERDTreeToggle<CR>
 
 " rspec
+let g:rspec_command = "compiler rspec | set makeprg=zeus | Make rspec {spec}"
 map <leader>ra :call RunAllSpecs()<CR>
 map <leader>rl :call RunLastSpec()<CR>
 map <leader>rr :call RunCurrentSpecFile()<CR>
@@ -274,7 +276,6 @@ map <SPACE> <Plug>(wildfire-fuel)
 vmap <C-SPACE> <Plug>(wildfire-water)
 let g:wildfire_objects = ["i'", 'i"', "i)", "i]", "i}", "ip", "it"]
 nmap <leader>s <Plug>(wildfire-quick-select)
-
 
 " neocomplete
 if g:use_neocomplete
@@ -460,7 +461,7 @@ if has('autocmd')
   augroup END
 
   autocmd BufWritePre {*.rb,*.js,*.coffee,*.scss,*.sass,*.haml,*.java,*.jsp} :%s/\s\+$//e
-  autocmd BufEnter * lcd %:p:h
+  " autocmd BufEnter * lcd %:p:h
 
 endif
 

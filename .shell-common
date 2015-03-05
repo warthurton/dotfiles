@@ -30,6 +30,7 @@ fi
 # ---------------------------------------------------------------------------
 alias list_to_regex="sed -e 's/[^0-9]//g' | tr '\n' '|' | sed -e 's/^/(/' -e 's/\|$/)/'"
 alias j='jrnl'
+alias j_recent="jrnl -from \"\$(gdate --date 'yesterday' +'%F %H:%M')\" "
 alias m='$PAGER'
 alias g='ag'
 alias l1="ls -1"
