@@ -151,7 +151,6 @@ if v:progname == 'nvim'
   Plug 'floobits/floobits-neovim'
 endif
 
-Plug 'edkolev/tmuxline.vim'
 Plug 'tpope/vim-git'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'mattn/gist-vim'
@@ -196,14 +195,6 @@ let g:airline_left_sep                    = ''
 let g:airline_right_sep                   = ''
 let g:airline#extensions#tabline#enabled  = 1
 let g:airline#extensions#tmuxline#enabled = 1
-
-" tmuxline
-let g:tmuxline_separators = {
-    \ 'left' : '',
-    \ 'left_alt': '>',
-    \ 'right' : '',
-    \ 'right_alt' : '<',
-    \ 'space' : ' '}
 
 " ctrlp
 let g:ctrlp_show_hidden                   = 1
