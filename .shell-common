@@ -10,8 +10,6 @@ if [ "${OSTYPE:0:6}" = "darwin" ] ; then
   alias update_brew="brew update && brew upgrade && brew prune && brew cleanup && brew outdated"
   alias start="simple_launchctl load"
   alias stop="simple_launchctl unload"
-  alias rebuild_launch_services="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user"
-
   simple_launchctl() { find $HOME/Library/LaunchAgents -name '*.plist' -name '*'$2'*' -ok launchctl $1 -w {} \; ; }
   [[ -x "/Applications/LibreOffice.app/Contents/MacOS/soffice" ]] && alias soffice="/Applications/LibreOffice.app/Contents/MacOS/soffice"
   [[ -x "/usr/local/opt/macvim/MacVim.app/Contents/MacOS/Vim"  ]] && alias vim="/usr/local/opt/macvim/MacVim.app/Contents/MacOS/Vim"
@@ -28,7 +26,7 @@ if [[ -d "/usr/syno" ]] ; then
   alias p="ps w"
 fi
 # ---------------------------------------------------------------------------
-alias list_to_regex="sed -e 's/[^0-9]//g' | tr '\n' '|' | sed -e 's/^/(/' -e 's/\|$/)/'"
+
 alias j='jrnl'
 alias j_recent="jrnl -from \"\$(gdate --date 'yesterday' +'%F %H:%M')\" "
 alias j_last='jrnl -from "$([[ $(date +%u) -eq 1 ]] && echo friday || echo yesterday)"'

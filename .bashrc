@@ -1,31 +1,36 @@
 # --------------------------------------------------------------------------
-set -o emacs -o monitor -o notify
-shopt -qs autocd checkwinsize cmdhist expand_aliases histappend hostcomplete interactive_comments nocaseglob nocasematch no_empty_cmd_completion progcomp promptvars sourcepath checkjobs
-shopt -qu mailwarn
-
 export HISTCONTROL=ignoreboth
 export HISTFILE="$HOME/.bash_history"
 export HISTFILESIZE=10000000
 export INPUTRC="$HOME/.bash_inputrc"
 export PS1='\t \u@\h \w \$ '
 
-unset __messy_path
-unset __cleaned_path
-unset __path_check
-declare -A __path_check
+declare -i __bash_version
+__bash_version=${BASH_VERSINFO[0]}
 
-__messy_path+=(/Applications/VMware\ Fusion.app/Contents/Library /Applications/Postgres.app/Contents/Versions/9.4}/bin /{usr,opt}/{local,X11}/{bin,sbin} $HOME/bin)
-__messy_path+=($(IFS=:; echo $PATH))
-__messy_path+=(/{usr,opt}/{bin,sbin} /{bin,sbin})
+set -o emacs -o monitor -o notify
+shopt -qs checkwinsize cmdhist expand_aliases histappend hostcomplete interactive_comments nocaseglob nocasematch no_empty_cmd_completion progcomp promptvars sourcepath
+shopt -qu mailwarn
 
-for p in "${__messy_path[@]}" ; do
-  [[ -d "$p" && -z "${__path_check[$p]}" ]] || continue
-  __path_check[$p]=1
-  __cleaned_path+=($p)
-done
+if ((__bash_version > 3)) ; then
+  shopt -qs autocd checkjobs
+  unset __messy_path
+  unset __cleaned_path
+  unset __path_check
+  declare -A __path_check
 
-export PATH=$(IFS=:; echo "${__cleaned_path[*]}")
+  __messy_path+=(/Applications/VMware\ Fusion.app/Contents/Library /Applications/Postgres.app/Contents/Versions/9.4}/bin /{usr,opt}/{local,X11}/{bin,sbin} $HOME/bin)
+  __messy_path+=($(IFS=:; echo $PATH))
+  __messy_path+=(/{usr,opt}/{bin,sbin} /{bin,sbin})
 
+  for p in "${__messy_path[@]}" ; do
+    [[ -d "$p" && -z "${__path_check[$p]}" ]] || continue
+    __path_check[$p]=1
+    __cleaned_path+=($p)
+  done
+
+  export PATH=$(IFS=:; echo "${__cleaned_path[*]}")
+fi
 # --------------------------------------------------------------------------
 [[ -s "$HOME/.shell-env" ]] && source "$HOME/.shell-env"
 [ -z "$PS1" ] && return
