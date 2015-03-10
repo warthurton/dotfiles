@@ -110,7 +110,6 @@ Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-haml',                { 'for': 'haml' }
 Plug 'othree/html5.vim',              { 'for': 'html' }
 Plug 'StanAngeloff/php.vim',          { 'for': 'php' }
-Plug 'acustodioo/vim-tmux',           { 'for': 'tmux' }
 Plug 'fatih/vim-go',                  { 'for': 'go' }
 Plug 'guns/vim-clojure-static',       { 'for': 'clojure' }
 Plug 'ksauzz/haproxy.vim',            { 'for': 'haproxy' }
@@ -125,7 +124,7 @@ Plug 'tpope/vim-markdown',            { 'for': 'markdown' }
 Plug 'travitch/hasksyn',              { 'for': 'haskell' }
 Plug 'vim-scripts/R.vim',             { 'for': 'r' }
 Plug 'vim-scripts/ael.vim',           { 'for': 'ael' }
-
+Plug 'acustodioo/vim-tmux'
 Plug 'JulesWang/css.vim',             { 'for': [ 'css', 'sass', 'scss' ] }
 Plug 'ap/vim-css-color',              { 'for': [ 'css', 'sass', 'scss' ] }
 
@@ -135,8 +134,8 @@ Plug 'kchmck/vim-coffee-script',      { 'for': [ 'javascript', 'coffeescript' ] 
 Plug 'tpope/vim-rails',               { 'for': 'ruby' }
 Plug 'tpope/vim-rake',                { 'for': 'ruby' }
 Plug 'vim-ruby/vim-ruby',             { 'for': 'ruby' }
-Plug 'ecomba/vim-ruby-refactoring',   { 'for': 'ruby' }
-Plug 'henrik/vim-ruby-runner',        { 'for': 'ruby' }
+" Plug 'ecomba/vim-ruby-refactoring',   { 'for': 'ruby' }
+" Plug 'henrik/vim-ruby-runner',        { 'for': 'ruby' }
 Plug 'tpope/vim-bundler',             { 'for': 'ruby' }
 Plug 'tpope/vim-rbenv',               { 'for': 'ruby' }
 Plug 'tpope/vim-rvm',                 { 'for': 'ruby' }
@@ -144,7 +143,7 @@ Plug 'tpope/vim-cucumber',            { 'for': 'ruby' }
 Plug 'thoughtbot/vim-rspec',          { 'for': 'ruby' }
 Plug 't9md/vim-ruby-xmpfilter',       { 'for': 'ruby' }
 
-Plug 'gcmt/wildfire.vim'
+" Plug 'gcmt/wildfire.vim'
 Plug 'kana/vim-textobj-user'
 Plug 'nelstrom/vim-textobj-rubyblock'
 
@@ -152,6 +151,7 @@ if v:progname == 'nvim'
   Plug 'floobits/floobits-neovim'
 endif
 
+Plug 'edkolev/tmuxline.vim'
 Plug 'tpope/vim-git'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'mattn/gist-vim'
@@ -165,16 +165,16 @@ Plug 'tpope/vim-surround'
 Plug 'vim-scripts/grep.vim'
 Plug 'flazz/vim-colorschemes'
 Plug 'chrisbra/color_highlight'
-Plug 'rking/ag.vim'
+" Plug 'rking/ag.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'bling/vim-airline'
 Plug 'kien/ctrlp.vim'
 Plug 'scrooloose/nerdtree',           { 'on':  'NERDTreeToggle' }
 Plug 'scrooloose/syntastic'
 Plug 'godlygeek/tabular'
-Plug 'majutsushi/tagbar'
+" Plug 'majutsushi/tagbar'
 Plug 'tomtom/tcomment_vim'
-Plug 'junegunn/fzf',                  { 'do': 'yes \| ./install' }
+" Plug 'junegunn/fzf',                  { 'do': 'yes \| ./install' }
 Plug 'Shougo/vimproc.vim',            { 'do': 'make' }
 
 if g:use_neocomplete
@@ -196,6 +196,14 @@ let g:airline_left_sep                    = ''
 let g:airline_right_sep                   = ''
 let g:airline#extensions#tabline#enabled  = 1
 let g:airline#extensions#tmuxline#enabled = 1
+
+" tmuxline
+let g:tmuxline_separators = {
+    \ 'left' : '',
+    \ 'left_alt': '>',
+    \ 'right' : '',
+    \ 'right_alt' : '<',
+    \ 'space' : ' '}
 
 " ctrlp
 let g:ctrlp_show_hidden                   = 1
@@ -264,12 +272,13 @@ vmap <leader>u :UndotreeToggle<CR>
 
 " tcomment
 map \\ gcc
-vmap \\ gc<space>
+vmap \\ gc
 
 if !exists('g:tcomment_types')
   let g:tcomment_types = {}
 endif
 let g:tcomment_types = { 'java' : '// %s' }
+let g:tcomment_types = { 'tmux' : '# %s' }
 
 " wildfire
 map <SPACE> <Plug>(wildfire-fuel)
@@ -361,7 +370,7 @@ if has('autocmd')
 endif
 
 """""""
-map <leader>' ""yls<c-r>={'"': "'", "'": '"'}[@"]<cr><esc>
+" map <leader>' ""yls<c-r>={'"': "'", "'": '"'}[@"]<cr><esc>
 map <leader>[ gt
 map <leader>] gT
 map <leader>e :edit %%
