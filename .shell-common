@@ -28,6 +28,7 @@ fi
 # ---------------------------------------------------------------------------
 
 alias j='jrnl'
+alias j_recent="jrnl -from \"\$(gdate --date 'yesterday' +'%F %H:%M')\" "
 alias m='$PAGER'
 alias g='ag'
 alias l1="ls -1"
