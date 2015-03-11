@@ -87,10 +87,15 @@ if has("ruby")
   compiler ruby
 endif
 
-if has("lua") && version >= 704
-  let g:use_neocomplete = 1
-else
-  let g:use_neocomplete = 0
+let g:use_neocomplete = 0
+let g:use_youcompleteme = 0
+
+if version >= 704
+  if has("lua")
+    let g:use_neocomplete = 1
+  else
+    let g:use_youcompleteme = 1
+  endif
 endif
 
 let g:cachedir = expand(vimhome . 'cache')
@@ -178,7 +183,9 @@ Plug 'Shougo/vimproc.vim',            { 'do': 'make' }
 
 if g:use_neocomplete
   Plug 'Shougo/neocomplete.vim'
-else
+endif
+
+if g:use_youcompleteme
   Plug 'Valloric/YouCompleteMe',      { 'do': './install.sh' }
 endif
 
