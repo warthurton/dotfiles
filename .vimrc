@@ -48,6 +48,7 @@ set listchars+=trail:.    " show trailing spaces as dots
 set listchars+=extends:>
 set listchars+=precedes:<
 set matchtime=5
+set modeline
 set modelines=5
 set mouse+=a
 set ruler
@@ -132,6 +133,7 @@ Plug 'vim-scripts/ael.vim',           { 'for': 'ael' }
 Plug 'acustodioo/vim-tmux'
 Plug 'JulesWang/css.vim',             { 'for': [ 'css', 'sass', 'scss' ] }
 Plug 'ap/vim-css-color',              { 'for': [ 'css', 'sass', 'scss' ] }
+Plug 'powerman/vim-plugin-AnsiEsc'
 
 Plug 'pangloss/vim-javascript',       { 'for': [ 'javascript', 'coffeescript' ] }
 Plug 'kchmck/vim-coffee-script',      { 'for': [ 'javascript', 'coffeescript' ] }
@@ -467,7 +469,7 @@ if has('autocmd')
       \ endif
   augroup END
 
-  autocmd BufWritePre {*.rb,*.js,*.coffee,*.scss,*.sass,*.haml,*.java,*.jsp} :%s/\s\+$//e
+  " autocmd BufWritePre {*.rb,*.js,*.coffee,*.scss,*.sass,*.haml,*.java,*.jsp} :%s/\s\+$//e
   " autocmd BufEnter * lcd %:p:h
 
 endif

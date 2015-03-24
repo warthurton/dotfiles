@@ -4,3 +4,4 @@
     zcompile "$zcompdump"
   fi
 } &!
+

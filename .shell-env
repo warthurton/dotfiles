@@ -33,4 +33,36 @@ fi
 [[ -d "/usr/syno" ]] && export TERM=${TERM:-cons25}
 
 # --------------------------------------------------------------------------
+# gpg-agent, only for linux
+
+if [[ "${OSTYPE:0:5}" = "linux" ]] ; then
+
+  __gpg_agent="${HOME}/.gnupg/gpg-agent-info"
+
+  [[ -f "$__gpg_agent" ]] || gpg-agent --daemon --write-env-file "$__gpg_agent"
+
+  if [[ -f "$__gpg_agent" ]] ; then
+    source "$__gpg_agent"
+    export GPG_AGENT_INFO
+  fi
+fi
+
+# --------------------------------------------------------------------------
+# ssh-agent, only for OS X
+
+if [[ -n $SSH_AUTH_SOCK && -S $SSH_AUTH_SOCK ]] ; then
+  if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
+    declare -i _ssh_major_ver
+    declare -i _ssh_minor_ver
+    ssh -V 2>&1 | sed -e 's/^[a-zA-Z]*_\([1-9][0-9]*\)\.\([0-9][0-9]*\).*$/\1 \2/' | read _ssh_major_ver _ssh_minor_ver
+
+    if (( (_ssh_major_ver = 6 && _ssh_minor_ver >= 6) || _ssh_major_ver >= 7 )) ; then
+      ssh-add -m -M >&/dev/null
+    elif (( _ssh_major_ver = 6 && _ssh_minor_ver < 6 )) ; then
+      ssh-add -A -K >&/dev/null
+    fi
+  fi
+fi
+
+# --------------------------------------------------------------------------
 # vim: ft=sh sw=2 ts=2 et

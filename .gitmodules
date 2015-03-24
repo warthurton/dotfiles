@@ -7,9 +7,3 @@
 [submodule ".zsh/fzf"]
 	path = .zsh/fzf
 	url = https://github.com/junegunn/fzf.git
-[submodule ".zsh/zsh-history-substring-search"]
-	path = .zsh/zsh-history-substring-search
-	url = https://github.com/zsh-users/zsh-history-substring-search.git
-[submodule "/Users/chorn/.tmux/plugins/tpm"]
-	path = /Users/chorn/.tmux/plugins/tpm
-	url = https://github.com/tmux-plugins/tpm

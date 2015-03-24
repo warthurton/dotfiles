@@ -1,9 +1,10 @@
 # Aliases & Functions for Interactive shells -------------------------------
 
+
 [[ -z "$PS1" ]] && return
 
 # OS X ---------------------------------------------------------------------
-if [ "${OSTYPE:0:6}" = "darwin" ] ; then
+if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
   alias ls="/bin/ls -FG"
   alias l="ls -lO"
   alias p="ps -Af"
@@ -15,7 +16,7 @@ if [ "${OSTYPE:0:6}" = "darwin" ] ; then
   [[ -x "/Applications/LibreOffice.app/Contents/MacOS/soffice" ]] && alias soffice="/Applications/LibreOffice.app/Contents/MacOS/soffice"
   [[ -x "/usr/local/opt/macvim/MacVim.app/Contents/MacOS/Vim"  ]] && alias vim="/usr/local/opt/macvim/MacVim.app/Contents/MacOS/Vim"
 # Linux ---------------------------------------------------------------------
-elif [ "${OSTYPE:0:5}" = "linux" ] ; then
+elif [[ "${OSTYPE:0:5}" = "linux" ]] ; then
   alias ls="/bin/ls --color=auto -F"
   alias l="ls -l"
   alias p="ps auxOU"
@@ -42,6 +43,50 @@ alias live_ip='dig +short myip.opendns.com @resolver1.opendns.com || curl -f4L h
 alias to_csv='soffice --convert-to csv --headless'
 alias pubgit='git --git-dir="$HOME/.git-pub-dotfiles" --work-tree="$HOME"'
 alias prvgit='git --git-dir="$HOME/.git-prv-dotfiles" --work-tree="$HOME"'
+
+total() {
+  cat - | tr '\n' '+' | sed -e 's/^/(/' -e 's/\+$/\)/'  | bc -q
+}
+
+iops_simple() {
+  local _dir="$1"
+  [[ -d "$_dir" ]] || return
+  local _output=$(mktemp fio_XXXX)
+  local _size="2G"
+  local -i _jobs=8
+  local _engine="vsync"
+  local -i _files=$((_jobs * 4))
+  local -i _depth=$((_jobs * 8))
+  [[ "${OSTYPE:0:5}" = "linux" ]] && _engine="libaio"
+
+  sudo fio                     \
+    --output="$_output"        \
+    --thread                   \
+    --name="Simple IOPS Test"  \
+    --directory="$_dir"        \
+    --readwrite=randrw         \
+    --ioengine=$_engine        \
+    --iodepth=$_depth          \
+    --size=$_size              \
+    --blocksize=4k             \
+    --nrfiles=$_files          \
+    --numjobs=$_jobs           \
+    --file_service_type=random \
+    --direct=1                 \
+    --overwrite=1              \
+    --runtime=300              \
+    --unlink=1                 \
+    --gtod_reduce=1            \
+    --minimal
+
+  local -i _r=$(cut -f 8  -d ';' "$_output" | tr '\n' '+' | sed -e 's/^/(/' -e 's/\+$/\)/'  | bc -q)
+  local -i _w=$(cut -f 49 -d ';' "$_output" | tr '\n' '+' | sed -e 's/^/(/' -e 's/\+$/\)/'  | bc -q)
+  local _rw=$((  ( _r + _w ) / 2 ))
+  rm -f "$_output"
+
+  echo
+  echo "[IOPS] READ: $_r WRITE: $_w AVG: $_rw "
+}
 
 # MySQL ---------------------------------------------------------------------
 alias mydump="mysqldump --allow-keywords --add-locks --hex-blob --max_allowed_packet=1G --lock-tables=false --lock-all-tables=false --quick --quote-names --complete-insert=false --extended-insert=false"
@@ -213,4 +258,6 @@ megadump() {
 #-----------------------------------------------------------------------------
 [[ -s "$HOME/.shell-prv" ]] && source "$HOME/.shell-prv"
 # --------------------------------------------------------------------------
-# vim: ft=sh sw=2 ts=2 et
+
+
+# vim: set syntax=zsh ft=zsh sw=2 ts=2 expandtab:
