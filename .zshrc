@@ -2,21 +2,9 @@
 alias -g M='|& $PAGER'
 
 # --------------------------------------------------------------------------
-for s in ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.plugin.zsh ~/.iterm2.zsh ~/.shell-common ~/.fzf.zsh ; do
+for s in ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ~/.iterm2.zsh ~/.shell-common ; do
   [[ -f "$s" ]] && source "$s"
 done
-# --------------------------------------------------------------------------
-bindkey "$terminfo[kcuu1]" history-substring-search-up
-bindkey "$terminfo[kcud1]" history-substring-search-down
-
-# bind P and N for EMACS mode
-bindkey -M emacs '^P' history-substring-search-up
-bindkey -M emacs '^N' history-substring-search-down
-
-# bind k and j for VI mode
-bindkey -M vicmd 'k' history-substring-search-up
-bindkey -M vicmd 'j' history-substring-search-down
-
 # --------------------------------------------------------------------------
 zstyle ':completion::complete:*' use-cache on
 compinit

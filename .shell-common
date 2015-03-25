@@ -259,5 +259,4 @@ megadump() {
 [[ -s "$HOME/.shell-prv" ]] && source "$HOME/.shell-prv"
 # --------------------------------------------------------------------------
 
-
 # vim: set syntax=zsh ft=zsh sw=2 ts=2 expandtab:

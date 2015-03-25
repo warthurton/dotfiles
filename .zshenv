@@ -3,28 +3,10 @@ export HISTFILE="$HOME/.zhistory"
 export SAVEHIST=10000000 # The maximum number of events to save in the history file.
 export WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
 # --------------------------------------------------------------------------
-[[ -s "$HOME/.shell-env" ]] && source "$HOME/.shell-env"
+[[ -f "$HOME/.shell-env" ]] && source "$HOME/.shell-env"
 
 fpath=(~/.zsh/zsh-completions/src $fpath)
 typeset -gU fpath path
-
-path=(
-  $HOME/bin
-  /Applications/VMware\ Fusion.app/Contents/Library
-  /Applications/Postgres.app/Contents/Versions/9.4/bin
-  /{usr,opt}/{local,X11}/{bin,sbin}
-  $path
-  /{usr,opt}/{bin,sbin}
-  /{bin,sbin}
-)
-
-__PATH=""
-while read -d : p ; do
-  [[ -d "${p}" ]] && __PATH="${__PATH}:${p}"
-done < <(echo $PATH)
-export PATH=${__PATH#:}
-
-# [[ -f "$HOME/.certs/curl-cacert.pem" ]] && export CURL_CA_BUNDLE="$HOME/.certs/curl-cacert.pem"
 
 # --------------------------------------------------------------------------
 autoload -Uz colors && colors
