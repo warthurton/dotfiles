@@ -215,7 +215,7 @@ command -v gdate >/dev/null 2>/dev/null && _date="gdate"
 confsync() {
   cd $HOME
   for host in $* ; do
-    (pubgit ls-files; prvgit ls-files) | rsync -iaxR --files-from=- . ${host//":"/}:
+    pubgit ls-files | rsync -iaxR --files-from=- . ${host//":"/}:
   done
 }
 

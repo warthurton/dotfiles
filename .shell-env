@@ -53,8 +53,10 @@ if [[ "$__bash_version" -gt "3" || -n $ZSH_VERSION ]] ; then
     __cleaned_path+=($p)
   done
 
-  export PATH=$(IFS=:; echo "${__cleaned_path[*]}")
+  PATH=$(IFS=:; echo "${__cleaned_path[*]}")
 fi
+
+export PATH
 # --------------------------------------------------------------------------
 if [[ -d "$HOME/.rvm/bin" ]] ; then
   source "$HOME/.rvm/scripts/rvm"
