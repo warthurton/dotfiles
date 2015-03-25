@@ -75,15 +75,15 @@ fi
 # gpg-agent, only for linux
 
 if [[ "${OSTYPE:0:5}" = "linux" ]] ; then
+  __gai="$HOME/.gnupg/gpg-agent-info"
 
-  __gpg_agent="${HOME}/.gnupg/gpg-agent-info"
+  [[ -z $GPG_AGENT_INFO ]] && [[ -f $__gai ]] && source $__gai
 
-  [[ -f "$__gpg_agent" ]] || gpg-agent --daemon --write-env-file "$__gpg_agent"
+  [[ -n $GPG_AGENT_INFO ]] && [[ -S $(echo $GPG_AGENT_INFO | cut -f 1 -d :) ]] || unset GPG_AGENT_INFO
 
-  if [[ -f "$__gpg_agent" ]] ; then
-    source "$__gpg_agent"
-    export GPG_AGENT_INFO
-  fi
+  [[ -z $GPG_AGENT_INFO ]] && eval $(gpg-agent --daemon --write-env-file $__gai)
+
+  [[ -n $GPG_AGENT_INFO ]] && [[ -S $(echo $GPG_AGENT_INFO | cut -f 1 -d :) ]] && export GPG_AGENT_INFO
 fi
 
 # --------------------------------------------------------------------------
