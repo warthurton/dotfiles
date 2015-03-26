@@ -68,7 +68,7 @@ fi
 # --------------------------------------------------------------------------
 # gpg-agent, only for linux
 
-if [[ "${OSTYPE:0:5}" = "linux" ]] ; then
+command -v gpg-agent >/dev/null 2>/dev/null && if [[ "${OSTYPE:0:5}" = "linux" ]] ; then
   __gai="$HOME/.gnupg/gpg-agent-info"
 
   [[ -z $GPG_AGENT_INFO ]] && [[ -f $__gai ]] && source $__gai

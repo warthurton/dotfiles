@@ -29,8 +29,10 @@ zmodload -i zsh/zleparameter
 zmodload -i zsh/zutil
 zmodload -i zsh/terminfo
 # --------------------------------------------------------------------------
-bindkey "$terminfo[kcuu1]" history-substring-search-up
-bindkey "$terminfo[kcud1]" history-substring-search-down
+if [[ -n $terminfo[kcuu1] ]] ; then
+  bindkey "$terminfo[kcuu1]" history-substring-search-up
+  bindkey "$terminfo[kcud1]" history-substring-search-down
+fi
 
 # bind P and N for EMACS mode
 bindkey -M emacs '^P' history-substring-search-up
