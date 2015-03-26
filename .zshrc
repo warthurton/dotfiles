@@ -2,7 +2,11 @@
 alias -g M='|& $PAGER'
 
 # --------------------------------------------------------------------------
-for s in ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ~/.iterm2.zsh ~/.shell-common ; do
+for s in  ~/.shell-common \
+          ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+          ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh \
+          ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 
+do
   [[ -f "$s" ]] && source "$s"
 done
 # --------------------------------------------------------------------------

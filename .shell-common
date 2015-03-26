@@ -1,8 +1,13 @@
 # Aliases & Functions for Interactive shells -------------------------------
 
-
 [[ -z "$PS1" ]] && return
 
+# --------------------------------------------------------------------------
+if [[ -n $ZSH_VERSION && -f ~/.fzf.zsh ]] ; then
+  source ~/.fzf.zsh
+elif [[ -f ~/.fzf.bash ]] ; then
+  source ~/.fzf.bash
+fi
 # OS X ---------------------------------------------------------------------
 if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
   alias ls="/bin/ls -FG"

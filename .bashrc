@@ -101,4 +101,3 @@ if command -v git >/dev/null 2>/dev/null ; then
     return 0
   }
 fi
-

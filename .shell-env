@@ -19,12 +19,6 @@ if [[ ! -d "$HOME/.rvm/bin" ]] ; then
   fi
 fi
 # --------------------------------------------------------------------------
-if [[ -n $ZSH_VERSION && -f ~/.fzf.zsh ]] ; then
-  source ~/.fzf.zsh
-elif [[ -f ~/.fzf.bash ]] ; then
-  source ~/.fzf.bash
-fi
-# --------------------------------------------------------------------------
 declare -i __bash_version
 __bash_version=${BASH_VERSINFO[0]}
 
