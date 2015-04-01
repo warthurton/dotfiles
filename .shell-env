@@ -11,6 +11,8 @@ export GREP_OPTIONS='--color=auto'
 export HISTSIZE=100000
 
 # --------------------------------------------------------------------------
+# ruby
+
 if [[ ! -d "$HOME/.rvm/bin" ]] ; then
   if [[ -d "/usr/local/opt/rbenv/bin" ]] ; then
     export RBENV_ROOT="/usr/local/opt/rbenv"
@@ -19,25 +21,20 @@ if [[ ! -d "$HOME/.rvm/bin" ]] ; then
   fi
 fi
 # --------------------------------------------------------------------------
-declare -i __bash_version
-__bash_version=${BASH_VERSINFO[0]}
-
-if ((__bash_version > 3 )) ; then
-  shopt -qs autocd checkjobs
-fi
-
-if [[ "$__bash_version" -gt "3" || -n $ZSH_VERSION ]] ; then
-  unset __messy_path
-  unset __cleaned_path
-  unset __path_check
+if [[ "$BASH_VERSINFO" -gt "3" || -n $ZSH_VERSION ]] ; then
+  declare -a __messy_path
+  declare -a __cleaned_path
   declare -A __path_check
 
+  # rvm is super picky about being first
   if [[ -d "$HOME/.rvm/bin" ]] ; then
     __messy_path+=($HOME/.rvm/bin)
   elif [[ -n $RBENV_ROOT ]] ; then
     __messy_path+=($RBENV_ROOT/bin)
   fi
-  __messy_path+=(/Applications/VMware\ Fusion.app/Contents/Library /Applications/Postgres.app/Contents/Versions/9.4}/bin /{usr,opt}/{local,X11}/{bin,sbin} $HOME/bin)
+
+  # Setup the path to be in a preferred order, but don't overwrite the existing path
+  __messy_path+=(/Applications/VMware\ Fusion.app/Contents/Library /{usr,opt}/{local,X11}/{bin,sbin} $HOME/bin)
   __messy_path+=($(IFS=:; echo $PATH))
   __messy_path+=(/{usr,opt}/{bin,sbin} /{bin,sbin})
 
@@ -48,10 +45,15 @@ if [[ "$__bash_version" -gt "3" || -n $ZSH_VERSION ]] ; then
   done
 
   PATH=$(IFS=:; echo "${__cleaned_path[*]}")
+  unset __messy_path
+  unset __cleaned_path
+  unset __path_check
 fi
 
 export PATH
 # --------------------------------------------------------------------------
+# ruby, prefer rvm over rbenv
+
 if [[ -d "$HOME/.rvm/bin" ]] ; then
   source "$HOME/.rvm/scripts/rvm"
 elif [[ -n $RBENV_ROOT ]] ; then
@@ -62,11 +64,12 @@ elif [[ -n $RBENV_ROOT ]] ; then
   fi
 fi
 # --------------------------------------------------------------------------
+# Synology NAS
 
 [[ -d "/usr/syno" ]] && export TERM=${TERM:-cons25}
 
 # --------------------------------------------------------------------------
-# gpg-agent, only for linux
+# gpg-agent, only for linux, on OS X use gpgtools instead
 
 command -v gpg-agent >/dev/null 2>/dev/null && if [[ "${OSTYPE:0:5}" = "linux" ]] ; then
   __gai="$HOME/.gnupg/gpg-agent-info"

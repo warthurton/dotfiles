@@ -9,6 +9,10 @@ set -o emacs -o monitor -o notify
 shopt -qs checkwinsize cmdhist expand_aliases histappend hostcomplete interactive_comments nocaseglob nocasematch no_empty_cmd_completion progcomp promptvars sourcepath
 shopt -qu mailwarn
 
+if [[ "$BASH_VERSINFO" -gt "3" ]] ; then
+  shopt -qs autocd checkjobs
+fi
+
 # --------------------------------------------------------------------------
 [[ -s "$HOME/.shell-env" ]] && source "$HOME/.shell-env"
 [ -z "$PS1" ] && return
