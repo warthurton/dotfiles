@@ -31,7 +31,9 @@
   amend = commit --amend
   authors = !git log --format="%aN"
   b = branch
+  c = commit
   ci = commit
+  com = commit
   co = checkout
   current-branch= !git branch | grep '*' | cut -d ' ' -f 2
   dc = diff --cached
