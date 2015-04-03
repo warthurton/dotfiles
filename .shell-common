@@ -39,7 +39,6 @@ alias j='jrnl'
 alias j_recent="jrnl -from \"\$(gdate --date 'yesterday' +'%F %H:%M')\" "
 alias j_last='jrnl -from "$([[ $(date +%u) -eq 1 ]] && echo friday || echo yesterday)"'
 alias m='$PAGER'
-alias g='ag'
 alias l1="ls -1"
 alias ll="l -A"
 alias la="ls -A"
@@ -48,6 +47,9 @@ alias live_ip='dig +short myip.opendns.com @resolver1.opendns.com || curl -f4L h
 alias to_csv='soffice --convert-to csv --headless'
 alias pubgit='git --git-dir="$HOME/.git-pub-dotfiles" --work-tree="$HOME"'
 alias prvgit='git --git-dir="$HOME/.git-prv-dotfiles" --work-tree="$HOME"'
+
+alias g="ag --pager=less --ignore='*.js' --color-match='1;36'"
+alias g_next='g $(git diff --name-only master..HEAD . | sed -e "s/^/ --ignore=/")'
 
 total() {
   cat - | tr '\n' '+' | sed -e 's/^/(/' -e 's/\+$/\)/'  | bc -q
