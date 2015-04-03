@@ -37,7 +37,7 @@ if [[ "$BASH_VERSINFO" -gt "3" || -n $ZSH_VERSION ]] ; then
   fi
 
   # Setup the path to be in a preferred order, but don't overwrite the existing path
-  __messy_path+=(/Applications/VMware\ Fusion.app/Contents/Library /{usr,opt}/{local,X11}/{bin,sbin} $HOME/bin)
+  __messy_path+=(/Applications/VMware\ Fusion.app/Contents/Library /{usr,opt}/{local,X11}/{bin,sbin} /{usr,opt}/local/{heroku}/bin $HOME/bin)
   __messy_path+=($(IFS=:; echo $PATH))
   __messy_path+=(/{usr,opt}/{bin,sbin} /{bin,sbin})
 
