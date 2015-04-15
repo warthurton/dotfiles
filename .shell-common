@@ -48,7 +48,7 @@ alias to_csv='soffice --convert-to csv --headless'
 alias pubgit='git --git-dir="$HOME/.git-pub-dotfiles" --work-tree="$HOME"'
 alias prvgit='git --git-dir="$HOME/.git-prv-dotfiles" --work-tree="$HOME"'
 
-alias g="ag --pager=less --ignore='*.js' --color-match='1;36'"
+alias g="ag --pager=less --color-match='1;36'"
 alias g_next='g $(git diff --name-only master..HEAD . | sed -e "s/^/ --ignore=/")'
 
 total() {

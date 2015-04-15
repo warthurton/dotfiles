@@ -95,7 +95,29 @@ precmd() {
 build_lprompt() {
 
   # user
-  echo -n '%(!.%F{9}.%F{4})%n'
+  case $USER in
+    chorn)
+      echo -n "%F{4}%n"
+      ;;
+    root)
+      echo -n "%F{9}__ROOT__"
+      ;;
+    *)
+      echo -n "%F{11}%n"
+      ;;
+  esac
+
+  # host
+  case $HOST in
+    Shodan*)
+      echo -n "%F{15}@%F{4}%m"
+      ;;
+    *)
+      echo -n "%F{15}@%F{14}%m"
+      ;;
+  esac
+
+  # ruby
   [[ -n $RUBY_VERSION ]] && echo -n " %F{1}${RUBY_VERSION}"
 
   echo -n "%f${vcs_info_msg_0_%% }"
@@ -107,13 +129,10 @@ build_lprompt() {
 build_rprompt() {
   [[ -z $TMUX ]] || return
 
-  # host
-  echo -n '%F{8}%m'
-
   # security
   if [[ "${OSTYPE:0:6}" = "darwin" && $USER != "root" ]] ; then
     if [[ $(defaults read com.apple.screensaver askForPassword) != "1" ]] ; then
-      echo -n ' %F{11}unlocked'
+      echo -n ' %F{11}UNLOCKED'
     fi
   fi
 
