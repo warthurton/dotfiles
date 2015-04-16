@@ -27,25 +27,30 @@ zstyle ':vcs_info:git*' actionformats " %F{15}%a%f ${__vcs_info_git_format}"
 zstyle ':vcs_info:git*+set-message:*' hooks git-status
 
 function +vi-git-status() {
+  git rev-parse --is-inside-work-tree >& /dev/null || return
+
   local branch
   branch="${hook_com[branch]}"
 
-  local -i last_commit
   local -i minutes_since_last_commit
-  strftime -s last_commit '%s' $(git log --pretty=format:'%at' -1)
-  minutes_since_last_commit=$(( ($EPOCHSECONDS - last_commit) / 60))
+  local -i unstaged_changes
+  local -i untracked_files
 
-  if (( minutes_since_last_commit > 90 )) ; then
+  minutes_since_last_commit=$(( ($EPOCHSECONDS - $(git log --pretty=format:'%at' -1)) / 60 ))
+  unstaged_changes=$( git status --porcelain | grep -c '^ M' )
+  untracked_files=$( git status --porcelain | grep -c '^??' )
+
+  if (( unstaged_changes > 0 && minutes_since_last_commit > 90 )) ; then
     hook_com[branch]="%F{9}${branch}%f"
     hook_com[unstaged]+=" %F{9}${minutes_since_last_commit}m%f"
-  elif (( minutes_since_last_commit > 30 )) ; then
+  elif (( unstaged_changes > 0 && minutes_since_last_commit > 30 )) ; then
     hook_com[branch]="%F{3}${branch}%f"
     hook_com[unstaged]+=" %F{3}${minutes_since_last_commit}m%f"
   else
     hook_com[branch]="%F{2}${branch}%f"
   fi
 
-  if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && git status --porcelain | fgrep '??' &> /dev/null ; then
+  if (( untracked_files > 0 )) ; then
     hook_com[unstaged]+=' %F{13}?%f'
   fi
 
