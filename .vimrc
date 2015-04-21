@@ -154,9 +154,9 @@ Plug 't9md/vim-ruby-xmpfilter',       { 'for': 'ruby' }
 Plug 'kana/vim-textobj-user'
 Plug 'nelstrom/vim-textobj-rubyblock'
 
-if v:progname == 'nvim'
-  Plug 'floobits/floobits-neovim'
-endif
+" if v:progname == 'nvim'
+"   Plug 'floobits/floobits-neovim'
+" endif
 
 Plug 'tpope/vim-git'
 Plug 'AndrewRadev/splitjoin.vim'
@@ -171,7 +171,7 @@ Plug 'tpope/vim-surround'
 Plug 'vim-scripts/grep.vim'
 Plug 'flazz/vim-colorschemes'
 Plug 'chrisbra/color_highlight'
-" Plug 'rking/ag.vim'
+Plug 'rking/ag.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'bling/vim-airline'
 Plug 'kien/ctrlp.vim'
