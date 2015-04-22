@@ -16,6 +16,7 @@ fi
 # --------------------------------------------------------------------------
 [[ -s "$HOME/.shell-env" ]] && source "$HOME/.shell-env"
 [ -z "$PS1" ] && return
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 [[ -s "$HOME/.shell-common" ]] && source "$HOME/.shell-common"
 # --------------------------------------------------------------------------
 

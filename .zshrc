@@ -2,6 +2,8 @@
 alias -g M='|& $PAGER'
 
 # --------------------------------------------------------------------------
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
 for s in  ~/.shell-common \
           ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
           ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh \
