@@ -141,8 +141,8 @@ Plug 'kchmck/vim-coffee-script',      { 'for': [ 'javascript', 'coffeescript' ] 
 Plug 'tpope/vim-rails',               { 'for': 'ruby' }
 Plug 'tpope/vim-rake',                { 'for': 'ruby' }
 Plug 'vim-ruby/vim-ruby',             { 'for': 'ruby' }
-" Plug 'ecomba/vim-ruby-refactoring',   { 'for': 'ruby' }
-" Plug 'henrik/vim-ruby-runner',        { 'for': 'ruby' }
+Plug 'ecomba/vim-ruby-refactoring',   { 'for': 'ruby' }
+Plug 'henrik/vim-ruby-runner',        { 'for': 'ruby' }
 Plug 'tpope/vim-bundler',             { 'for': 'ruby' }
 Plug 'tpope/vim-rbenv',               { 'for': 'ruby' }
 Plug 'tpope/vim-rvm',                 { 'for': 'ruby' }
@@ -154,13 +154,9 @@ Plug 't9md/vim-ruby-xmpfilter',       { 'for': 'ruby' }
 Plug 'kana/vim-textobj-user'
 Plug 'nelstrom/vim-textobj-rubyblock'
 
-" if v:progname == 'nvim'
-"   Plug 'floobits/floobits-neovim'
-" endif
-
 Plug 'tpope/vim-git'
 Plug 'AndrewRadev/splitjoin.vim'
-Plug 'mattn/gist-vim'
+" Plug 'mattn/gist-vim'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
@@ -168,9 +164,7 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
-Plug 'vim-scripts/grep.vim'
-Plug 'flazz/vim-colorschemes'
-Plug 'chrisbra/color_highlight'
+" Plug 'vim-scripts/grep.vim'
 Plug 'rking/ag.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'bling/vim-airline'
@@ -178,16 +172,23 @@ Plug 'kien/ctrlp.vim'
 Plug 'scrooloose/nerdtree',           { 'on':  'NERDTreeToggle' }
 Plug 'scrooloose/syntastic'
 Plug 'godlygeek/tabular'
-" Plug 'majutsushi/tagbar'
+Plug 'majutsushi/tagbar'
 Plug 'tomtom/tcomment_vim'
-" Plug 'junegunn/fzf',                  { 'do': 'yes \| ./install' }
+Plug 'junegunn/fzf' ",                  { 'do': 'yes \| ./install' }
 Plug 'Shougo/vimproc.vim',            { 'do': 'make' }
 
-if g:use_neocomplete
+" Colors
+Plug 'altercation/vim-colors-solarized'
+Plug 'tpope/vim-vividchalk'
+Plug 'chriskempson/base16-vim'
+Plug 'chrisbra/color_highlight'
+
+
+if g:use_neocomplete > 0
   Plug 'Shougo/neocomplete.vim'
 endif
 
-if g:use_youcompleteme
+if g:use_youcompleteme > 0
   Plug 'Valloric/YouCompleteMe',      { 'do': './install.sh' }
 endif
 

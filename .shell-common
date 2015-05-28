@@ -7,7 +7,7 @@ if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
   alias ls="/bin/ls -FG"
   alias l="ls -lO"
   alias p="ps -Af"
-  alias update_brew="brew update && brew upgrade && brew prune && brew cleanup && brew outdated"
+  alias update_brew="brew update --all && brew upgrade --all && brew prune && brew cleanup && brew outdated"
   alias rebuild_launch_services="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user"
   alias start="simple_launchctl load"
   alias stop="simple_launchctl unload"
@@ -52,6 +52,10 @@ alias g_next='g $(git diff --name-only master..HEAD . | sed -e "s/^/ --ignore=/"
 
 total() {
   cat - | tr '\n' '+' | sed -e 's/^/(/' -e 's/\+$/\)/'  | bc -q
+}
+
+downloaded_in() {
+  for f in $* ; do stat -r "$f" | awk '{print ($11 - $12) " seconds"}' ; done
 }
 
 iops_simple() {

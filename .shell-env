@@ -76,33 +76,42 @@ fi
 # --------------------------------------------------------------------------
 # gpg-agent, only for linux, on OS X use gpgtools instead
 
-command -v gpg-agent >/dev/null 2>/dev/null && if [[ "${OSTYPE:0:5}" = "linux" ]] ; then
-  __gai="$HOME/.gnupg/gpg-agent-info"
+if [[ "${OSTYPE:0:5}" = "linux" ]] ; then
+  if command -v gpg-agent >/dev/null 2>/dev/null ; then
+    __gai="$HOME/.gnupg/gpg-agent-info"
 
-  [[ -z $GPG_AGENT_INFO ]] && [[ -f $__gai ]] && source $__gai
+    [[ -z $GPG_AGENT_INFO ]] && [[ -f $__gai ]] && source $__gai
 
-  [[ -n $GPG_AGENT_INFO ]] && [[ -S $(echo $GPG_AGENT_INFO | cut -f 1 -d :) ]] || unset GPG_AGENT_INFO
+    [[ -n $GPG_AGENT_INFO ]] && [[ -S $(echo $GPG_AGENT_INFO | cut -f 1 -d :) ]] || unset GPG_AGENT_INFO
 
-  [[ -z $GPG_AGENT_INFO ]] && eval $(gpg-agent --daemon --write-env-file $__gai)
+    [[ -z $GPG_AGENT_INFO ]] && eval $(gpg-agent --daemon --write-env-file $__gai)
 
-  [[ -n $GPG_AGENT_INFO ]] && [[ -S $(echo $GPG_AGENT_INFO | cut -f 1 -d :) ]] && export GPG_AGENT_INFO
+    [[ -n $GPG_AGENT_INFO ]] && [[ -S $(echo $GPG_AGENT_INFO | cut -f 1 -d :) ]] && export GPG_AGENT_INFO
+  fi
 fi
 
 # --------------------------------------------------------------------------
 # ssh-agent, only for OS X
 
-if [[ -n $SSH_AUTH_SOCK && -S $SSH_AUTH_SOCK ]] ; then
-  if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
-    declare -i _ssh_major_ver
-    declare -i _ssh_minor_ver
-    ssh -V 2>&1 | sed -e 's/^[a-zA-Z]*_\([1-9][0-9]*\)\.\([0-9][0-9]*\).*$/\1 \2/' | read _ssh_major_ver _ssh_minor_ver
-
-    if (( (_ssh_major_ver = 6 && _ssh_minor_ver >= 6) || _ssh_major_ver >= 7 )) ; then
-      ssh-add -m -M >&/dev/null
-    elif (( _ssh_major_ver = 6 && _ssh_minor_ver < 6 )) ; then
-      ssh-add -A -K >&/dev/null
-    fi
+if [[ -z _SSH_MAJOR_VER && -z _SSH_MINOR_VER ]] ; then
+  if command -v ssh >/dev/null 2>/dev/null ; then
+    declare -i _SSH_MAJOR_VER
+    declare -i _SSH_MINOR_VER
+    ssh -V 2>&1 | sed -e 's/^[a-zA-Z]*_\([1-9][0-9]*\)\.\([0-9][0-9]*\).*$/\1 \2/' | read _SSH_MAJOR_VER _SSH_MINOR_VER
+    export _SSH_MAJOR_VER _SSH_MINOR_VER
   fi
+fi
+
+if [[ "${OSTYPE:0:6}" = "darwin" && -n _SSH_MAJOR_VER && -n _SSH_MINOR_VER && -n $SSH_AUTH_SOCK && -S $SSH_AUTH_SOCK ]] ; then
+  if (( (_SSH_MAJOR_VER = 6 && _SSH_MINOR_VER >= 6) || _SSH_MAJOR_VER >= 7 )) ; then
+    ssh-add -m -M >&/dev/null
+  elif (( _SSH_MAJOR_VER = 6 && _SSH_MINOR_VER < 6 )) ; then
+    ssh-add -A -K >&/dev/null
+  fi
+fi
+
+if [[ -n "$SSH_AUTH_SOCK" && ! -S "$SSH_AUTH_SOCK" ]] ; then
+  export SSH_AUTH_SOCK=$(find /tmp/ssh-* -type s | head -1)
 fi
 
 # --------------------------------------------------------------------------
