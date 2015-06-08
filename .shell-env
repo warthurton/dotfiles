@@ -69,6 +69,11 @@ elif [[ -n $RBENV_ROOT ]] ; then
   fi
 fi
 # --------------------------------------------------------------------------
+
+BASE16_SHELL="$HOME/.config/base16-shell/base16-twilight.dark.sh"
+[[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
+
+# --------------------------------------------------------------------------
 # Synology NAS
 
 [[ -d "/usr/syno" ]] && export TERM=${TERM:-cons25}

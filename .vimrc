@@ -91,13 +91,13 @@ endif
 let g:use_neocomplete = 0
 let g:use_youcompleteme = 0
 
-if version >= 704
-  if has("lua")
-    let g:use_neocomplete = 1
-  else
-    let g:use_youcompleteme = 1
-  endif
-endif
+" if version >= 704
+"   if has("lua")
+"     let g:use_neocomplete = 1
+"   else
+"     let g:use_youcompleteme = 1
+"   endif
+" endif
 
 let g:cachedir = expand(vimhome . 'cache')
 
@@ -134,29 +134,27 @@ Plug 'acustodioo/vim-tmux'
 Plug 'JulesWang/css.vim',             { 'for': [ 'css', 'sass', 'scss' ] }
 Plug 'ap/vim-css-color',              { 'for': [ 'css', 'sass', 'scss' ] }
 Plug 'powerman/vim-plugin-AnsiEsc'
-
 Plug 'pangloss/vim-javascript',       { 'for': [ 'javascript', 'coffeescript' ] }
 Plug 'kchmck/vim-coffee-script',      { 'for': [ 'javascript', 'coffeescript' ] }
 
 Plug 'tpope/vim-rails',               { 'for': 'ruby' }
 Plug 'tpope/vim-rake',                { 'for': 'ruby' }
 Plug 'vim-ruby/vim-ruby',             { 'for': 'ruby' }
-Plug 'ecomba/vim-ruby-refactoring',   { 'for': 'ruby' }
-Plug 'henrik/vim-ruby-runner',        { 'for': 'ruby' }
 Plug 'tpope/vim-bundler',             { 'for': 'ruby' }
 Plug 'tpope/vim-rbenv',               { 'for': 'ruby' }
 Plug 'tpope/vim-rvm',                 { 'for': 'ruby' }
 Plug 'tpope/vim-cucumber',            { 'for': 'ruby' }
 Plug 'thoughtbot/vim-rspec',          { 'for': 'ruby' }
-Plug 't9md/vim-ruby-xmpfilter',       { 'for': 'ruby' }
 
-" Plug 'gcmt/wildfire.vim'
-Plug 'kana/vim-textobj-user'
-Plug 'nelstrom/vim-textobj-rubyblock'
+" Plug 'ecomba/vim-ruby-refactoring',   { 'for': 'ruby' }
+" Plug 'henrik/vim-ruby-runner',        { 'for': 'ruby' }
+" Plug 'kana/vim-textobj-user'
+" Plug 'nelstrom/vim-textobj-rubyblock'
+
+Plug 't9md/vim-ruby-xmpfilter',       { 'for': 'ruby' }
 
 Plug 'tpope/vim-git'
 Plug 'AndrewRadev/splitjoin.vim'
-" Plug 'mattn/gist-vim'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
@@ -164,7 +162,7 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
-" Plug 'vim-scripts/grep.vim'
+Plug 'vim-scripts/grep.vim'
 Plug 'rking/ag.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'bling/vim-airline'
@@ -178,11 +176,8 @@ Plug 'junegunn/fzf' ",                  { 'do': 'yes \| ./install' }
 Plug 'Shougo/vimproc.vim',            { 'do': 'make' }
 
 " Colors
-Plug 'altercation/vim-colors-solarized'
-Plug 'tpope/vim-vividchalk'
+" Plug 'tpope/vim-vividchalk'
 Plug 'chriskempson/base16-vim'
-Plug 'chrisbra/color_highlight'
-
 
 if g:use_neocomplete > 0
   Plug 'Shougo/neocomplete.vim'
@@ -194,17 +189,16 @@ endif
 
 call plug#end()
 
-filetype plugin indent on
-syntax on
-silent! colorscheme vividchalk
-
 " airline
-let g:airline_theme                       = 'murmur'
+let g:airline_theme                       = 'badwolf'
 let g:airline_powerline_fonts             = 0
 let g:airline_left_sep                    = ''
 let g:airline_right_sep                   = ''
 let g:airline#extensions#tabline#enabled  = 1
 let g:airline#extensions#tmuxline#enabled = 1
+
+" base16
+let base16colorspace = 256
 
 " ctrlp
 let g:ctrlp_show_hidden                   = 1
@@ -281,12 +275,6 @@ endif
 let g:tcomment_types = { 'java' : '// %s' }
 let g:tcomment_types = { 'tmux' : '# %s' }
 
-" wildfire
-map <SPACE> <Plug>(wildfire-fuel)
-vmap <C-SPACE> <Plug>(wildfire-water)
-let g:wildfire_objects = ["i'", 'i"', "i)", "i]", "i}", "ip", "it"]
-nmap <leader>s <Plug>(wildfire-quick-select)
-
 " neocomplete
 if g:use_neocomplete
   let g:neocomplete#data_directory                    = cachedir.'/neocomplete'
@@ -351,23 +339,13 @@ endif
 
 " xmpfilter
 if has('autocmd')
-  if executable('seeing_is_believing')
-    let g:xmpfilter_cmd = "seeing_is_believing"
-    autocmd FileType ruby nmap <buffer> <Leader>m <Plug>(seeing_is_believing-mark)
-    autocmd FileType ruby xmap <buffer> <Leader>m <Plug>(seeing_is_believing-mark)
-    autocmd FileType ruby imap <buffer> <Leader>m <Plug>(seeing_is_believing-mark)
-    autocmd FileType ruby nnoremap <buffer> <Leader>c <Plug>(seeing_is_believing-clean)
-    autocmd FileType ruby xnoremap <buffer> <Leader>c <Plug>(seeing_is_believing-clean)
-    autocmd FileType ruby inoremap <buffer> <Leader>c <Plug>(seeing_is_believing-clean)
-    " xmpfilter compatible
-    autocmd FileType ruby nmap <buffer> <Leader>r <Plug>(seeing_is_believing-run_-x)
-    autocmd FileType ruby xmap <buffer> <Leader>r <Plug>(seeing_is_believing-run_-x)
-    autocmd FileType ruby imap <buffer> <Leader>r <Plug>(seeing_is_believing-run_-x)
-    " auto insert mark at appropriate spot.
-    autocmd FileType ruby nmap <buffer> <F12> <Plug>(seeing_is_believing-run)
-    autocmd FileType ruby xmap <buffer> <F12> <Plug>(seeing_is_believing-run)
-    autocmd FileType ruby imap <buffer> <F12> <Plug>(seeing_is_believing-run)
-  endif
+  autocmd FileType ruby nmap <buffer> <leader>xm <Plug>(xmpfilter-mark)
+  autocmd FileType ruby xmap <buffer> <leader>xm <Plug>(xmpfilter-mark)
+  autocmd FileType ruby imap <buffer> <leader>xm <Plug>(xmpfilter-mark)
+
+  autocmd FileType ruby nmap <buffer> <leader>xr <Plug>(xmpfilter-run)
+  autocmd FileType ruby xmap <buffer> <leader>xr <Plug>(xmpfilter-run)
+  autocmd FileType ruby imap <buffer> <leader>xr <Plug>(xmpfilter-run)
 endif
 
 """""""
@@ -408,9 +386,9 @@ if has("gui_running")
   set guioptions-=r  "remove toolbar
   set anti
   set browsedir=current
-  set columns=179
+  " set columns=179
   set cursorline
-  set lines=43
+  " set lines=43
   set mousehide
   set number
   set numberwidth=5
@@ -424,6 +402,7 @@ if has('autocmd')
 
   augroup Ruby
     autocmd!
+    autocmd FileType ruby compiler ruby
     autocmd FileType ruby,eruby nested setlocal cinwords=do
     autocmd FileType ruby,eruby nested let g:rubycomplete_buffer_loading = 0
     autocmd FileType ruby,eruby nested let g:rubycomplete_rails = 1
@@ -455,7 +434,7 @@ if has('autocmd')
 
   augroup GitCommits
     autocmd!
-    autocmd FileType gitcommit            nested setlocal spell
+    autocmd FileType gitcommit            nested setlocal nospell
     autocmd VimEnter .git/PULLREQ_EDITMSG nested setlocal filetype=markdown
   augroup END
 
@@ -484,4 +463,11 @@ function! ToTab(cmd)
   set nomodified
 endfunction
 command! -nargs=+ -complete=command TabMessage call TabMessage(<q-args>)
+
+syntax on
+filetype on
+filetype plugin on
+filetype indent on
+" silent! colorscheme vividchalk
+colorscheme base16-twilight
 
