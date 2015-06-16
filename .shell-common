@@ -32,11 +32,18 @@ if command -v nvim >/dev/null 2>/dev/null ; then
   alias mvim="nvim"
 fi
 # ---------------------------------------------------------------------------
-
+if command -v ag >/dev/null 2>/dev/null ; then
+  alias ag="ag --pager=less --color-match='1;36'"
+  alias ag_next='g $(git diff --name-only master..HEAD . | sed -e "s/^/ --ignore=/")'
+fi
+# ---------------------------------------------------------------------------
+if command -v jrnl >/dev/null 2>/dev/null ; then
+  alias j='jrnl'
+  alias j_recent="jrnl -from \"\$(gdate --date 'yesterday' +'%F %H:%M')\" "
+  alias j_last='jrnl -from "$([[ $(date +%u) -eq 1 ]] && echo friday || echo yesterday)"'
+fi
+# ---------------------------------------------------------------------------
 alias list_to_regex="sed -e 's/[^0-9]//g' | tr '\n' '|' | sed -e 's/^/(/' -e 's/\|$/)/'"
-alias j='jrnl'
-alias j_recent="jrnl -from \"\$(gdate --date 'yesterday' +'%F %H:%M')\" "
-alias j_last='jrnl -from "$([[ $(date +%u) -eq 1 ]] && echo friday || echo yesterday)"'
 alias m='$PAGER'
 alias l1="ls -1"
 alias ll="l -A"
@@ -44,11 +51,7 @@ alias la="ls -A"
 alias datafart='curl --data-binary @- datafart.com'
 alias live_ip='dig +short myip.opendns.com @resolver1.opendns.com || curl -f4L http://ifconfig.me'
 alias to_csv='soffice --convert-to csv --headless'
-alias pubgit='git --git-dir="$HOME/.git-pub-dotfiles" --work-tree="$HOME"'
-alias prvgit='git --git-dir="$HOME/.git-prv-dotfiles" --work-tree="$HOME"'
-
-alias g="ag --pager=less --color-match='1;36'"
-alias g_next='g $(git diff --name-only master..HEAD . | sed -e "s/^/ --ignore=/")'
+# ---------------------------------------------------------------------------
 
 total() {
   cat - | tr '\n' '+' | sed -e 's/^/(/' -e 's/\+$/\)/'  | bc -q
@@ -102,8 +105,6 @@ iops_simple() {
 alias mydump="mysqldump --allow-keywords --add-locks --hex-blob --max_allowed_packet=1G --lock-tables=false --lock-all-tables=false --quick --quote-names --complete-insert=false --extended-insert=false"
 # Ruby ---------------------------------------------------------------------
 alias be="bundle exec"
-alias berc="bundle exec rails c"
-alias gs="gem server"
 
 rebundle() {
   local start=$(pwd)
@@ -120,6 +121,8 @@ httpd() {
   ruby -run -e httpd . -p $port
 }
 # Git ---------------------------------------------------------------------
+alias pubgit='git --git-dir="$HOME/.git-pub-dotfiles" --work-tree="$HOME"'
+alias prvgit='git --git-dir="$HOME/.git-prv-dotfiles" --work-tree="$HOME"'
 alias gst='git status'
 alias gcam='git commit --all --verbose --message'
 alias gco='git checkout'
