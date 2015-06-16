@@ -128,12 +128,12 @@ alias gcam='git commit --all --verbose --message'
 alias gco='git checkout'
 alias gps='git push'
 alias gpl='git pull'
-alias gg='git grep'
-alias grb='git rebase'
-alias gr='git remote --verbose'
-alias gl='git log --topo-order --pretty=format:${_git_log_medium_format}'
-alias gls='git log --topo-order --stat --pretty=format:${_git_log_medium_format}'
-alias glc='git shortlog --summary --numbered'
+# alias gg='git grep'
+# alias grb='git rebase'
+# alias gr='git remote --verbose'
+# alias gl='git log --topo-order --pretty=format:${_git_log_medium_format}'
+# alias gls='git log --topo-order --stat --pretty=format:${_git_log_medium_format}'
+# alias glc='git shortlog --summary --numbered'
 
 kernel_purge() {
   local _removed=($(dpkg -l 'linux-*' | grep '^rc' | cut -f 3 -d ' '))
@@ -227,46 +227,43 @@ command -v gdate >/dev/null 2>/dev/null && _date="gdate"
 #-----------------------------------------------------------------------------
 confsync() {
   cd $HOME
+
   for host in $* ; do
     pubgit ls-files | rsync -iaxR --files-from=- . ${host//":"/}:
+    prvgit ls-files | rsync -iaxR --files-from=- . ${host//":"/}:
   done
 }
 
-confbackup() {
-  cd $HOME
-  find .* -not -name '.DS_Store' -not -path '.dropbox*' -not -path '.Trash*' | rsync -iaxR --files-from=- . $*
-}
-
-megadump_table() {
-  local _db="$1"
-  local _tbl="$2"
-  local _file="${_db}___${_tbl}.sql"
-  mysqldump --allow-keywords --lock-tables=false --lock-all-tables=false --complete-insert=false --extended-insert=false ${_db} "${_tbl}" -tKqQ -r "${_file}"
-}
-
-megadump_table_and_split() {
-  local _db="$1"
-  local _tbl="$2"
-  local _file="${_db}___${_tbl}.sql"
-  mysqldump --allow-keywords --lock-tables=false --lock-all-tables=false --complete-insert=false --extended-insert=false ${_db} "${_tbl}" -tKqQ -r "${_file}"
-  split --lines=250000 --unbuffered --additional-suffix=.sql --numeric-suffixes=1 --suffix-length=3 "${_file}" "${_db}___${_tbl}___"
-  rm -f "${_file}"
-}
-
-megadump() {
-  local -i _max=500000
-  local _db="$1"
-  mysqldump --allow-keywords --lock-tables=false --lock-all-tables=false "${_db}" -dqQ -r "schema___${_db}.sql"
-  while read _tbl ; do
-    local -i _size=$(mysql "${_db}" -BNe "SELECT COUNT(*) FROM ${_tbl}" | sed -e 's/^ *//')
-    if (( _size > _max )) ; then
-      megadump_table_and_split "${_db}" "${_tbl}" &
-    else
-      megadump_table "${_db}" "${_tbl}" &
-    fi
-  done < <(mysql "${_db}" -BNe "SHOW TABLES")
-
-}
+# megadump_table() {
+#   local _db="$1"
+#   local _tbl="$2"
+#   local _file="${_db}___${_tbl}.sql"
+#   mysqldump --allow-keywords --lock-tables=false --lock-all-tables=false --complete-insert=false --extended-insert=false ${_db} "${_tbl}" -tKqQ -r "${_file}"
+# }
+#
+# megadump_table_and_split() {
+#   local _db="$1"
+#   local _tbl="$2"
+#   local _file="${_db}___${_tbl}.sql"
+#   mysqldump --allow-keywords --lock-tables=false --lock-all-tables=false --complete-insert=false --extended-insert=false ${_db} "${_tbl}" -tKqQ -r "${_file}"
+#   split --lines=250000 --unbuffered --additional-suffix=.sql --numeric-suffixes=1 --suffix-length=3 "${_file}" "${_db}___${_tbl}___"
+#   rm -f "${_file}"
+# }
+#
+# megadump() {
+#   local -i _max=500000
+#   local _db="$1"
+#   mysqldump --allow-keywords --lock-tables=false --lock-all-tables=false "${_db}" -dqQ -r "schema___${_db}.sql"
+#   while read _tbl ; do
+#     local -i _size=$(mysql "${_db}" -BNe "SELECT COUNT(*) FROM ${_tbl}" | sed -e 's/^ *//')
+#     if (( _size > _max )) ; then
+#       megadump_table_and_split "${_db}" "${_tbl}" &
+#     else
+#       megadump_table "${_db}" "${_tbl}" &
+#     fi
+#   done < <(mysql "${_db}" -BNe "SHOW TABLES")
+#
+# }
 
 #-----------------------------------------------------------------------------
 [[ -s "$HOME/.shell-prv" ]] && source "$HOME/.shell-prv"
