@@ -151,4 +151,5 @@ export PROMPT="%f%b%k%u%s\$(build_lprompt)%f%b%k%u%s"
 export RPROMPT="%f%b%k%u%s\$(build_rprompt)%f%b%k%u%s"
 
 # --------------------------------------------------------------------------
-# vim: ft=zsh sw=2 ts=2 et
+# vim: set syntax=sh ft=zsh sw=2 ts=2 expandtab:
+

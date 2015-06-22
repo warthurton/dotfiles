@@ -78,4 +78,4 @@ setopt list_ambiguous
 setopt list_types
 setopt nomenu_complete        # Do not autoselect the first completion entry.
 # --------------------------------------------------------------------------
-# vim: ft=zsh sw=2 ts=2 et
+# vim: set syntax=sh ft=zsh sw=2 ts=2 expandtab:

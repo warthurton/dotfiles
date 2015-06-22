@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Aliases & Functions for Interactive shells -------------------------------
 
 [[ -z "$PS1" ]] && return
@@ -11,7 +13,7 @@ if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
   alias rebuild_launch_services="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user"
   alias start="simple_launchctl load"
   alias stop="simple_launchctl unload"
-  simple_launchctl() { find $HOME/Library/LaunchAgents -name '*.plist' -name '*'$2'*' -ok launchctl $1 -w {} \; ; }
+  simple_launchctl() { find ~/Library/LaunchAgents -name '*.plist' -name '*'"$2"'*' -ok launchctl "$1" -w {} \; ; }
   [[ -x "/Applications/LibreOffice.app/Contents/MacOS/soffice" ]] && alias soffice="/Applications/LibreOffice.app/Contents/MacOS/soffice"
   [[ -x "/usr/local/opt/macvim/MacVim.app/Contents/MacOS/Vim"  ]] && alias vim="/usr/local/opt/macvim/MacVim.app/Contents/MacOS/Vim"
 # Linux ---------------------------------------------------------------------
@@ -54,51 +56,11 @@ alias to_csv='soffice --convert-to csv --headless'
 # ---------------------------------------------------------------------------
 
 total() {
-  cat - | tr '\n' '+' | sed -e 's/^/(/' -e 's/\+$/\)/'  | bc -q
+  tr '\n' '+' | sed -e 's/^/(/' -e 's/\+$/\)/'  | bc -q
 }
 
 downloaded_in() {
-  for f in $* ; do stat -r "$f" | awk '{print ($11 - $12) " seconds"}' ; done
-}
-
-iops_simple() {
-  local _dir="$1"
-  [[ -d "$_dir" ]] || return
-  local _output=$(mktemp fio_XXXX)
-  local _size="2G"
-  local -i _jobs=8
-  local _engine="vsync"
-  local -i _files=$((_jobs * 4))
-  local -i _depth=$((_jobs * 8))
-  [[ "${OSTYPE:0:5}" = "linux" ]] && _engine="libaio"
-
-  sudo fio                     \
-    --output="$_output"        \
-    --thread                   \
-    --name="Simple IOPS Test"  \
-    --directory="$_dir"        \
-    --readwrite=randrw         \
-    --ioengine=$_engine        \
-    --iodepth=$_depth          \
-    --size=$_size              \
-    --blocksize=4k             \
-    --nrfiles=$_files          \
-    --numjobs=$_jobs           \
-    --file_service_type=random \
-    --direct=1                 \
-    --overwrite=1              \
-    --runtime=300              \
-    --unlink=1                 \
-    --gtod_reduce=1            \
-    --minimal
-
-  local -i _r=$(cut -f 8  -d ';' "$_output" | tr '\n' '+' | sed -e 's/^/(/' -e 's/\+$/\)/'  | bc -q)
-  local -i _w=$(cut -f 49 -d ';' "$_output" | tr '\n' '+' | sed -e 's/^/(/' -e 's/\+$/\)/'  | bc -q)
-  local _rw=$((  ( _r + _w ) / 2 ))
-  rm -f "$_output"
-
-  echo
-  echo "[IOPS] READ: $_r WRITE: $_w AVG: $_rw "
+  for f in "$@" ; do stat -r "$f" | awk '{print ($11 - $12) " seconds"}' ; done
 }
 
 # MySQL ---------------------------------------------------------------------
@@ -107,7 +69,8 @@ alias mydump="mysqldump --allow-keywords --add-locks --hex-blob --max_allowed_pa
 alias be="bundle exec"
 
 rebundle() {
-  local start=$(pwd)
+  local start
+  start=$(pwd)
   find . -maxdepth 3 -type f -name Gemfile -exec dirname "{}" \; | while read dir ; do
     echo "${dir}"
     cd "${dir}" && bundle
@@ -118,7 +81,7 @@ rebundle() {
 httpd() {
   port="${1:-8000}"
   command -v open >/dev/null 2>/dev/null && (sleep 1 && open "http://127.0.0.1:$port" &)
-  ruby -run -e httpd . -p $port
+  ruby -run -e httpd . -p "$port"
 }
 # Git ---------------------------------------------------------------------
 alias pubgit='git --git-dir="$HOME/.git-pub-dotfiles" --work-tree="$HOME"'
@@ -136,26 +99,30 @@ alias gpl='git pull'
 # alias glc='git shortlog --summary --numbered'
 
 kernel_purge() {
-  local _removed=($(dpkg -l 'linux-*' | grep '^rc' | cut -f 3 -d ' '))
-  local _vcurrent=$(uname -r | sed -re 's/-[a-z]+$//')
-  local _vnewest=$(dpkg -l 'linux-image-*' | grep -E '^ii +linux-image-[[:digit:]]+\.[[:digit:]]+\.' | sed -e 's/^.*linux-image-//' -e 's/ .*$//' | tail -1 | sed -re 's/-[a-z]+$//')
-  local _old=($(dpkg -l 'linux-*' | grep -E '^ii +linux-[^ ]+-[[:digit:]]+\.[[:digit:]]+\.' | grep -Ev "(${_vcurrent}|${_vnewest})" | cut -f 3 -d ' '))
+  local _removed
+  _removed=($(dpkg -l 'linux-*' | grep '^rc' | cut -f 3 -d ' '))
+  local _vcurrent
+  _vcurrent=$(uname -r | sed -re 's/-[a-z]+$//')
+  local _vnewest
+  _vnewest=$(dpkg -l 'linux-image-*' | grep -E '^ii +linux-image-[[:digit:]]+\.[[:digit:]]+\.' | sed -e 's/^.*linux-image-//' -e 's/ .*$//' | tail -1 | sed -re 's/-[a-z]+$//')
+  local _old
+  _old=($(dpkg -l 'linux-*' | grep -E '^ii +linux-[^ ]+-[[:digit:]]+\.[[:digit:]]+\.' | grep -Ev "(${_vcurrent}|${_vnewest})" | cut -f 3 -d ' '))
 
-  [[ -n ${_removed[@]} ]] && sudo apt-get purge ${_removed[@]}
-  [[ -n ${_old[@]} ]]     && sudo apt-get purge ${_old[@]}
+  [[ -n ${_removed[@]} ]] && sudo apt-get purge "${_removed[@]}"
+  [[ -n ${_old[@]} ]]     && sudo apt-get purge "${_old[@]}"
 }
 # tmux ---------------------------------------------------------------------
 tnew() {
   local h="$1"
   [[ -z $h ]] && return
-  tmux neww -n ${h} "exec ssh ${h}"
+  tmux neww -n "$h" "exec ssh ${h}"
 }
 
 tneww() {
   local h="$1"
   [[ -z $h ]] && return
-  tmux neww -n ${h}.1 "exec ssh ${h}"
-  tmux neww -n ${h}.2 "exec ssh ${h}"
+  tmux neww -n "${h}.1" "exec ssh ${h}"
+  tmux neww -n "${h}.2" "exec ssh ${h}"
 }
 # openssl ---------------------------------------------------------------------
 newssl() {
@@ -182,9 +149,9 @@ newssl() {
       DNS.1              = ${h}
 REQ
 
-  openssl genrsa -out $key 4096 >&/dev/null
+  openssl genrsa -out "${key}" 4096 >&/dev/null
   openssl req -new -x509 -days 3650 -utf8 -sha512 -key "${key}" -out "${crt}" -reqexts exts -batch -config "${req}"
-  cat $crt $key > $pem && rm $key $crt $req
+  cat "${crt}" "${key}" > "${pem}" && rm "${key}" "${crt}" "${req}"
 }
 #-----------------------------------------------------------------------------
 date2stamp() {
@@ -200,37 +167,40 @@ stamp2date() {
 }
 
 date_diff() {
- case $1 in
+  case $1 in
        -s)   sec=1;      shift;;
        -m)   sec=60;     shift;;
        -h)   sec=3600;   shift;;
        -d)   sec=86400;  shift;;
        -w)   sec=604800; shift;;
        *)    sec=86400;;
- esac
+  esac
 
- local date1=$(date2stamp $1)
- local date2=$(date2stamp $2)
- local diff_secs=$((date2-date1))
- if ((diff_secs < 0)); then abs=-1; else abs=1; fi
- echo $((diff_secs / sec * abs))
+  local date1
+  date1=$(date2stamp "$1")
+  local date2
+  date2=$(date2stamp "$2")
+  local diff_secs
+  diff_secs=$((date2-date1))
+  if ((diff_secs < 0)); then abs=-1; else abs=1; fi
+  echo $(( (diff_secs / sec) * abs))
 }
 
 date_range() {
-local _date="date"
-command -v gdate >/dev/null 2>/dev/null && _date="gdate"
- local range=$(date_diff -d $1 $2)
- for i in $(seq 0 $range) ; do
+  local _date="date"
+  command -v gdate >/dev/null 2>/dev/null && _date="gdate"
+  local range
+  range=$(date_diff -d "$1" "$2")
+  for i in $(seq 0 "$range") ; do
    $_date --date "$1 $i day" +'%Y-%m-%d'
- done
+  done
 }
 #-----------------------------------------------------------------------------
 confsync() {
-  cd $HOME
-
-  for host in $* ; do
-    pubgit ls-files | rsync -iaxR --files-from=- . ${host//":"/}:
-    prvgit ls-files | rsync -iaxR --files-from=- . ${host//":"/}:
+  cd ~
+  for host in "$@" ; do
+    pubgit ls-files | rsync -iaxR --files-from=- . "${host//":"/}:"
+    prvgit ls-files | rsync -iaxR --files-from=- . "${host//":"/}:"
   done
 }
 
@@ -269,4 +239,4 @@ confsync() {
 [[ -s "$HOME/.shell-prv" ]] && source "$HOME/.shell-prv"
 # --------------------------------------------------------------------------
 
-# vim: set syntax=zsh ft=zsh sw=2 ts=2 expandtab:
+# vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:

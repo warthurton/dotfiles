@@ -243,8 +243,8 @@ let g:syntastic_ruby_checkers            = ['mri', 'jruby', 'rubocop']
 let g:syntastic_ruby_rubocop_args        = '--display-cop-names'
 let g:syntastic_sass_checkers            = ['sass']
 let g:syntastic_scss_checkers            = ['sass']
-let g:syntastic_sh_checkbashisms_args    = '-x'
-let g:syntastic_sh_checkers              = ['shellcheck', 'checkbashisms', 'sh']
+let g:syntastic_sh_shellcheck_args       = '--exclude=SC2001'
+let g:syntastic_sh_checkers              = ['shellcheck', 'sh']
 let g:syntastic_style_error_symbol       = '✗'
 let g:syntastic_style_warning_symbol     = '⚠'
 let g:syntastic_warning_symbol           = '⚠⚠'

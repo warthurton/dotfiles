@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # --------------------------------------------------------------------------
 umask 022
 
@@ -38,9 +39,9 @@ if [[ "$BASH_VERSINFO" -gt "3" || -n $ZSH_VERSION ]] ; then
   # Setup the path to be in a preferred order, but don't overwrite the existing path
   __messy_path+=(/Applications/VMware\ Fusion.app/Contents/Library)
   __messy_path+=(/Applications/Postgres.app/Contents/Versions/9.4/bin)
-  __messy_path+=(/{usr,opt}/{local,X11}/{bin,sbin} /{usr,opt}/local/{heroku}/bin)
+  __messy_path+=(/{usr,opt}/{local,X11}/{bin,sbin} /{usr,opt}/local/heroku/bin)
   __messy_path+=($HOME/bin)
-  __messy_path+=($(IFS=:; echo $PATH))
+  __messy_path+=($(IFS=:; echo "$PATH"))
   __messy_path+=(/{usr,opt}/{bin,sbin} /{bin,sbin})
 
   for p in "${__messy_path[@]}" ; do
@@ -71,7 +72,7 @@ fi
 # --------------------------------------------------------------------------
 
 BASE16_SHELL="$HOME/.config/base16-shell/base16-twilight.dark.sh"
-[[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
+[[ -s "$BASE16_SHELL" ]] && source "$BASE16_SHELL"
 
 # --------------------------------------------------------------------------
 # Synology NAS
@@ -85,13 +86,13 @@ if [[ "${OSTYPE:0:5}" = "linux" ]] ; then
   if command -v gpg-agent >/dev/null 2>/dev/null ; then
     __gai="$HOME/.gnupg/gpg-agent-info"
 
-    [[ -z $GPG_AGENT_INFO ]] && [[ -f $__gai ]] && source $__gai
+    [[ -z "$GPG_AGENT_INFO" ]] && [[ -f "$__gai" ]] && source "$__gai"
 
-    [[ -n $GPG_AGENT_INFO ]] && [[ -S $(echo $GPG_AGENT_INFO | cut -f 1 -d :) ]] || unset GPG_AGENT_INFO
+    [[ -n "$GPG_AGENT_INFO" && -S $(echo "$GPG_AGENT_INFO" | cut -f 1 -d :) ]] || unset GPG_AGENT_INFO
 
-    [[ -z $GPG_AGENT_INFO ]] && eval $(gpg-agent --daemon --write-env-file $__gai)
+    [[ -z "$GPG_AGENT_INFO" ]] && eval "$(gpg-agent --daemon --write-env-file "$__gai")"
 
-    [[ -n $GPG_AGENT_INFO ]] && [[ -S $(echo $GPG_AGENT_INFO | cut -f 1 -d :) ]] && export GPG_AGENT_INFO
+    [[ -n "$GPG_AGENT_INFO" ]] && [[ -S $(echo "$GPG_AGENT_INFO" | cut -f 1 -d :) ]] && export GPG_AGENT_INFO
   fi
 fi
 
@@ -102,7 +103,7 @@ if [[ -z _SSH_MAJOR_VER && -z _SSH_MINOR_VER ]] ; then
   if command -v ssh >/dev/null 2>/dev/null ; then
     declare -i _SSH_MAJOR_VER
     declare -i _SSH_MINOR_VER
-    ssh -V 2>&1 | sed -e 's/^[a-zA-Z]*_\([1-9][0-9]*\)\.\([0-9][0-9]*\).*$/\1 \2/' | read _SSH_MAJOR_VER _SSH_MINOR_VER
+    read _SSH_MAJOR_VER _SSH_MINOR_VER < <(ssh -V 2>&1 | sed -e 's/^[a-zA-Z]*_\([1-9][0-9]*\)\.\([0-9][0-9]*\).*$/\1 \2/')
     export _SSH_MAJOR_VER _SSH_MINOR_VER
   fi
 fi
@@ -116,8 +117,10 @@ if [[ "${OSTYPE:0:6}" = "darwin" && -n _SSH_MAJOR_VER && -n _SSH_MINOR_VER && -n
 fi
 
 if [[ -n "$SSH_AUTH_SOCK" && ! -S "$SSH_AUTH_SOCK" ]] ; then
-  export SSH_AUTH_SOCK=$(find /tmp/ssh-* -type s | head -1)
+  declare SSH_AUTH_SOCK
+  SSH_AUTH_SOCK=$(find /tmp/ssh-* -type s | head -1)
+  export SSH_AUTH_SOCK
 fi
 
 # --------------------------------------------------------------------------
-# vim: ft=sh sw=2 ts=2 et
+# vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:

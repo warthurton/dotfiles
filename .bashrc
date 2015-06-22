@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # --------------------------------------------------------------------------
 export HISTCONTROL=ignoreboth
 export HISTFILE="$HOME/.bash_history"
@@ -15,13 +16,13 @@ fi
 
 # --------------------------------------------------------------------------
 [[ -s "$HOME/.shell-env" ]] && source "$HOME/.shell-env"
-[ -z "$PS1" ] && return
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+[[ -z "$PS1" ]] && return
+[[ -f ~/.fzf.bash ]] && source ~/.fzf.bash
+[[ -f ~/.travis/travis.sh ]] && source ~/.travis/travis.sh
 [[ -s "$HOME/.shell-common" ]] && source "$HOME/.shell-common"
 # --------------------------------------------------------------------------
 
-lm() { ls -lF $2 | $PAGER; }
-pw() { p | $PAGER; }
+pw() { p | "$PAGER" ; }
 
 if ! command -v __git_ps1 >/dev/null 2>/dev/null ; then
   [[ -s "$HOME/bin/git-prompt.sh" ]] && source "$HOME/bin/git-prompt.sh"
@@ -45,7 +46,7 @@ export PROMPT_COMMAND="ps1_update"
 __reset=$(tput sgr0)
 
 color() {
-  tput setaf $1
+  tput setaf "$1"
   return 0
 }
 # Prompt---------------------------------------------------------------------
@@ -69,7 +70,7 @@ _ps1_id() {
   if [[ $EUID -eq 0 ]] ; then
     echo -n "__ROOT__"
   else
-    echo -n $USER
+    echo -n "$USER"
   fi
   return 0
 }
@@ -83,7 +84,9 @@ if command -v ruby >/dev/null 2>/dev/null ; then
 fi
 if command -v git >/dev/null 2>/dev/null ; then
   _ps1_git_color() {
-    export __LOCAL_GIT_STATUS="`git status -unormal 2>&1`"
+    declare __LOCAL_GIT_STATUS
+    __LOCAL_GIT_STATUS="$(git status -unormal 2>&1)"
+    export __LOCAL_GIT_STATUS
     if ! [[ "$__LOCAL_GIT_STATUS" =~ Not\ a\ git\ repo ]]; then
       if [[ "$__LOCAL_GIT_STATUS" =~ nothing\ to\ commit ]]; then
         color 10
@@ -100,9 +103,11 @@ if command -v git >/dev/null 2>/dev/null ; then
       branch=${BASH_REMATCH[1]}
       test "$branch" != master || branch=' '
     else
-      branch="(`git describe --all --contains --abbrev=4 HEAD 2> /dev/null || echo HEAD`)"
+      branch="($(git describe --all --contains --abbrev=4 HEAD 2> /dev/null || echo HEAD))"
     fi
-    printf "$(__git_ps1)"
+    printf "%s", "$(__git_ps1)"
     return 0
   }
 fi
+
+# vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:
