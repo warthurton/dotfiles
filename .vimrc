@@ -51,6 +51,7 @@ set matchtime=5
 set modeline
 set modelines=5
 set mouse+=a
+set number
 set ruler
 set scrolloff=3
 set shiftwidth=2
@@ -91,13 +92,13 @@ endif
 let g:use_neocomplete = 0
 let g:use_youcompleteme = 0
 
-" if version >= 704
-"   if has("lua")
-"     let g:use_neocomplete = 1
-"   else
-"     let g:use_youcompleteme = 1
-"   endif
-" endif
+if version >= 704
+  if has("lua")
+    let g:use_neocomplete = 1
+  else
+    let g:use_youcompleteme = 1
+  endif
+endif
 
 let g:cachedir = expand(vimhome . 'cache')
 
@@ -139,6 +140,7 @@ Plug 'kchmck/vim-coffee-script',      { 'for': [ 'javascript', 'coffeescript' ] 
 
 Plug 'tpope/vim-rails',               { 'for': 'ruby' }
 Plug 'tpope/vim-rake',                { 'for': 'ruby' }
+Plug 'tpope/vim-endwise',             { 'for': 'ruby' }
 Plug 'vim-ruby/vim-ruby',             { 'for': 'ruby' }
 Plug 'tpope/vim-bundler',             { 'for': 'ruby' }
 Plug 'tpope/vim-rbenv',               { 'for': 'ruby' }
@@ -156,7 +158,6 @@ Plug 't9md/vim-ruby-xmpfilter',       { 'for': 'ruby' }
 Plug 'tpope/vim-git'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'mbbill/undotree'
-Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-sleuth'
@@ -165,15 +166,16 @@ Plug 'tpope/vim-surround'
 Plug 'vim-scripts/grep.vim'
 Plug 'rking/ag.vim'
 Plug 'airblade/vim-gitgutter'
-Plug 'bling/vim-airline'
 Plug 'kien/ctrlp.vim'
 Plug 'scrooloose/nerdtree',           { 'on':  'NERDTreeToggle' }
 Plug 'scrooloose/syntastic'
 Plug 'godlygeek/tabular'
 Plug 'majutsushi/tagbar'
 Plug 'tomtom/tcomment_vim'
-Plug 'junegunn/fzf' ",                  { 'do': 'yes \| ./install' }
+Plug 'junegunn/fzf',                  { 'dir': '~/.zsh/fzf', 'do': 'yes \| ./install' }
 Plug 'Shougo/vimproc.vim',            { 'do': 'make' }
+" Plug 'bling/vim-airline'
+Plug 'powerline/powerline',           { 'rtp': 'powerline/bindings/vim/', 'do': 'pip install --upgrade powerline-status' }
 
 " Colors
 " Plug 'tpope/vim-vividchalk'
@@ -215,7 +217,7 @@ endif
 
 " gitgutter
 highlight clear SignColumn
-let g:gitgutter_enabled                   = 0
+let g:gitgutter_enabled                   = 1
 let g:gitgutter_realtime                  = 0
 let g:gitgutter_eager                     = 0
 let g:gitgutter_max_signs                 = 10000
@@ -239,8 +241,8 @@ let g:syntastic_check_on_open            = 0
 let g:syntastic_enable_signs             = 1
 let g:syntastic_error_symbol             = '✗✗'
 let g:syntastic_loc_list_height          = 5
-let g:syntastic_ruby_checkers            = ['mri', 'jruby', 'rubocop']
-let g:syntastic_ruby_rubocop_args        = '--display-cop-names'
+let g:syntastic_ruby_checkers            = ['rubocop', 'mri']
+let g:syntastic_ruby_rubocop_args        = '--display-cop-names --only-guide-cops --except Metrics/LineLength,Style/Documentation,Metrics/MethodLength,Metrics/BlockNesting, Style/HashSyntax, Style/BlockDelimiters '
 let g:syntastic_sass_checkers            = ['sass']
 let g:syntastic_scss_checkers            = ['sass']
 let g:syntastic_sh_shellcheck_args       = '--exclude=SC2001'
@@ -367,6 +369,10 @@ command! KillWhitespace :normal :%s/ *$//g<cr><c-o><cr>
 " inoremap <left> <nop>
 " inoremap <right> <nop>
 
+inoremap jk <Esc>
+nnoremap jk <Esc>
+vnoremap jk <Esc>
+
 nnoremap <CR> :nohlsearch<cr>
 imap <c-l> <space>=><space>
 vnoremap < <gv
@@ -470,4 +476,7 @@ filetype plugin on
 filetype indent on
 " silent! colorscheme vividchalk
 colorscheme base16-twilight
+
+" My colorscheme overrides
+highlight LineNr ctermfg=236 ctermbg=234
 
