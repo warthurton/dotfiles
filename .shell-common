@@ -29,11 +29,6 @@ if [[ -d "/usr/syno" ]] ; then
   alias p="ps w"
 fi
 # ---------------------------------------------------------------------------
-if command -v nvim >/dev/null 2>/dev/null ; then
-  alias vim="nvim"
-  alias mvim="nvim"
-fi
-# ---------------------------------------------------------------------------
 if command -v ag >/dev/null 2>/dev/null ; then
   alias ag="ag --pager=less --color-match='1;36'"
   alias ag_next='g $(git diff --name-only master..HEAD . | sed -e "s/^/ --ignore=/")'
