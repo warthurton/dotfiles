@@ -1,13 +1,10 @@
 
+let vimhome = '~/.vim/'
+set clipboard+=unnamed
+
 if v:progname == 'nvim'
   let vimhome = '~/.nvim/'
   set clipboard+=unnamedplus
-  set viminfo='512,<4096,s512,/512,:512,n~/.nvim/viminfo
-else
-  let vimhome = '~/.vim/'
-  set clipboard+=unnamed
-  set viminfo='512,<4096,s512,/512,:512,n~/.vim/viminfo
-  set nocompatible
 endif
 
 let config_dirs = ['tmp', 'undo', 'cache', 'autoload', 'plugged', 'backup', 'swap']
@@ -26,6 +23,7 @@ let &backupdir = expand(vimhome . 'backup')
 set background=dark
 set backspace=indent,eol,start
 set binary
+let g:cachedir = expand(vimhome . 'cache')
 let &directory = expand(vimhome . 'swap')
 set noex
 set encoding=utf-8
@@ -40,7 +38,7 @@ set ignorecase
 set incsearch
 set laststatus=2
 set lazyredraw
-set linespace=0
+" set linespace=0
 set list
 set listchars=""          " Reset the listchars
 set listchars+=tab:\ \    " a tab should display as "  ", trailing whitespace as "."
@@ -51,7 +49,9 @@ set matchtime=5
 set modeline
 set modelines=5
 set mouse+=a
+set nocompatible
 set number
+set numberwidth=6
 set ruler
 set scrolloff=3
 set shiftwidth=2
@@ -67,23 +67,31 @@ set softtabstop=2
 set splitbelow
 set splitright
 set tabstop=2
-" set tags=./tags
 set noterse
 set visualbell
 set t_Co=256
 set t_vb=
-let &undodir = expand(vimhome . 'undo')
-set undolevels=1000
-set undoreload=10000
 set wildignore+=*/.cache/*,*/tmp/*,*/.git/*,*/.neocon/*,*.log,*.so,*.swp,*.zip,*.gz,*.bz2,*.bmp,*.ppt
 set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe,*.dll
 set wildmenu
 set wildmode=longest,list
 set writebackup
-set winwidth=84 " We have to have a winheight bigger than we want to set winminheight. But if we set winheight to be huge before winminheight, the winminheight set will fail.
-set winheight=5
-set winminheight=5
-set winheight=999
+" set winwidth=84 " We have to have a winheight bigger than we want to set winminheight. But if we set winheight to be huge before winminheight, the winminheight set will fail.
+" set winheight=5
+" set winminheight=5
+" set winheight=999
+
+if has('persistent_undo')
+  let &undodir = expand(vimhome . 'undo')
+  set undolevels=1000
+  set undoreload=10000
+  set undofile
+endif
+
+if empty(glob(vimhome . 'autoload/plug.vim'))
+  execute "silent !curl -sfLo " . vimhome . "/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim"
+  autocmd VimEnter * PlugInstall
+endif
 
 if has("ruby")
   compiler ruby
@@ -100,96 +108,89 @@ if version >= 704
   endif
 endif
 
-let g:cachedir = expand(vimhome . 'cache')
-
-if empty(glob(vimhome . 'autoload/plug.vim'))
-  if v:progname == 'nvim'
-    silent !curl -sfLo ~/.nvim/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim
-  else
-    silent !curl -sfLo ~/.vim/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim
-  endif
-  autocmd VimEnter * PlugInstall
-endif
-
 call plug#begin(vimhome . 'plugged')
 
-Plug 'tpope/vim-dispatch'
-Plug 'tpope/vim-haml',                { 'for': 'haml' }
-Plug 'othree/html5.vim',              { 'for': 'html' }
-Plug 'StanAngeloff/php.vim',          { 'for': 'php' }
-Plug 'fatih/vim-go',                  { 'for': 'go' }
-Plug 'guns/vim-clojure-static',       { 'for': 'clojure' }
-Plug 'ksauzz/haproxy.vim',            { 'for': 'haproxy' }
-Plug 'kurayama/systemd-vim-syntax',   { 'for': 'systemd' }
-Plug 'leshill/vim-json',              { 'for': 'json' }
-Plug 'mitsuhiko/vim-python-combined', { 'for': 'python' }
-Plug 'mutewinter/nginx.vim',          { 'for': 'nginx' }
-Plug 'oscarh/vimerl',                 { 'for': 'erlang' }
-Plug 'rodjek/vim-puppet',             { 'for': 'puppet' }
-Plug 'sheerun/vim-yardoc',            { 'for': 'yard' }
-Plug 'tpope/vim-markdown',            { 'for': 'markdown' }
-Plug 'travitch/hasksyn',              { 'for': 'haskell' }
-Plug 'vim-scripts/R.vim',             { 'for': 'r' }
-Plug 'vim-scripts/ael.vim',           { 'for': 'ael' }
-Plug 'acustodioo/vim-tmux'
-Plug 'JulesWang/css.vim',             { 'for': [ 'css', 'sass', 'scss' ] }
-Plug 'ap/vim-css-color',              { 'for': [ 'css', 'sass', 'scss' ] }
-Plug 'powerman/vim-plugin-AnsiEsc'
-Plug 'pangloss/vim-javascript',       { 'for': [ 'javascript', 'coffeescript' ] }
-Plug 'kchmck/vim-coffee-script',      { 'for': [ 'javascript', 'coffeescript' ] }
-
-Plug 'tpope/vim-rails',               { 'for': 'ruby' }
-Plug 'tpope/vim-rake',                { 'for': 'ruby' }
-Plug 'tpope/vim-endwise',             { 'for': 'ruby' }
-Plug 'vim-ruby/vim-ruby',             { 'for': 'ruby' }
-Plug 'tpope/vim-bundler',             { 'for': 'ruby' }
-Plug 'tpope/vim-rbenv',               { 'for': 'ruby' }
-Plug 'tpope/vim-rvm',                 { 'for': 'ruby' }
-Plug 'tpope/vim-cucumber',            { 'for': 'ruby' }
-Plug 'thoughtbot/vim-rspec',          { 'for': 'ruby' }
-
+" Do I really use these?
+"
+" Plug 'tpope/vim-dispatch'
+" Plug 'tpope/vim-haml',                { 'for': 'haml' }
+" Plug 'othree/html5.vim',              { 'for': 'html' }
+" Plug 'StanAngeloff/php.vim',          { 'for': 'php' }
+" Plug 'fatih/vim-go',                  { 'for': 'go' }
+" Plug 'guns/vim-clojure-static',       { 'for': 'clojure' }
+" Plug 'ksauzz/haproxy.vim',            { 'for': 'haproxy' }
+" Plug 'kurayama/systemd-vim-syntax',   { 'for': 'systemd' }
+" Plug 'leshill/vim-json',              { 'for': 'json' }
+" Plug 'mitsuhiko/vim-python-combined', { 'for': 'python' }
+" Plug 'mutewinter/nginx.vim',          { 'for': 'nginx' }
+" Plug 'oscarh/vimerl',                 { 'for': 'erlang' }
+" Plug 'rodjek/vim-puppet',             { 'for': 'puppet' }
+" Plug 'sheerun/vim-yardoc',            { 'for': 'yard' }
+" Plug 'tpope/vim-markdown',            { 'for': 'markdown' }
+" Plug 'travitch/hasksyn',              { 'for': 'haskell' }
+" Plug 'vim-scripts/R.vim',             { 'for': 'r' }
+" Plug 'vim-scripts/ael.vim',           { 'for': 'ael' }
+" Plug 'acustodioo/vim-tmux'
+" Plug 'JulesWang/css.vim',             { 'for': [ 'css', 'sass', 'scss' ] }
+" Plug 'ap/vim-css-color',              { 'for': [ 'css', 'sass', 'scss' ] }
+" Plug 'powerman/vim-plugin-AnsiEsc'
+" Plug 'pangloss/vim-javascript',       { 'for': [ 'javascript', 'coffeescript' ] }
+" Plug 'kchmck/vim-coffee-script',      { 'for': [ 'javascript', 'coffeescript' ] }
+" Plug 'tpope/vim-rbenv',               { 'for': 'ruby' }
+" Plug 'tpope/vim-rvm',                 { 'for': 'ruby' }
+" Plug 'tpope/vim-cucumber',            { 'for': 'ruby' }
 " Plug 'ecomba/vim-ruby-refactoring',   { 'for': 'ruby' }
 " Plug 'henrik/vim-ruby-runner',        { 'for': 'ruby' }
-" Plug 'kana/vim-textobj-user'
-" Plug 'nelstrom/vim-textobj-rubyblock'
+" Plug 'tpope/vim-repeat'
+" Plug 'tpope/vim-sleuth'
+" Plug 'tpope/vim-speeddating'
+" Plug 'tpope/vim-surround'
+" Plug 'vim-scripts/grep.vim'
+" Plug 'rking/ag.vim'
+" Plug 'majutsushi/tagbar'
+" Plug 'junegunn/fzf',                  { 'dir': '~/.zsh/fzf', 'do': 'yes \| ./install' }
+" Plug 'Shougo/vimproc.vim',            { 'do': 'make' }
+" Plug 'bling/vim-airline'
 
-Plug 't9md/vim-ruby-xmpfilter',       { 'for': 'ruby' }
-
-Plug 'tpope/vim-git'
+Plug 'kana/vim-textobj-user'
+Plug 'tpope/vim-endwise',              { 'for': 'ruby' }
+Plug 'vim-ruby/vim-ruby',              { 'for': 'ruby' }
+Plug 'nelstrom/vim-textobj-rubyblock', { 'for': 'ruby' }
+Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby' }
+Plug 'tpope/vim-bundler',              { 'for': 'ruby' }
+Plug 'tpope/vim-rake',                 { 'for': 'ruby' }
+Plug 'tpope/vim-rails',                { 'for': 'ruby' }
+Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
+Plug 'tpope/vim-vividchalk'
+Plug 'chriskempson/base16-vim'
+Plug 'oplatek/Conque-Shell'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-sleuth'
-Plug 'tpope/vim-speeddating'
-Plug 'tpope/vim-surround'
-Plug 'vim-scripts/grep.vim'
-Plug 'rking/ag.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'kien/ctrlp.vim'
 Plug 'scrooloose/nerdtree',           { 'on':  'NERDTreeToggle' }
 Plug 'scrooloose/syntastic'
 Plug 'godlygeek/tabular'
-Plug 'majutsushi/tagbar'
 Plug 'tomtom/tcomment_vim'
-Plug 'junegunn/fzf',                  { 'dir': '~/.zsh/fzf', 'do': 'yes \| ./install' }
-Plug 'Shougo/vimproc.vim',            { 'do': 'make' }
-" Plug 'bling/vim-airline'
-Plug 'powerline/powerline',           { 'rtp': 'powerline/bindings/vim/', 'do': 'pip install --upgrade powerline-status' }
 
-" Colors
-" Plug 'tpope/vim-vividchalk'
-Plug 'chriskempson/base16-vim'
+if has("python")
+  Plug 'powerline/powerline', { 'rtp': 'powerline/bindings/vim/', 'do': 'pip install --upgrade powerline-status' }
+endif
 
 if g:use_neocomplete > 0
   Plug 'Shougo/neocomplete.vim'
 endif
 
 if g:use_youcompleteme > 0
-  Plug 'Valloric/YouCompleteMe',      { 'do': './install.sh' }
+  Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
 endif
 
 call plug#end()
+
+set viminfo='512,<4096,s512,/512,:512,n~/.vim/viminfo
+
+runtime macros/matchit.vim
 
 " airline
 let g:airline_theme                       = 'badwolf'
@@ -350,8 +351,7 @@ if has('autocmd')
   autocmd FileType ruby imap <buffer> <leader>xr <Plug>(xmpfilter-run)
 endif
 
-"""""""
-" map <leader>' ""yls<c-r>={'"': "'", "'": '"'}[@"]<cr><esc>
+map <leader>' ""yls<c-r>={'"': "'", "'": '"'}[@"]<cr><esc>
 map <leader>[ gt
 map <leader>] gT
 map <leader>e :edit %%
@@ -369,20 +369,24 @@ command! KillWhitespace :normal :%s/ *$//g<cr><c-o><cr>
 " inoremap <left> <nop>
 " inoremap <right> <nop>
 
-inoremap jk <Esc>
-nnoremap jk <Esc>
-vnoremap jk <Esc>
+imap jk <Esc>
+nmap jk <Esc>
+vmap jk <Esc>
 
-nnoremap <CR> :nohlsearch<cr>
+nmap d[ [m
+nmap d] ]m
+nmap c[ [[
+nmap c] ]]
+
+
+nmap <CR> :nohlsearch<cr>
 imap <c-l> <space>=><space>
-vnoremap < <gv
-vnoremap > >gv
+vmap < <gv
+vmap > >gv
 vmap <Tab> >gv
 vmap <S-Tab> <gv
-cnoremap %% <C-R>=expand('%:h').'/'<cr>
-noremap Q <nop>
-
-let g:colorizer_auto_filetype            = 'css,scss,sass,html'
+cmap %% <C-R>=expand('%:h').'/'<cr>
+nmap Q <Nop>
 
 if has("gui_running")
   set guifont=Source\ Code\ Pro\ Light:h14
@@ -391,14 +395,8 @@ if has("gui_running")
   set guioptions-=L  "remove toolbar
   set guioptions-=r  "remove toolbar
   set anti
-  set browsedir=current
-  " set columns=179
   set cursorline
-  " set lines=43
   set mousehide
-  set number
-  set numberwidth=5
-  let g:gitgutter_enabled = 1
   let &t_SI = "\<Esc>]50;CursorShape=1\x7"
   let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 endif
@@ -474,8 +472,13 @@ syntax on
 filetype on
 filetype plugin on
 filetype indent on
-" silent! colorscheme vividchalk
-colorscheme base16-twilight
+
+for _cs in ['vividchalk', 'base16-twilight']
+  try
+    execute 'colorscheme' _cs
+  catch
+  endtry
+endfor
 
 " My colorscheme overrides
 highlight LineNr ctermfg=236 ctermbg=234
