@@ -8,6 +8,10 @@
 	clean = git hawser clean %f
 	smudge = git hawser smudge %f
   required = true
+[filter "lfs"]
+	clean = git lfs clean %f
+	smudge = git lfs smudge %f
+	required = true
 [filter "media"]
   required = true
   clean = git media clean %f
@@ -71,5 +75,7 @@
   unadd = reset HEAD
   unique-authors = !git authors | sort -u
   unique-email-domains = !git email-domains | sort -u
+[rerere]
+	enabled = true
 
 ; vim: ft=gitconfig sw=2 ts=2 et
