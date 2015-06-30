@@ -41,6 +41,7 @@ if [[ "$BASH_VERSINFO" -gt "3" || -n $ZSH_VERSION ]] ; then
   __messy_path+=(/Applications/Postgres.app/Contents/Versions/9.4/bin)
   __messy_path+=(/{usr,opt}/{local,X11}/{bin,sbin} /{usr,opt}/local/heroku/bin)
   __messy_path+=($HOME/bin)
+  __messy_path+=($HOME/.linuxbrew/bin)
   __messy_path+=($(IFS=:; echo "$PATH"))
   __messy_path+=(/{usr,opt}/{bin,sbin} /{bin,sbin})
 
