@@ -24,40 +24,24 @@ if [[ ! -d "$HOME/.rvm/bin" ]] ; then
   fi
 fi
 # --------------------------------------------------------------------------
-if [[ "$BASH_VERSINFO" -gt "3" || -n $ZSH_VERSION ]] ; then
-  declare -a __messy_path
-  declare -a __cleaned_path
-  declare -A __path_check
 
-  # rvm is super picky about being first
-  if [[ -d "$HOME/.rvm/bin" ]] ; then
-    __messy_path+=($HOME/.rvm/bin)
-  elif [[ -n $RBENV_ROOT ]] ; then
-    __messy_path+=($RBENV_ROOT/bin)
+for dir in \
+  /{bin,sbin} \
+  /{usr,opt}/{bin,sbin} \
+  /{usr,opt}/{local,X11}/{bin,sbin} \
+  /{usr,opt}/local/heroku/bin \
+  /Applications/VMware\ Fusion.app/Contents/Library \
+  /Applications/Postgres.app/Contents/Versions/9.4/bin \
+  $HOME/bin \
+  $HOME/.linuxbrew/bin \
+  $RBENV_ROOT/bin \
+  $HOME/.rvm/bin
+do
+  if [[ -d "$dir" && ! $PATH =~ ^${dir}: && ! $PATH =~ :${dir}$ && ! $PATH =~ :${dir}: ]] ; then
+    export PATH="$PATH:${dir}"
   fi
+done
 
-  # Setup the path to be in a preferred order, but don't overwrite the existing path
-  __messy_path+=(/Applications/VMware\ Fusion.app/Contents/Library)
-  __messy_path+=(/Applications/Postgres.app/Contents/Versions/9.4/bin)
-  __messy_path+=(/{usr,opt}/{local,X11}/{bin,sbin} /{usr,opt}/local/heroku/bin)
-  __messy_path+=($HOME/bin)
-  __messy_path+=($HOME/.linuxbrew/bin)
-  __messy_path+=($(IFS=:; echo "$PATH"))
-  __messy_path+=(/{usr,opt}/{bin,sbin} /{bin,sbin})
-
-  for p in "${__messy_path[@]}" ; do
-    [[ -d "$p" && -z "${__path_check[$p]}" ]] || continue
-    __path_check[$p]=1
-    __cleaned_path+=($p)
-  done
-
-  PATH=$(IFS=:; echo "${__cleaned_path[*]}")
-  unset __messy_path
-  unset __cleaned_path
-  unset __path_check
-fi
-
-export PATH
 # --------------------------------------------------------------------------
 # ruby, prefer rvm over rbenv
 
