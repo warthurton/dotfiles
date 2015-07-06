@@ -55,11 +55,6 @@ elif [[ -n $RBENV_ROOT ]] ; then
   fi
 fi
 # --------------------------------------------------------------------------
-
-BASE16_SHELL="$HOME/.config/base16-shell/base16-twilight.dark.sh"
-[[ -s "$BASE16_SHELL" ]] && source "$BASE16_SHELL"
-
-# --------------------------------------------------------------------------
 # Synology NAS
 
 [[ -d "/usr/syno" ]] && export TERM=${TERM:-cons25}
@@ -106,6 +101,12 @@ if [[ -n "$SSH_AUTH_SOCK" && ! -S "$SSH_AUTH_SOCK" ]] ; then
   SSH_AUTH_SOCK=$(find /tmp/ssh-* -type s | head -1)
   export SSH_AUTH_SOCK
 fi
+
+# --------------------------------------------------------------------------
+[[ -z "$PS1" ]] && return
+
+BASE16_SHELL="$HOME/.config/base16-shell/base16-twilight.dark.sh"
+[[ -s "$BASE16_SHELL" ]] && source "$BASE16_SHELL"
 
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:
