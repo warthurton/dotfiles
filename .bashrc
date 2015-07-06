@@ -105,7 +105,7 @@ if command -v git >/dev/null 2>/dev/null ; then
     else
       branch="($(git describe --all --contains --abbrev=4 HEAD 2> /dev/null || echo HEAD))"
     fi
-    printf "%s", "$(__git_ps1)"
+    printf "%s" "$(__git_ps1)"
     return 0
   }
 fi

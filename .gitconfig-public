@@ -57,6 +57,7 @@
   hp = "!show_git_head"
   l = "!pretty_git_log"
   la = !git l --all
+  # long = log --abbrev-commit --date=relative --pretty="tformat:%h;%an;%s"
   lms = !git local-master-sync-check
   ls = ls-files
   merged = branch --merged
