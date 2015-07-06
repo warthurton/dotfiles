@@ -4,7 +4,7 @@ export HISTCONTROL=ignoreboth
 export HISTFILE="$HOME/.bash_history"
 export HISTFILESIZE=10000000
 export INPUTRC="$HOME/.bash_inputrc"
-export PS1='\t \u@\h \w \$ '
+# export PS1='\t \u@\h \w \$ '
 
 set -o emacs -o monitor -o notify
 shopt -qs checkwinsize cmdhist expand_aliases histappend hostcomplete interactive_comments nocaseglob nocasematch no_empty_cmd_completion progcomp promptvars sourcepath
