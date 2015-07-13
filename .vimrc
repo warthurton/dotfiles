@@ -1,4 +1,5 @@
 
+let g:os=substitute(system('uname'), '\n', '', '')
 let vimhome = '~/.vim/'
 set clipboard+=unnamed
 
@@ -99,6 +100,17 @@ endif
 
 let g:use_neocomplete = 0
 let g:use_youcompleteme = 0
+let g:use_airline = 0
+let g:use_dash = 0
+let g:use_ag = 0
+
+if g:os == 'Darwin'
+  let g:use_dash = 1
+endif
+
+if version >= 702
+  let g:use_airline = 1
+endif
 
 if version >= 704
   if has("lua")
@@ -108,83 +120,88 @@ if version >= 704
   endif
 endif
 
+if executable('ag')
+  let g:use_ag = 1
+  set grepprg=ag\ --nogroup\ --nocolor
+endif
+
 call plug#begin(vimhome . 'plugged')
 
 " Do I really use these?
-"
-" Plug 'tpope/vim-dispatch'
-" Plug 'tpope/vim-haml',                { 'for': 'haml' }
-" Plug 'othree/html5.vim',              { 'for': 'html' }
-" Plug 'StanAngeloff/php.vim',          { 'for': 'php' }
-" Plug 'fatih/vim-go',                  { 'for': 'go' }
-" Plug 'guns/vim-clojure-static',       { 'for': 'clojure' }
-" Plug 'ksauzz/haproxy.vim',            { 'for': 'haproxy' }
-" Plug 'kurayama/systemd-vim-syntax',   { 'for': 'systemd' }
-" Plug 'leshill/vim-json',              { 'for': 'json' }
-" Plug 'mitsuhiko/vim-python-combined', { 'for': 'python' }
-" Plug 'mutewinter/nginx.vim',          { 'for': 'nginx' }
-" Plug 'oscarh/vimerl',                 { 'for': 'erlang' }
-" Plug 'rodjek/vim-puppet',             { 'for': 'puppet' }
-" Plug 'sheerun/vim-yardoc',            { 'for': 'yard' }
-" Plug 'tpope/vim-markdown',            { 'for': 'markdown' }
-" Plug 'travitch/hasksyn',              { 'for': 'haskell' }
-" Plug 'vim-scripts/R.vim',             { 'for': 'r' }
-" Plug 'vim-scripts/ael.vim',           { 'for': 'ael' }
-" Plug 'acustodioo/vim-tmux'
-" Plug 'JulesWang/css.vim',             { 'for': [ 'css', 'sass', 'scss' ] }
-" Plug 'ap/vim-css-color',              { 'for': [ 'css', 'sass', 'scss' ] }
-" Plug 'powerman/vim-plugin-AnsiEsc'
-" Plug 'pangloss/vim-javascript',       { 'for': [ 'javascript', 'coffeescript' ] }
-" Plug 'kchmck/vim-coffee-script',      { 'for': [ 'javascript', 'coffeescript' ] }
-" Plug 'tpope/vim-rbenv',               { 'for': 'ruby' }
-" Plug 'tpope/vim-rvm',                 { 'for': 'ruby' }
-" Plug 'tpope/vim-cucumber',            { 'for': 'ruby' }
+" Plug 'Shougo/vimproc.vim',            { 'do': 'make' }
 " Plug 'ecomba/vim-ruby-refactoring',   { 'for': 'ruby' }
 " Plug 'henrik/vim-ruby-runner',        { 'for': 'ruby' }
+" Plug 'junegunn/fzf',                  { 'dir': '~/.zsh/fzf', 'do': 'yes \| ./install' }
+" Plug 'tpope/vim-dispatch'
+" Plug 'tpope/vim-rbenv',               { 'for': 'ruby' }
 " Plug 'tpope/vim-repeat'
+" Plug 'tpope/vim-rvm',                 { 'for': 'ruby' }
 " Plug 'tpope/vim-sleuth'
 " Plug 'tpope/vim-speeddating'
 " Plug 'tpope/vim-surround'
 " Plug 'vim-scripts/grep.vim'
-" Plug 'rking/ag.vim'
-" Plug 'majutsushi/tagbar'
-" Plug 'junegunn/fzf',                  { 'dir': '~/.zsh/fzf', 'do': 'yes \| ./install' }
-" Plug 'Shougo/vimproc.vim',            { 'do': 'make' }
-" Plug 'bling/vim-airline'
 
-Plug 'kana/vim-textobj-user'
-Plug 'tpope/vim-endwise',              { 'for': 'ruby' }
-Plug 'vim-ruby/vim-ruby',              { 'for': 'ruby' }
-Plug 'nelstrom/vim-textobj-rubyblock', { 'for': 'ruby' }
-Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby' }
-Plug 'tpope/vim-bundler',              { 'for': 'ruby' }
-Plug 'tpope/vim-rake',                 { 'for': 'ruby' }
-Plug 'tpope/vim-rails',                { 'for': 'ruby' }
-Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
-Plug 'tpope/vim-vividchalk'
-Plug 'chriskempson/base16-vim'
-Plug 'oplatek/Conque-Shell'
 Plug 'AndrewRadev/splitjoin.vim'
-Plug 'mbbill/undotree'
-Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
-Plug 'kien/ctrlp.vim'
-Plug 'scrooloose/nerdtree',           { 'on':  'NERDTreeToggle' }
-Plug 'scrooloose/syntastic'
+Plug 'bling/vim-bufferline'
+Plug 'chriskempson/base16-vim'
 Plug 'godlygeek/tabular'
+Plug 'kana/vim-textobj-user'
+Plug 'kien/ctrlp.vim'
+Plug 'majutsushi/tagbar'
+Plug 'mbbill/undotree'
+Plug 'oplatek/Conque-Shell'
+Plug 'powerman/vim-plugin-AnsiEsc'
+Plug 'scrooloose/nerdtree',            { 'on':  'NERDTreeToggle' }
+Plug 'scrooloose/syntastic'
 Plug 'tomtom/tcomment_vim'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-vividchalk'
 
-if has("python")
-  Plug 'powerline/powerline', { 'rtp': 'powerline/bindings/vim/', 'do': 'pip install --upgrade powerline-status' }
+Plug 'JulesWang/css.vim',              { 'for': [ 'css', 'sass', 'scss' ] }
+Plug 'acustodioo/vim-tmux',            { 'for': 'tmux' }
+Plug 'fatih/vim-go',                   { 'for': 'go' }
+Plug 'kchmck/vim-coffee-script',       { 'for': 'coffeescript' }
+Plug 'ksauzz/haproxy.vim',             { 'for': 'haproxy' }
+Plug 'kurayama/systemd-vim-syntax',    { 'for': 'systemd' }
+Plug 'leshill/vim-json',               { 'for': 'json' }
+Plug 'mitsuhiko/vim-python-combined',  { 'for': 'python' }
+Plug 'mutewinter/nginx.vim',           { 'for': 'nginx' }
+Plug 'nelstrom/vim-textobj-rubyblock', { 'for': 'ruby' }
+Plug 'othree/html5.vim',               { 'for': 'html' }
+Plug 'pangloss/vim-javascript',        { 'for': 'javascript' }
+Plug 'sheerun/vim-yardoc',             { 'for': 'yard' }
+Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby' }
+Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
+Plug 'tpope/vim-bundler',              { 'for': 'ruby' }
+Plug 'tpope/vim-cucumber',             { 'for': 'ruby' }
+Plug 'tpope/vim-endwise',              { 'for': 'ruby' }
+Plug 'tpope/vim-haml',                 { 'for': 'haml' }
+Plug 'tpope/vim-markdown',             { 'for': 'markdown' }
+Plug 'tpope/vim-rails',                { 'for': 'ruby' }
+Plug 'tpope/vim-rake',                 { 'for': 'ruby' }
+Plug 'vim-ruby/vim-ruby',              { 'for': 'ruby' }
+
+if g:use_ag == 1
+  Plug 'rking/ag.vim'
 endif
 
-if g:use_neocomplete > 0
+if g:use_dash == 1
+  Plug 'rizzatti/dash.vim'
+endif
+
+if g:use_airline == 1
+  Plug 'bling/vim-airline'
+endif
+
+if g:use_neocomplete == 1
   Plug 'Shougo/neocomplete.vim'
 endif
 
-if g:use_youcompleteme > 0
+if g:use_youcompleteme == 1
   Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
 endif
+
 
 call plug#end()
 
@@ -193,21 +210,24 @@ set viminfo='512,<4096,s512,/512,:512,n~/.vim/viminfo
 runtime macros/matchit.vim
 
 " airline
-let g:airline_theme                       = 'badwolf'
-let g:airline_powerline_fonts             = 0
 let g:airline_left_sep                    = ''
 let g:airline_right_sep                   = ''
+let g:airline#extensions#branch#format = 1
+let g:airline#extensions#bufferline#enabled = 1
+let g:airline#extensions#syntastic#enabled = 1
 let g:airline#extensions#tabline#enabled  = 1
+let g:airline#extensions#tagbar#enabled = 1
 let g:airline#extensions#tmuxline#enabled = 1
 
 " base16
-let base16colorspace = 256
+if &term == 'xterm-256color' || &term == 'screen-256color' || &t_Co == 256
+  let base16colorspace = 256
+endif
 
 " ctrlp
 let g:ctrlp_show_hidden                   = 1
 let g:ctrlp_extensions                    = ['funky']
-if executable('ag')
-  set grepprg=ag\ --nogroup\ --nocolor
+if g:use_ag == 1
   let g:ctrlp_user_command        = 'ag %s -l --nocolor -g ""'
   let g:ctrlp_use_caching         = 0
 else
