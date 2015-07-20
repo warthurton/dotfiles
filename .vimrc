@@ -39,7 +39,6 @@ set ignorecase
 set incsearch
 set laststatus=2
 set lazyredraw
-" set linespace=0
 set list
 set listchars=""          " Reset the listchars
 set listchars+=tab:\ \    " a tab should display as "  ", trailing whitespace as "."
@@ -77,10 +76,6 @@ set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe,*.dll
 set wildmenu
 set wildmode=longest,list
 set writebackup
-" set winwidth=84 " We have to have a winheight bigger than we want to set winminheight. But if we set winheight to be huge before winminheight, the winminheight set will fail.
-" set winheight=5
-" set winminheight=5
-" set winheight=999
 
 if has('persistent_undo')
   let &undodir = expand(vimhome . 'undo')
@@ -98,19 +93,15 @@ if has("ruby")
   compiler ruby
 endif
 
-let g:use_neocomplete = 0
+let g:use_ag            = 0
+let g:use_airline       = 0
+let g:use_dash          = 0
+let g:use_neocomplete   = 0
+let g:use_supertab      = 0
 let g:use_youcompleteme = 0
-let g:use_airline = 0
-let g:use_dash = 0
-let g:use_ag = 0
 
-if g:os == 'Darwin'
-  let g:use_dash = 1
-endif
-
-if version >= 702
-  let g:use_airline = 1
-endif
+if version >= 702          | let g:use_airline   = 1 | endif
+if g:os == 'Darwin'        | let g:use_dash      = 1 | endif
 
 if version >= 704
   if has("lua")
@@ -118,143 +109,145 @@ if version >= 704
   else
     let g:use_youcompleteme = 1
   endif
+else
+  let g:use_supertab = 1
 endif
 
 if executable('ag')
   let g:use_ag = 1
-  set grepprg=ag\ --nogroup\ --nocolor
+  set grepprg=ag\ --nogroup\ --nocolor\ --numbers\ $*\ /dev/null
 endif
 
 call plug#begin(vimhome . 'plugged')
 
 " Do I really use these?
 " Plug 'Shougo/vimproc.vim',            { 'do': 'make' }
+" Plug 'oplatek/Conque-Shell'
 " Plug 'ecomba/vim-ruby-refactoring',   { 'for': 'ruby' }
 " Plug 'henrik/vim-ruby-runner',        { 'for': 'ruby' }
 " Plug 'junegunn/fzf',                  { 'dir': '~/.zsh/fzf', 'do': 'yes \| ./install' }
 " Plug 'tpope/vim-dispatch'
-" Plug 'tpope/vim-rbenv',               { 'for': 'ruby' }
 " Plug 'tpope/vim-repeat'
-" Plug 'tpope/vim-rvm',                 { 'for': 'ruby' }
 " Plug 'tpope/vim-sleuth'
 " Plug 'tpope/vim-speeddating'
 " Plug 'tpope/vim-surround'
 " Plug 'vim-scripts/grep.vim'
 
 Plug 'AndrewRadev/splitjoin.vim'
+Plug 'JulesWang/css.vim',              { 'for': [ 'css', 'sass', 'scss' ] }
+Plug 'Shougo/vimshell.vim'
+Plug 'acustodioo/vim-tmux',            { 'for': 'tmux' }
 Plug 'airblade/vim-gitgutter'
 Plug 'bling/vim-bufferline'
 Plug 'chriskempson/base16-vim'
+Plug 'fatih/vim-go',                   { 'for': 'go' }
 Plug 'godlygeek/tabular'
 Plug 'kana/vim-textobj-user'
-Plug 'kien/ctrlp.vim'
-Plug 'majutsushi/tagbar'
-Plug 'mbbill/undotree'
-Plug 'oplatek/Conque-Shell'
-Plug 'powerman/vim-plugin-AnsiEsc'
-Plug 'scrooloose/nerdtree',            { 'on':  'NERDTreeToggle' }
-Plug 'scrooloose/syntastic'
-Plug 'tomtom/tcomment_vim'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-vividchalk'
-
-Plug 'JulesWang/css.vim',              { 'for': [ 'css', 'sass', 'scss' ] }
-Plug 'acustodioo/vim-tmux',            { 'for': 'tmux' }
-Plug 'fatih/vim-go',                   { 'for': 'go' }
 Plug 'kchmck/vim-coffee-script',       { 'for': 'coffeescript' }
+Plug 'kien/ctrlp.vim'
 Plug 'ksauzz/haproxy.vim',             { 'for': 'haproxy' }
 Plug 'kurayama/systemd-vim-syntax',    { 'for': 'systemd' }
 Plug 'leshill/vim-json',               { 'for': 'json' }
+Plug 'majutsushi/tagbar'
+Plug 'mbbill/undotree'
 Plug 'mitsuhiko/vim-python-combined',  { 'for': 'python' }
 Plug 'mutewinter/nginx.vim',           { 'for': 'nginx' }
 Plug 'nelstrom/vim-textobj-rubyblock', { 'for': 'ruby' }
 Plug 'othree/html5.vim',               { 'for': 'html' }
 Plug 'pangloss/vim-javascript',        { 'for': 'javascript' }
+Plug 'powerman/vim-plugin-AnsiEsc'
+Plug 'scrooloose/nerdtree',            { 'on':  'NERDTreeToggle' }
+Plug 'scrooloose/syntastic',           { 'do': 'gem install rubocop' }
 Plug 'sheerun/vim-yardoc',             { 'for': 'yard' }
-Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby' }
+Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby', 'do': 'gem install rcodetools' }
 Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
+Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-bundler',              { 'for': 'ruby' }
 Plug 'tpope/vim-cucumber',             { 'for': 'ruby' }
 Plug 'tpope/vim-endwise',              { 'for': 'ruby' }
+Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-haml',                 { 'for': 'haml' }
 Plug 'tpope/vim-markdown',             { 'for': 'markdown' }
 Plug 'tpope/vim-rails',                { 'for': 'ruby' }
 Plug 'tpope/vim-rake',                 { 'for': 'ruby' }
+Plug 'tpope/vim-vividchalk'
 Plug 'vim-ruby/vim-ruby',              { 'for': 'ruby' }
 
-if g:use_ag == 1
-  Plug 'rking/ag.vim'
-endif
-
-if g:use_dash == 1
-  Plug 'rizzatti/dash.vim'
-endif
-
-if g:use_airline == 1
-  Plug 'bling/vim-airline'
-endif
-
-if g:use_neocomplete == 1
-  Plug 'Shougo/neocomplete.vim'
-endif
-
-if g:use_youcompleteme == 1
-  Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
-endif
-
+if g:use_airline == 1       | Plug 'bling/vim-airline'                                | endif
+if g:use_ag == 1            | Plug 'rking/ag.vim'                                     | endif
+if g:use_dash == 1          | Plug 'rizzatti/dash.vim'                                | endif
+if g:use_neocomplete == 1   | Plug 'Shougo/neocomplete.vim'                           | endif
+if g:use_youcompleteme == 1 | Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' } | endif
+if g:use_supertab == 1      | Plug 'ervandew/supertab'                                | endif
 
 call plug#end()
-
 set viminfo='512,<4096,s512,/512,:512,n~/.vim/viminfo
-
 runtime macros/matchit.vim
 
-" airline
-let g:airline_left_sep                    = ''
-let g:airline_right_sep                   = ''
-let g:airline#extensions#branch#format = 1
-let g:airline#extensions#bufferline#enabled = 1
-let g:airline#extensions#syntastic#enabled = 1
-let g:airline#extensions#tabline#enabled  = 1
-let g:airline#extensions#tagbar#enabled = 1
-let g:airline#extensions#tmuxline#enabled = 1
 
-" base16
+" AndrewRadev/splitjoin.vim
+nmap <leader>sj :SplitjoinJoin<cr>
+nmap <leader>ss :SplitjoinSplit<cr>
+
+
+" airblade/vim-gitgutter
+highlight clear SignColumn
+let g:gitgutter_eager     = 0
+let g:gitgutter_enabled   = 1
+let g:gitgutter_max_signs = 10000
+let g:gitgutter_realtime  = 0
+
+
+" bling/vim-bufferline
+let g:bufferline_active_buffer_left  = '['
+let g:bufferline_active_buffer_right = ']'
+let g:bufferline_echo                = 1
+let g:bufferline_modified            = '+'
+let g:bufferline_rotate              = 0
+let g:bufferline_show_bufnr          = 1
+let g:bufferline_solo_highlight      = 1
+
+
+" chriskempson/base16-vim
 if &term == 'xterm-256color' || &term == 'screen-256color' || &t_Co == 256
   let base16colorspace = 256
 endif
 
-" ctrlp
-let g:ctrlp_show_hidden                   = 1
-let g:ctrlp_extensions                    = ['funky']
+
+" godlygeek/tabular
+nmap <leader>a= :Tabularize /=<CR>
+vmap <leader>a= :Tabularize /=<CR>
+nmap <leader>a: :Tabularize /:\zs<CR>
+vmap <leader>a: :Tabularize /:\zs<CR>
+
+
+" kien/ctrlp.vim
+let g:ctrlp_extensions     = ['funky']
+let g:ctrlp_map            = '<c-t>'
+let g:ctrlp_match_window   = 'bottom,order:btt,min:1,max:20,results:20'
+let g:ctrlp_show_hidden    = 1
+let g:ctrlp_use_caching    = 0
 if g:use_ag == 1
-  let g:ctrlp_user_command        = 'ag %s -l --nocolor -g ""'
-  let g:ctrlp_use_caching         = 0
-else
-  let g:ctrlp_cache_dir           = cachedir.'/ctrlp'
-  let g:ctrlp_use_caching         = 1
-  let g:ctrlp_clear_cache_on_exit = 1
+  let g:ctrlp_user_command = 'ag --files-with-matches --nocolor -g "" %s'
 endif
 
-" gitgutter
-highlight clear SignColumn
-let g:gitgutter_enabled                   = 1
-let g:gitgutter_realtime                  = 0
-let g:gitgutter_eager                     = 0
-let g:gitgutter_max_signs                 = 10000
 
-" nerdtree
+" majutsushi/tagbar
+nmap <leader>t :TagbarToggle<CR>
+vmap <leader>t :TagbarToggle<CR>
+
+
+" mbbill/undotree
+nmap <leader>u :UndotreeToggle<CR>
+vmap <leader>u :UndotreeToggle<CR>
+
+
+" scrooloose/nerdtree
 nmap <leader>n :NERDTreeToggle<CR>
 vmap <leader>n :NERDTreeToggle<CR>
 
-" rspec
-let g:rspec_command = "compiler rspec | set makeprg=zeus | Make rspec {spec}"
-map <leader>ra :call RunAllSpecs()<CR>
-map <leader>rl :call RunLastSpec()<CR>
-map <leader>rr :call RunCurrentSpecFile()<CR>
-map <leader>rs :call RunNearestSpec()<CR>
 
-" syntastic
+" scrooloose/syntastic
 let g:syntastic_auto_jump                = 1
 let g:syntastic_auto_loc_list            = 1
 let g:syntastic_auto_loc_list            = 1 " Close the location-list when errors are gone
@@ -262,43 +255,48 @@ let g:syntastic_check_on_open            = 0
 let g:syntastic_enable_signs             = 1
 let g:syntastic_error_symbol             = '✗✗'
 let g:syntastic_loc_list_height          = 5
-let g:syntastic_ruby_checkers            = ['rubocop', 'mri']
-let g:syntastic_ruby_rubocop_args        = '--display-cop-names --only-guide-cops --except Metrics/LineLength,Style/Documentation,Metrics/MethodLength,Metrics/BlockNesting, Style/HashSyntax, Style/BlockDelimiters '
-let g:syntastic_sass_checkers            = ['sass']
-let g:syntastic_scss_checkers            = ['sass']
 let g:syntastic_sh_shellcheck_args       = '--exclude=SC2001'
 let g:syntastic_sh_checkers              = ['shellcheck', 'sh']
 let g:syntastic_style_error_symbol       = '✗'
 let g:syntastic_style_warning_symbol     = '⚠'
 let g:syntastic_warning_symbol           = '⚠⚠'
-let g:syntastic_xml_checkers             = ['xmllint']
-let g:syntastic_xslt_checkers            = ['xmllint']
+let g:syntastic_ruby_checkers            = ['rubocop', 'mri']
+let g:syntastic_ruby_rubocop_args        = '--display-cop-names --only-guide-cops --except "Metrics/LineLength, Style/Documentation, Metrics/MethodLength, Metrics/BlockNesting, Style/HashSyntax, Style/BlockDelimiters, Style/StringLiterals"'
 
-" tabular
-nmap <leader>a= :Tabularize /=<CR>
-vmap <leader>a= :Tabularize /=<CR>
-nmap <leader>a: :Tabularize /:\zs<CR>
-vmap <leader>a: :Tabularize /:\zs<CR>
+" t9md/vim-ruby-xmpfilter
+let g:xmpfilter_cmd = "xmpfilter --annotations --rails"
 
-" tagbar
-nmap <leader>t :TagbarToggle<CR>
-vmap <leader>t :TagbarToggle<CR>
 
-" undotree
-nmap <leader>u :UndotreeToggle<CR>
-vmap <leader>u :UndotreeToggle<CR>
+" thoughtbot/vim-rspec
+let g:rspec_command = "compiler rspec | set makeprg=zeus | Make rspec {spec}"
+map <leader>ra :call RunAllSpecs()<CR>
+map <leader>rl :call RunLastSpec()<CR>
+map <leader>rr :call RunCurrentSpecFile()<CR>
+map <leader>rs :call RunNearestSpec()<CR>
 
-" tcomment
+
+" tomtom/tcomment_vim
 map \\ gcc
 vmap \\ gc
-
 if !exists('g:tcomment_types')
   let g:tcomment_types = {}
 endif
 let g:tcomment_types = { 'java' : '// %s' }
 let g:tcomment_types = { 'tmux' : '# %s' }
 
-" neocomplete
+
+" bling/vim-airline
+let g:airline_left_sep                      = ''
+let g:airline_right_sep                     = ''
+let g:airline#extensions#branch#format      = 1
+let g:airline#extensions#bufferline#enabled = 1
+let g:airline#extensions#syntastic#enabled  = 1
+let g:airline#extensions#tabline#enabled    = 1
+let g:airline#extensions#tagbar#enabled     = 1
+let g:airline#extensions#tmuxline#enabled   = 1
+
+
+" Shougo/neocomplete.vim
 if g:use_neocomplete
   let g:neocomplete#data_directory                    = cachedir.'/neocomplete'
   let g:neocomplete#auto_completion_start_length      = 2
@@ -314,7 +312,6 @@ if g:use_neocomplete
   let g:neocomplete#force_overwrite_completefunc      = 1
   let g:neocomplete#keyword_patterns                  = {}
   let g:neocomplete#keyword_patterns._                = '\h\w*'
-  let g:neocomplete#keyword_patterns.perl             = '\h\w*->\h\w*\|\h\w*::\w*'
   let g:neocomplete#lock_buffer_name_pattern          = '\*ku\*'
   let g:neocomplete#manual_completion_start_length    = 0
   let g:neocomplete#min_keyword_length                = 3
@@ -322,9 +319,6 @@ if g:use_neocomplete
   let g:neocomplete#same_filetypes._                  = '_'
   let g:neocomplete#same_filetypes.gitconfig          = '_'
   let g:neocomplete#sources#omni#input_patterns       = {}
-  let g:neocomplete#sources#omni#input_patterns.c     = '[^.[:digit:] *\t]\%(\.\|->\)'
-  let g:neocomplete#sources#omni#input_patterns.cpp   = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-  let g:neocomplete#sources#omni#input_patterns.php   = '[^. \t]->\h\w*\|\h\w*::'
   let g:neocomplete#sources#syntax#min_keyword_length = 4
 
   let g:neocomplete#sources#dictionary#dictionaries = {
@@ -332,8 +326,8 @@ if g:use_neocomplete
       \ 'vimshell' : expand(vimhome . 'vimshell')
       \ }
 
-  inoremap <expr><C-g> neocomplete#undo_completion()
-  inoremap <expr><C-l> neocomplete#complete_common_string()
+  " inoremap <expr><C-g> neocomplete#undo_completion()
+  " inoremap <expr><C-l> neocomplete#complete_common_string()
   inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
   function! s:my_cr_function()
     return pumvisible() ? neocomplete#close_popup() : "\<CR>"
@@ -344,11 +338,9 @@ if g:use_neocomplete
   "" <C-h>, <BS>: close popup and delete backword char.
   inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
   inoremap <expr><BS>  neocomplete#smart_close_popup()."\<C-h>"
-  inoremap <expr><C-y> neocomplete#close_popup()
-  inoremap <expr><C-e> neocomplete#cancel_popup()
-endif
+  " inoremap <expr><C-y> neocomplete#close_popup()
+  " inoremap <expr><C-e> neocomplete#cancel_popup()
 
-if has('autocmd')
   augroup OmniCompleteModes
     autocmd!
     autocmd FileType python        nested setlocal omnifunc=pythoncomplete#Complete
@@ -358,27 +350,56 @@ if has('autocmd')
     autocmd FileType javascript    nested setlocal omnifunc=javascriptcomplete#CompleteJS
     autocmd FileType xml           nested setlocal omnifunc=xmlcomplete#CompleteTags
   augroup END
+
 endif
 
-" xmpfilter
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has('autocmd')
-  autocmd FileType ruby nmap <buffer> <leader>xm <Plug>(xmpfilter-mark)
-  autocmd FileType ruby xmap <buffer> <leader>xm <Plug>(xmpfilter-mark)
-  autocmd FileType ruby imap <buffer> <leader>xm <Plug>(xmpfilter-mark)
+  augroup Ruby
+    autocmd!
+    autocmd FileType ruby nmap <buffer> <F5> <Plug>(xmpfilter-mark)
+    autocmd FileType ruby imap <buffer> <F5> <Plug>(xmpfilter-mark)
+    autocmd FileType ruby vmap <buffer> <F5> <Plug>(xmpfilter-mark)
+    autocmd FileType ruby nmap <buffer> <F6> <Plug>(xmpfilter-run)
+    autocmd FileType ruby imap <buffer> <F6> <Plug>(xmpfilter-run)
+    autocmd FileType ruby vmap <buffer> <F6> <Plug>(xmpfilter-run)
 
-  autocmd FileType ruby nmap <buffer> <leader>xr <Plug>(xmpfilter-run)
-  autocmd FileType ruby xmap <buffer> <leader>xr <Plug>(xmpfilter-run)
-  autocmd FileType ruby imap <buffer> <leader>xr <Plug>(xmpfilter-run)
+    " autocmd BufNewFile,BufRead *.cap      nested setlocal filetype=ruby
+    " autocmd BufNewFile,BufRead *.thor     nested setlocal filetype=ruby
+    " autocmd BufNewFile,BufRead *.html.erb nested setlocal filetype=eruby.html
+    " autocmd BufNewFile,BufRead *.js.erb   nested setlocal filetype=eruby.javascript
+    " autocmd BufNewFile,BufRead *.rb.erb   nested setlocal filetype=eruby.ruby
+    " autocmd BufNewFile,BufRead *.sh.erb   nested setlocal filetype=eruby.sh
+    " autocmd BufNewFile,BufRead *.yml.erb  nested setlocal filetype=eruby.yaml
+    " autocmd BufNewFile,BufRead *.txt.erb  nested setlocal filetype=eruby.text
+  augroup END
+
+  augroup GitCommits
+    autocmd!
+    autocmd FileType gitcommit            nested setlocal nospell
+    autocmd VimEnter .git/PULLREQ_EDITMSG nested setlocal filetype=markdown
+  augroup END
+
+  augroup gitCommitEditMsg
+    autocmd!
+    autocmd BufReadPost *
+      \ if @% == '.git/COMMIT_EDITMSG' |
+      \   exe "normal gg" |
+      \ endif
+  augroup END
+
+  augroup vimrcEx
+    autocmd!
+    autocmd BufReadPost *
+      \ if line("'\"") > 0 && line("'\"") <= line("$") |
+      \   exe "normal g`\"" |
+      \ endif
+  augroup END
+
 endif
 
-map <leader>' ""yls<c-r>={'"': "'", "'": '"'}[@"]<cr><esc>
-map <leader>[ gt
-map <leader>] gT
-map <leader>e :edit %%
-map <leader>v :view %%
-
-command! KillWhitespace :normal :%s/ *$//g<cr><c-o><cr>
-
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " i just don't hate myself enough
 " nnoremap <left> <C-w>h
 " nnoremap <right> <C-w>l
@@ -388,106 +409,27 @@ command! KillWhitespace :normal :%s/ *$//g<cr><c-o><cr>
 " inoremap <down> <nop>
 " inoremap <left> <nop>
 " inoremap <right> <nop>
+nmap Q <nop>
 
 imap jk <Esc>
 nmap jk <Esc>
 vmap jk <Esc>
 
+nmap <leader>[ gt
+nmap <leader>] gT
 nmap d[ [m
 nmap d] ]m
 nmap c[ [[
 nmap c] ]]
 
-
 nmap <CR> :nohlsearch<cr>
-imap <c-l> <space>=><space>
 vmap < <gv
 vmap > >gv
 vmap <Tab> >gv
 vmap <S-Tab> <gv
 cmap %% <C-R>=expand('%:h').'/'<cr>
-nmap Q <Nop>
 
-if has("gui_running")
-  set guifont=Source\ Code\ Pro\ Light:h14
-  set guioptions-=m  "remove menu bar
-  set guioptions-=T  "remove toolbar
-  set guioptions-=L  "remove toolbar
-  set guioptions-=r  "remove toolbar
-  set anti
-  set cursorline
-  set mousehide
-  let &t_SI = "\<Esc>]50;CursorShape=1\x7"
-  let &t_EI = "\<Esc>]50;CursorShape=0\x7"
-endif
-
-if has('autocmd')
-  autocmd FileType ruby,haml,eruby,yaml,html,sass,cucumber,java,jsp,xml set ai sw=2 sts=2 et
-
-  augroup Ruby
-    autocmd!
-    autocmd FileType ruby compiler ruby
-    autocmd FileType ruby,eruby nested setlocal cinwords=do
-    autocmd FileType ruby,eruby nested let g:rubycomplete_buffer_loading = 0
-    autocmd FileType ruby,eruby nested let g:rubycomplete_rails = 1
-    autocmd FileType ruby,eruby nested let g:rubycomplete_classes_in_global = 1
-
-    " Other ruby
-    autocmd BufNewFile,BufRead *.cap      nested setlocal filetype=ruby
-    autocmd BufNewFile,BufRead *.thor     nested setlocal filetype=ruby
-    autocmd BufNewFile,BufRead *.html.erb nested setlocal filetype=eruby.html
-    autocmd BufNewFile,BufRead *.js.erb   nested setlocal filetype=eruby.javascript
-    autocmd BufNewFile,BufRead *.rb.erb   nested setlocal filetype=eruby.ruby
-    autocmd BufNewFile,BufRead *.sh.erb   nested setlocal filetype=eruby.sh
-    autocmd BufNewFile,BufRead *.yml.erb  nested setlocal filetype=eruby.yaml
-    autocmd BufNewFile,BufRead *.txt.erb  nested setlocal filetype=eruby.text
-  augroup END
-
-  augroup CandFriends
-    autocmd!
-    autocmd FileType java,c,cpp,objc nested setlocal smartindent expandtab shiftwidth=2 softtabstop=2
-  augroup END
-
-  augroup JavaScript
-    autocmd!
-    autocmd FileType javascript nested setlocal smartindent expandtab shiftwidth=4 softtabstop=4
-    if has('conceal')
-      autocmd FileType json nested setlocal concealcursor= conceallevel=1
-    endif
-  augroup END
-
-  augroup GitCommits
-    autocmd!
-    autocmd FileType gitcommit            nested setlocal nospell
-    autocmd VimEnter .git/PULLREQ_EDITMSG nested setlocal filetype=markdown
-  augroup END
-
-  augroup vimrcEx
-    au!
-    " When editing a file, always jump to the last known cursor position.
-    " Don't do it when the position is invalid or when inside an event handler
-    " (happens when dropping a file on gvim).
-    autocmd BufReadPost *
-      \ if line("'\"") > 0 && line("'\"") <= line("$") |
-      \   exe "normal g`\"" |
-      \ endif
-  augroup END
-
-  " autocmd BufWritePre {*.rb,*.js,*.coffee,*.scss,*.sass,*.haml,*.java,*.jsp} :%s/\s\+$//e
-  " autocmd BufEnter * lcd %:p:h
-
-endif
-
-function! ToTab(cmd)
-  redir => message
-  silent execute a:cmd
-  redir END
-  tabnew
-  silent put=message
-  set nomodified
-endfunction
-command! -nargs=+ -complete=command TabMessage call TabMessage(<q-args>)
-
+command! KillWhitespace :normal :%s/ *$//g<cr><c-o><cr>
 syntax on
 filetype on
 filetype plugin on
@@ -502,4 +444,19 @@ endfor
 
 " My colorscheme overrides
 highlight LineNr ctermfg=236 ctermbg=234
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("gui_running")
+  set guifont=Source\ Code\ Pro\ Light:h14
+  set guioptions-=m  "remove menu bar
+  set guioptions-=T  "remove toolbar
+  set guioptions-=L  "remove toolbar
+  set guioptions-=r  "remove toolbar
+  set anti
+  set cursorline
+  set mousehide
+  let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+  let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+endif
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
