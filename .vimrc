@@ -30,6 +30,7 @@ set noex
 set encoding=utf-8
 set noerrorbells
 set expandtab
+set exrc
 set nofoldenable
 set formatoptions=rq
 set nohidden
@@ -54,6 +55,7 @@ set number
 set numberwidth=6
 set ruler
 set scrolloff=3
+set secure
 set shiftwidth=2
 set shortmess+=I
 set showcmd
@@ -69,6 +71,8 @@ set splitright
 set tabstop=2
 set noterse
 set visualbell
+set tags+=tags
+set tags+=gems.tags
 set t_Co=256
 set t_vb=
 set wildignore+=*/.cache/*,*/tmp/*,*/.git/*,*/.neocon/*,*.log,*.so,*.swp,*.zip,*.gz,*.bz2,*.bmp,*.ppt
@@ -126,7 +130,6 @@ call plug#begin(vimhome . 'plugged')
 " Plug 'ecomba/vim-ruby-refactoring',   { 'for': 'ruby' }
 " Plug 'henrik/vim-ruby-runner',        { 'for': 'ruby' }
 " Plug 'junegunn/fzf',                  { 'dir': '~/.zsh/fzf', 'do': 'yes \| ./install' }
-" Plug 'tpope/vim-dispatch'
 " Plug 'tpope/vim-repeat'
 " Plug 'tpope/vim-sleuth'
 " Plug 'tpope/vim-speeddating'
@@ -140,6 +143,7 @@ Plug 'acustodioo/vim-tmux',            { 'for': 'tmux' }
 Plug 'airblade/vim-gitgutter'
 Plug 'bling/vim-bufferline'
 Plug 'chriskempson/base16-vim'
+Plug 'chrisbra/NrrwRgn'
 Plug 'fatih/vim-go',                   { 'for': 'go' }
 Plug 'godlygeek/tabular'
 Plug 'kana/vim-textobj-user'
@@ -159,11 +163,14 @@ Plug 'powerman/vim-plugin-AnsiEsc'
 Plug 'scrooloose/nerdtree',            { 'on':  'NERDTreeToggle' }
 Plug 'scrooloose/syntastic',           { 'do': 'gem install rubocop' }
 Plug 'sheerun/vim-yardoc',             { 'for': 'yard' }
+Plug 'szw/vim-ctrlspace'
+Plug 'szw/vim-tags'
 Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby', 'do': 'gem install rcodetools' }
 Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
 Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-bundler',              { 'for': 'ruby' }
 Plug 'tpope/vim-cucumber',             { 'for': 'ruby' }
+Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-endwise',              { 'for': 'ruby' }
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-haml',                 { 'for': 'haml' }
@@ -185,20 +192,46 @@ set viminfo='512,<4096,s512,/512,:512,n~/.vim/viminfo
 runtime macros/matchit.vim
 
 
-" AndrewRadev/splitjoin.vim
-nmap <leader>sj :SplitjoinJoin<cr>
-nmap <leader>ss :SplitjoinSplit<cr>
+" airline
+let g:airline_detect_crypt                         = 1
+let g:airline_detect_iminsert                      = 0
+let g:airline_detect_modified                      = 1
+let g:airline_detect_paste                         = 1
+let g:airline_inactive_collapse                    = 1
+let g:airline_powerline_fonts                      = 0
+let g:airline_left_sep                             = ''
+let g:airline_right_sep                            = ''
+let g:airline#extensions#branch#format             = 1
+let g:airline#extensions#bufferline#enabled        = 1
+let g:airline#extensions#ctrlspace#enabled         = 1
+let g:airline#extensions#nrrwrgn#enabled           = 1
+let g:airline#extensions#syntastic#enabled         = 1
+let g:airline#extensions#tabline#enabled           = 0
+let g:airline#extensions#tagbar#enabled            = 1
+let g:airline#extensions#tmuxline#enabled          = 1
+" let g:airline#extensions#tabline#show_close_button = 0
+" let g:airline#extensions#tabline#buffer_idx_mode   = 1
+" let g:airline#extensions#tabline#show_buffers      = 1
+" let g:airline#extensions#tabline#show_tabs         = 1
+let g:airline_section_b                            = '%{getcwd()}'
+" nmap <leader>1 <Plug>AirlineSelectTab1
+" nmap <leader>2 <Plug>AirlineSelectTab2
+" nmap <leader>3 <Plug>AirlineSelectTab3
+" nmap <leader>4 <Plug>AirlineSelectTab4
+" nmap <leader>5 <Plug>AirlineSelectTab5
+" nmap <leader>6 <Plug>AirlineSelectTab6
+" nmap <leader>7 <Plug>AirlineSelectTab7
+" nmap <leader>8 <Plug>AirlineSelectTab8
+" nmap <leader>9 <Plug>AirlineSelectTab9
 
 
-" airblade/vim-gitgutter
-highlight clear SignColumn
-let g:gitgutter_eager     = 0
-let g:gitgutter_enabled   = 1
-let g:gitgutter_max_signs = 10000
-let g:gitgutter_realtime  = 0
+" base16-vim
+if &term == 'xterm-256color' || &term == 'screen-256color' || &t_Co == 256
+  let base16colorspace = 256
+endif
 
 
-" bling/vim-bufferline
+" bufferline
 let g:bufferline_active_buffer_left  = '['
 let g:bufferline_active_buffer_right = ']'
 let g:bufferline_echo                = 1
@@ -208,20 +241,7 @@ let g:bufferline_show_bufnr          = 1
 let g:bufferline_solo_highlight      = 1
 
 
-" chriskempson/base16-vim
-if &term == 'xterm-256color' || &term == 'screen-256color' || &t_Co == 256
-  let base16colorspace = 256
-endif
-
-
-" godlygeek/tabular
-nmap <leader>a= :Tabularize /=<CR>
-vmap <leader>a= :Tabularize /=<CR>
-nmap <leader>a: :Tabularize /:\zs<CR>
-vmap <leader>a: :Tabularize /:\zs<CR>
-
-
-" kien/ctrlp.vim
+" ctrlp.vim
 let g:ctrlp_extensions     = ['funky']
 let g:ctrlp_map            = '<c-t>'
 let g:ctrlp_match_window   = 'bottom,order:btt,min:1,max:20,results:20'
@@ -230,75 +250,20 @@ let g:ctrlp_use_caching    = 0
 if g:use_ag == 1
   let g:ctrlp_user_command = 'ag --files-with-matches --nocolor -g "" %s'
 endif
+nnoremap <leader>. :CtrlPTag<cr>
 
 
-" majutsushi/tagbar
-nmap <leader>t :TagbarToggle<CR>
-vmap <leader>t :TagbarToggle<CR>
+" gitgutter
+highlight clear SignColumn
+let g:gitgutter_eager     = 0
+let g:gitgutter_enabled   = 1
+let g:gitgutter_max_signs = 10000
+let g:gitgutter_realtime  = 0
 
 
-" mbbill/undotree
-nmap <leader>u :UndotreeToggle<CR>
-vmap <leader>u :UndotreeToggle<CR>
-
-
-" scrooloose/nerdtree
-nmap <leader>n :NERDTreeToggle<CR>
-vmap <leader>n :NERDTreeToggle<CR>
-
-
-" scrooloose/syntastic
-let g:syntastic_auto_jump                = 1
-let g:syntastic_auto_loc_list            = 1
-let g:syntastic_auto_loc_list            = 1 " Close the location-list when errors are gone
-let g:syntastic_check_on_open            = 0
-let g:syntastic_enable_signs             = 1
-let g:syntastic_error_symbol             = '✗✗'
-let g:syntastic_loc_list_height          = 5
-let g:syntastic_sh_shellcheck_args       = '--exclude=SC2001'
-let g:syntastic_sh_checkers              = ['shellcheck', 'sh']
-let g:syntastic_style_error_symbol       = '✗'
-let g:syntastic_style_warning_symbol     = '⚠'
-let g:syntastic_warning_symbol           = '⚠⚠'
-let g:syntastic_ruby_checkers            = ['rubocop', 'mri']
-let g:syntastic_ruby_rubocop_args        = '--display-cop-names --only-guide-cops --except "Metrics/LineLength, Style/Documentation, Metrics/MethodLength, Metrics/BlockNesting, Style/HashSyntax, Style/BlockDelimiters, Style/StringLiterals"'
-
-" t9md/vim-ruby-xmpfilter
-let g:xmpfilter_cmd = "xmpfilter --annotations --rails"
-
-
-" thoughtbot/vim-rspec
-let g:rspec_command = "compiler rspec | set makeprg=zeus | Make rspec {spec}"
-map <leader>ra :call RunAllSpecs()<CR>
-map <leader>rl :call RunLastSpec()<CR>
-map <leader>rr :call RunCurrentSpecFile()<CR>
-map <leader>rs :call RunNearestSpec()<CR>
-
-
-" tomtom/tcomment_vim
-map \\ gcc
-vmap \\ gc
-if !exists('g:tcomment_types')
-  let g:tcomment_types = {}
-endif
-let g:tcomment_types = { 'java' : '// %s' }
-let g:tcomment_types = { 'tmux' : '# %s' }
-
-
-" bling/vim-airline
-let g:airline_left_sep                      = ''
-let g:airline_right_sep                     = ''
-let g:airline#extensions#branch#format      = 1
-let g:airline#extensions#bufferline#enabled = 1
-let g:airline#extensions#syntastic#enabled  = 1
-let g:airline#extensions#tabline#enabled    = 1
-let g:airline#extensions#tagbar#enabled     = 1
-let g:airline#extensions#tmuxline#enabled   = 1
-
-
-" Shougo/neocomplete.vim
+" neocomplete.vim
 if g:use_neocomplete
-  let g:neocomplete#data_directory                    = cachedir.'/neocomplete'
+  let g:neocomplete#data_directory                    = g:cachedir.'/neocomplete'
   let g:neocomplete#auto_completion_start_length      = 2
   let g:neocomplete#disable_auto_complete             = 0
   let g:neocomplete#enable_at_startup                 = 1
@@ -352,6 +317,84 @@ if g:use_neocomplete
   augroup END
 
 endif
+
+
+" nerdtree
+nmap <leader>n :NERDTreeToggle<CR>
+vmap <leader>n :NERDTreeToggle<CR>
+
+
+" rspec
+let g:rspec_command = "compiler rspec | set makeprg=zeus | Make rspec {spec}"
+map <leader>ra :call RunAllSpecs()<CR>
+map <leader>rl :call RunLastSpec()<CR>
+map <leader>rr :call RunCurrentSpecFile()<CR>
+map <leader>rs :call RunNearestSpec()<CR>
+
+
+" ruby-xmpfilter
+let g:xmpfilter_cmd = "xmpfilter --annotations --rails"
+
+
+" splitjoin.vim
+nmap <leader>sj :SplitjoinJoin<cr>
+nmap <leader>ss :SplitjoinSplit<cr>
+
+
+" syntastic
+let g:syntastic_auto_jump                = 1
+let g:syntastic_auto_loc_list            = 1
+let g:syntastic_auto_loc_list            = 1 " Close the location-list when errors are gone
+let g:syntastic_check_on_open            = 0
+let g:syntastic_enable_signs             = 1
+let g:syntastic_error_symbol             = '✗✗'
+let g:syntastic_loc_list_height          = 5
+let g:syntastic_sh_shellcheck_args       = '--exclude=SC2001'
+let g:syntastic_sh_checkers              = ['shellcheck', 'sh']
+let g:syntastic_style_error_symbol       = '✗'
+let g:syntastic_style_warning_symbol     = '⚠'
+let g:syntastic_warning_symbol           = '⚠⚠'
+let g:syntastic_ruby_checkers            = ['rubocop', 'mri']
+let g:syntastic_ruby_rubocop_args        = '--display-cop-names --only-guide-cops --except "Metrics/LineLength, Style/Documentation, Metrics/MethodLength, Metrics/BlockNesting, Style/HashSyntax, Style/BlockDelimiters, Style/StringLiterals"'
+
+
+" tabular
+nmap <leader>a= :Tabularize /=<CR>
+vmap <leader>a= :Tabularize /=<CR>
+nmap <leader>a: :Tabularize /:\zs<CR>
+vmap <leader>a: :Tabularize /:\zs<CR>
+
+
+" tagbar
+nmap <leader>t :TagbarToggle<CR>
+vmap <leader>t :TagbarToggle<CR>
+
+
+" tags (ctags)
+let g:vim_tags_auto_generate = 1
+let g:vim_tags_project_tags_command = "{CTAGS} -R {OPTIONS} {DIRECTORY} 2>/dev/null"
+let g:vim_tags_gems_tags_command = "{CTAGS} -R {OPTIONS} `bundle show --paths` 2>/dev/null"
+let g:vim_tags_use_vim_dispatch = 1
+let g:vim_tags_use_language_field = 1
+let g:vim_tags_ignore_files = ['.gitignore', 'certs', 'checksums', 'coverage', 'data', 'log', 'pkg', 'tmp']
+let g:vim_tags_main_file = 'tags'
+let g:vim_tags_extension = '.tags'
+let g:vim_tags_cache_dir = expand(g:cachedir.'ctags')
+
+
+" tcomment_vim
+map \\ gcc
+vmap \\ gc
+if !exists('g:tcomment_types')
+  let g:tcomment_types = {}
+endif
+let g:tcomment_types = { 'java' : '// %s' }
+let g:tcomment_types = { 'tmux' : '# %s' }
+
+
+" undotree
+nmap <leader>u :UndotreeToggle<CR>
+vmap <leader>u :UndotreeToggle<CR>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""

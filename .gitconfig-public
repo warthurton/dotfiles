@@ -30,6 +30,8 @@
   subjectprefix = git
 [prompt]
   showinfo = true
+[rerere]
+	enabled = true
 [alias]
   aa = add --all
   amend = commit --amend
@@ -76,7 +78,5 @@
   unadd = reset HEAD
   unique-authors = !git authors | sort -u
   unique-email-domains = !git email-domains | sort -u
-[rerere]
-	enabled = true
 
 ; vim: ft=gitconfig sw=2 ts=2 et
