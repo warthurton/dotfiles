@@ -263,6 +263,9 @@ let g:gitgutter_realtime  = 0
 
 " neocomplete.vim
 if g:use_neocomplete
+  if !isdirectory(expand(g:cachedir . '/neocomplete'))
+    call mkdir(expand(g:cachedir . '/neocomplete'), "p")
+  endif
   let g:neocomplete#data_directory                    = g:cachedir.'/neocomplete'
   let g:neocomplete#auto_completion_start_length      = 2
   let g:neocomplete#disable_auto_complete             = 0
@@ -379,7 +382,10 @@ let g:vim_tags_use_language_field = 1
 let g:vim_tags_ignore_files = ['.gitignore', 'certs', 'checksums', 'coverage', 'data', 'log', 'pkg', 'tmp']
 let g:vim_tags_main_file = 'tags'
 let g:vim_tags_extension = '.tags'
-let g:vim_tags_cache_dir = expand(g:cachedir.'ctags')
+let g:vim_tags_cache_dir = expand(g:cachedir.'/ctags')
+if !isdirectory(expand(g:cachedir . '/ctags'))
+  call mkdir(expand(g:cachedir . '/ctags'), "p")
+endif
 
 
 " tcomment_vim

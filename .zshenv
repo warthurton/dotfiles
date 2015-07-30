@@ -18,16 +18,16 @@ autoload -Uz zcp
 autoload -Uz zed
 autoload -Uz zargs
 
-zmodload -i zsh/compctl
-zmodload -i zsh/complete
-zmodload -i zsh/complist
-zmodload -i zsh/datetime
-zmodload -i zsh/main
-zmodload -i zsh/parameter
-zmodload -i zsh/zle
-zmodload -i zsh/zleparameter
-zmodload -i zsh/zutil
-zmodload -i zsh/terminfo
+zmodload zsh/compctl
+zmodload zsh/complete
+zmodload zsh/complist
+zmodload zsh/datetime
+zmodload zsh/main
+zmodload zsh/parameter
+zmodload zsh/zle
+zmodload zsh/zleparameter
+zmodload zsh/zutil
+zmodload zsh/terminfo
 # --------------------------------------------------------------------------
 setopt nobeep
 setopt append_history

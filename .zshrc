@@ -22,7 +22,7 @@ zstyle ':vcs_info:*' check-for-changes true
 zstyle ':vcs_info:*' stagedstr ' %F{10}\U03B4%f'
 zstyle ':vcs_info:*' unstagedstr ' %F{11}\U03B4%f'
 
-__vcs_info_git_format='%c%u %b %F{8}%6.6i%f %m'
+__vcs_info_git_format='%c%u %b %F{8}%8.8i%f %m'
 
 zstyle ':vcs_info:git*' formats "${__vcs_info_git_format}"
 zstyle ':vcs_info:git*' actionformats " %F{15}%a%f ${__vcs_info_git_format}"
@@ -34,20 +34,56 @@ function +vi-git-status() {
   local branch
   branch="${hook_com[branch]}"
 
-  local -i minutes_since_last_commit
+  local -i seconds_since_last_commit
   local -i unstaged_changes
   local -i untracked_files
 
-  minutes_since_last_commit=$(( ($EPOCHSECONDS - $(git log --pretty=format:'%at' -1)) / 60 ))
+  local -i _weeks_since=0
+  local -i _days_since=0
+  local -i _hours_since=0
+  local -i _minutes_since=0
+  local _since
+
+  seconds_since_last_commit=$(( $EPOCHSECONDS - $(git log --pretty=format:'%at' -1) ))
+
+  if (( seconds_since_last_commit > 60 )) ; then
+    (( _seconds = seconds_since_last_commit ))
+
+    (( _weeks_since = _seconds / (60 * 60 * 24 * 7) ))
+    (( _seconds = _seconds - ( _weeks_since * 60 * 60 * 24 * 7) ))
+
+    (( _days_since = _seconds / (60 * 60 * 24) ))
+    (( _seconds = _seconds - ( _days_since * 60 * 60 * 24 ) ))
+
+    (( _hours_since = _seconds / (60 * 60) ))
+    (( _seconds = _seconds - ( _hours_since * 60 * 60 ) ))
+
+    (( _minutes_since = _seconds / 60 ))
+    (( _seconds = _seconds - ( _minutes_since * 60 ) ))
+
+    if (( _weeks_since > 0 )) ; then
+      _since="${_since}${_weeks_since}w"
+    fi
+    if (( _weeks_since > 0 || _days_since > 0 )) ; then
+      _since="${_since}${_days_since}d"
+    fi
+    if (( _weeks_since > 0 || days_since > 0 || _hours_since > 0 )) ; then
+      _since="${_since}${_hours_since}h"
+    fi
+    if (( _weeks_since > 0 || _days_since > 0 || _hours_since > 0 || _minutes_since > 0 )) ; then
+      _since="${_since}${_minutes_since}m"
+    fi
+  fi
+
   unstaged_changes=$( git status --porcelain | grep -c '^ M' )
   untracked_files=$( git status --porcelain | grep -c '^??' )
 
-  if (( unstaged_changes > 0 && minutes_since_last_commit > 90 )) ; then
+  if (( unstaged_changes > 0 && seconds_since_last_commit > (60 * 60 * 2) )) ; then
     hook_com[branch]="%F{9}${branch}%f"
-    hook_com[unstaged]+=" %F{9}${minutes_since_last_commit}m%f"
-  elif (( unstaged_changes > 0 && minutes_since_last_commit > 30 )) ; then
+    hook_com[unstaged]+=" %F{9}${_since}%f"
+  elif (( unstaged_changes > 0 && seconds_since_last_commit > (60 * 60) )) ; then
     hook_com[branch]="%F{3}${branch}%f"
-    hook_com[unstaged]+=" %F{3}${minutes_since_last_commit}m%f"
+    hook_com[unstaged]+=" %F{3}${_since}%f"
   else
     hook_com[branch]="%F{2}${branch}%f"
   fi
@@ -77,7 +113,7 @@ function +vi-git-status() {
   local -i stashes
   if [[ -s ${hook_com[base]}/.git/refs/stash ]] ; then
     stashes=$(git stash list 2>/dev/null | wc -l)
-    hook_com[misc]+=" %F{7}(${stashes} stashed)%f"
+    hook_com[misc]+="%F{7}(${stashes} stashed)%f"
   fi
 }
 
@@ -93,10 +129,62 @@ _ruby_version() {
   fi
 }
 
+_darwin_unlocked() {
+  export DARWIN_UNLOCKED=""
+
+  if [[ "${OSTYPE:0:6}" = "darwin" && $USER != "root" && $(defaults read com.apple.screensaver askForPassword) != "1" ]] ; then
+    export DARWIN_UNLOCKED="UNLOCKED"
+  fi
+}
+
 precmd() {
+  _darwin_unlocked
   vcs_info
   _ruby_version
   print -Pn "\e]0;\a"
+}
+
+build_multi_prompt() {
+  # [[ -z $TMUX ]] || return
+
+  # security
+  [[ -n $DARWIN_UNLOCKED ]] && echo -n "%F{11}${DARWIN_UNLOCKED} "
+
+  # ruby
+  [[ -n $RUBY_VERSION ]] && echo -n "%F{1}${RUBY_VERSION}"
+
+  echo -n "%f${vcs_info_msg_0_%% }"
+
+  echo -n ' %F{7}%~\n'
+
+  # Time
+  echo -n '%F{8}%D{%H:%M:%S} '
+
+  # user
+  case $USER in
+    chorn)
+      echo -n '%F{4}%n'
+      ;;
+    root)
+      echo -n '%F{9}__ROOT__'
+      ;;
+    *)
+      echo -n '%F{11}%n'
+      ;;
+  esac
+
+  # host
+  case $HOST in
+    Shodan*)
+      echo -n "%F{15}@%F{4}%m"
+      ;;
+    *)
+      echo -n "%F{15}@%F{14}%m"
+      ;;
+  esac
+
+  # path
+  echo -n ' %(?.%F{7}.%F{15})%? %(!.#.$) '
 }
 
 build_lprompt() {
@@ -133,22 +221,9 @@ build_lprompt() {
   echo -n ' %F{7}%~ %(?.%F{7}.%F{15})%? %(!.#.$) '
 }
 
-build_rprompt() {
-  [[ -z $TMUX ]] || return
-
-  # security
-  if [[ "${OSTYPE:0:6}" = "darwin" && $USER != "root" ]] ; then
-    if [[ $(defaults read com.apple.screensaver askForPassword) != "1" ]] ; then
-      echo -n ' %F{11}UNLOCKED'
-    fi
-  fi
-
-  # Time
-  echo -n ' %F{8}%D{%H:%M:%S}'
-}
-
-export PROMPT="%f%b%k%u%s\$(build_lprompt)%f%b%k%u%s"
-export RPROMPT="%f%b%k%u%s\$(build_rprompt)%f%b%k%u%s"
+# export PROMPT="%f%b%k%u%s\$(build_lprompt)%f%b%k%u%s"
+export PROMPT="%f%b%k%u%s\$(build_multi_prompt)%f%b%k%u%s"
+unset RPROMPT
 
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=zsh sw=2 ts=2 expandtab:
