@@ -110,10 +110,12 @@ if g:os == 'Darwin'        | let g:use_dash      = 1 | endif
 if version >= 704
   if has("lua")
     let g:use_neocomplete = 1
-  else
+  elseif has("python")
     let g:use_youcompleteme = 1
   endif
-else
+endif
+
+if g:use_neocomplete == 0 && g:use_youcompleteme == 0
   let g:use_supertab = 1
 endif
 
