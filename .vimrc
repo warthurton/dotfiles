@@ -311,15 +311,15 @@ if g:use_neocomplete
   " inoremap <expr><C-y> neocomplete#close_popup()
   " inoremap <expr><C-e> neocomplete#cancel_popup()
 
-  augroup OmniCompleteModes
-    autocmd!
-    autocmd FileType python        nested setlocal omnifunc=pythoncomplete#Complete
-    autocmd FileType ruby,eruby    nested setlocal omnifunc=rubycomplete#Complete
-    autocmd FileType css           nested setlocal omnifunc=csscomplete#CompleteCSS
-    autocmd FileType html,markdown nested setlocal omnifunc=htmlcomplete#CompleteTags
-    autocmd FileType javascript    nested setlocal omnifunc=javascriptcomplete#CompleteJS
-    autocmd FileType xml           nested setlocal omnifunc=xmlcomplete#CompleteTags
-  augroup END
+  " augroup OmniCompleteModes
+  "   autocmd!
+  "   autocmd FileType python        nested setlocal omnifunc=pythoncomplete#Complete
+  "   autocmd FileType ruby,eruby    nested setlocal omnifunc=rubycomplete#Complete
+  "   autocmd FileType css           nested setlocal omnifunc=csscomplete#CompleteCSS
+  "   autocmd FileType html,markdown nested setlocal omnifunc=htmlcomplete#CompleteTags
+  "   autocmd FileType javascript    nested setlocal omnifunc=javascriptcomplete#CompleteJS
+  "   autocmd FileType xml           nested setlocal omnifunc=xmlcomplete#CompleteTags
+  " augroup END
 
 endif
 
