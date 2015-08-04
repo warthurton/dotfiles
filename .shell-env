@@ -10,6 +10,7 @@ export LSCOLORS="Gxfxcxdxbxegedabagacad"
 export LESS="iRQXF"
 export GREP_OPTIONS='--color=auto'
 export HISTSIZE=100000
+[[ -s "$HOME/.certs/curl-cacert.pem" ]] && export CURL_CA_BUNDLE="$HOME/.certs/curl-cacert.pem"
 
 command -v ag >/dev/null 2>/dev/null && export FZF_DEFAULT_COMMAND='ag -l -g ""'
 
