@@ -37,10 +37,12 @@ for dir in \
   $RBENV_ROOT/bin \
   $HOME/.rvm/bin
 do
-  if [[ -d "$dir" && ! $PATH =~ ^${dir}: && ! $PATH =~ :${dir}$ && ! $PATH =~ :${dir}: ]] ; then
-    export PATH="$PATH:${dir}"
-  fi
+  PATH="${PATH#$dir:}"
+  PATH="${PATH/:$dir/}"
+  [[ -d "$dir" ]] && PATH="$PATH:${dir}"
 done
+
+export PATH
 
 # --------------------------------------------------------------------------
 # ruby, prefer rvm over rbenv
