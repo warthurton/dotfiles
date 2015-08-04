@@ -39,7 +39,7 @@ for dir in \
 do
   PATH="${PATH#$dir:}"
   PATH="${PATH/:$dir/}"
-  [[ -d "$dir" ]] && PATH="$PATH:${dir}"
+  [[ -d "$dir" ]] && PATH="${dir}:$PATH"
 done
 
 export PATH
