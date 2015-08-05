@@ -129,8 +129,6 @@ call plug#begin(vimhome . 'plugged')
 " Do I really use these?
 " Plug 'Shougo/vimproc.vim',            { 'do': 'make' }
 " Plug 'oplatek/Conque-Shell'
-" Plug 'ecomba/vim-ruby-refactoring',   { 'for': 'ruby' }
-" Plug 'henrik/vim-ruby-runner',        { 'for': 'ruby' }
 " Plug 'junegunn/fzf',                  { 'dir': '~/.zsh/fzf', 'do': 'yes \| ./install' }
 " Plug 'tpope/vim-repeat'
 " Plug 'tpope/vim-sleuth'
@@ -168,7 +166,6 @@ Plug 'sheerun/vim-yardoc',             { 'for': 'yard' }
 Plug 'szw/vim-ctrlspace'
 Plug 'szw/vim-tags'
 Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby', 'do': 'gem install rcodetools' }
-Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
 Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-bundler',              { 'for': 'ruby' }
 Plug 'tpope/vim-cucumber',             { 'for': 'ruby' }
@@ -181,6 +178,13 @@ Plug 'tpope/vim-rails',                { 'for': 'ruby' }
 Plug 'tpope/vim-rake',                 { 'for': 'ruby' }
 Plug 'tpope/vim-vividchalk'
 Plug 'vim-ruby/vim-ruby',              { 'for': 'ruby' }
+
+" tmux / ruby / tests
+Plug 'benmills/vimux',                 { 'for': 'ruby' }
+Plug 'christoomey/vim-tmux-navigator', { 'for': 'ruby' }
+Plug 'jgdavey/vim-turbux',             { 'for': 'ruby' }
+Plug 'skalnik/vim-vroom',              { 'for': 'ruby' }
+Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
 
 if g:use_airline == 1       | Plug 'bling/vim-airline'                                | endif
 if g:use_ag == 1            | Plug 'rking/ag.vim'                                     | endif
@@ -310,17 +314,6 @@ if g:use_neocomplete
   inoremap <expr><BS>  neocomplete#smart_close_popup()."\<C-h>"
   " inoremap <expr><C-y> neocomplete#close_popup()
   " inoremap <expr><C-e> neocomplete#cancel_popup()
-
-  " augroup OmniCompleteModes
-  "   autocmd!
-  "   autocmd FileType python        nested setlocal omnifunc=pythoncomplete#Complete
-  "   autocmd FileType ruby,eruby    nested setlocal omnifunc=rubycomplete#Complete
-  "   autocmd FileType css           nested setlocal omnifunc=csscomplete#CompleteCSS
-  "   autocmd FileType html,markdown nested setlocal omnifunc=htmlcomplete#CompleteTags
-  "   autocmd FileType javascript    nested setlocal omnifunc=javascriptcomplete#CompleteJS
-  "   autocmd FileType xml           nested setlocal omnifunc=xmlcomplete#CompleteTags
-  " augroup END
-
 endif
 
 
@@ -371,8 +364,8 @@ vmap <leader>a: :Tabularize /:\zs<CR>
 
 
 " tagbar
-nmap <leader>t :TagbarToggle<CR>
-vmap <leader>t :TagbarToggle<CR>
+nmap <leader>T :TagbarToggle<CR>
+vmap <leader>T :TagbarToggle<CR>
 
 
 " tags (ctags)
@@ -398,6 +391,16 @@ if !exists('g:tcomment_types')
 endif
 let g:tcomment_types = { 'java' : '// %s' }
 let g:tcomment_types = { 'tmux' : '# %s' }
+
+
+" tmux-navigator
+let g:tmux_navigator_no_mappings = 1
+
+nnoremap <silent> {Left-mapping} :TmuxNavigateLeft<cr>
+nnoremap <silent> {Down-Mapping} :TmuxNavigateDown<cr>
+nnoremap <silent> {Up-Mapping} :TmuxNavigateUp<cr>
+nnoremap <silent> {Right-Mapping} :TmuxNavigateRight<cr>
+nnoremap <silent> {Previous-Mapping} :TmuxNavigatePrevious<cr>
 
 
 " undotree

@@ -104,6 +104,8 @@ kernel_purge() {
   [[ -n ${_old[@]} ]]     && sudo apt-get purge "${_old[@]}"
 }
 # tmux ---------------------------------------------------------------------
+alias tatt='tmux attach -t $USER || tmux new -s $USER'
+
 tnew() {
   local h="$1"
   [[ -z $h ]] && return
