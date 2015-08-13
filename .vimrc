@@ -163,7 +163,7 @@ Plug 'powerman/vim-plugin-AnsiEsc'
 Plug 'scrooloose/nerdtree',            { 'on':  'NERDTreeToggle' }
 Plug 'scrooloose/syntastic',           { 'do': 'gem install rubocop' }
 Plug 'sheerun/vim-yardoc',             { 'for': 'yard' }
-Plug 'szw/vim-ctrlspace'
+" Plug 'szw/vim-ctrlspace'
 Plug 'szw/vim-tags'
 Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby', 'do': 'gem install rcodetools' }
 Plug 'tomtom/tcomment_vim'

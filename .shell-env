@@ -10,7 +10,6 @@ export LSCOLORS="Gxfxcxdxbxegedabagacad"
 export LESS="iRQXF"
 export GREP_OPTIONS='--color=auto'
 export HISTSIZE=100000
-[[ -s "$HOME/.certs/curl-cacert.pem" ]] && export CURL_CA_BUNDLE="$HOME/.certs/curl-cacert.pem"
 
 command -v ag >/dev/null 2>/dev/null && export FZF_DEFAULT_COMMAND='ag -l -g ""'
 
@@ -60,7 +59,10 @@ fi
 # --------------------------------------------------------------------------
 # Synology NAS
 
-[[ -d "/usr/syno" ]] && export TERM=${TERM:-cons25}
+if [[ -d "/usr/syno" ]] ; then
+  export TERM=${TERM:-cons25}
+  [[ -s "$HOME/.certs/curl-cacert.pem" ]] && export CURL_CA_BUNDLE="$HOME/.certs/curl-cacert.pem"
+fi
 
 # --------------------------------------------------------------------------
 # gpg-agent, only for linux, on OS X use gpgtools instead

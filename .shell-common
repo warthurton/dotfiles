@@ -148,47 +148,60 @@ REQ
   cat "${crt}" "${key}" > "${pem}" && rm "${key}" "${crt}" "${req}"
 }
 #-----------------------------------------------------------------------------
-date2stamp() {
-  local _date="date"
-  command -v gdate >/dev/null 2>/dev/null && _date="gdate"
-  $_date --utc --date "$1" +%s
-}
-
-stamp2date() {
-  local _date="date"
-  command -v gdate >/dev/null 2>/dev/null && _date="gdate"
-  $_date --utc --date "1970-01-01 $1 sec" "+%Y-%m-%d %T"
-}
-
-date_diff() {
-  case $1 in
-       -s)   sec=1;      shift;;
-       -m)   sec=60;     shift;;
-       -h)   sec=3600;   shift;;
-       -d)   sec=86400;  shift;;
-       -w)   sec=604800; shift;;
-       *)    sec=86400;;
-  esac
-
-  local date1
-  date1=$(date2stamp "$1")
-  local date2
-  date2=$(date2stamp "$2")
-  local diff_secs
-  diff_secs=$((date2-date1))
-  if ((diff_secs < 0)); then abs=-1; else abs=1; fi
-  echo $(( (diff_secs / sec) * abs))
-}
-
-date_range() {
-  local _date="date"
-  command -v gdate >/dev/null 2>/dev/null && _date="gdate"
-  local range
-  range=$(date_diff -d "$1" "$2")
-  for i in $(seq 0 "$range") ; do
-   $_date --date "$1 $i day" +'%Y-%m-%d'
-  done
-}
+# date_diff() {
+#   local _start_date="$1"
+#   local _stop_date="$2"
+#
+#   [[ -n "$_start_date" && -n "$_stop_date" ]] || return
+#
+#   local _date1
+#   local _date2
+#
+#   if [[ -n "$ZSH_VERSION" ]] ; then
+#     command -v strftime >&/dev/null || zmodload zsh/datetime
+#     strftime -s _date1 -r '%Y-%m-%d %H:%M:%S' "$_start_date"
+#     strftime -s _date2 -r '%Y-%m-%d %H:%M:%S' "$_stop_date"
+#   elif [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
+#     _date1=$(date -f '%Y-%m-%d %H:%M:%S' -j "$_start_date" +'%s')
+#     _date2=$(date -f '%Y-%m-%d %H:%M:%S' -j "$_stop_date" +'%s')
+#   else
+#     _date1=$(date --date "$_start_date" +'%s')
+#     _date2=$(date --date "$_stop_date" +'%s')
+#   fi
+#
+#   [[ -n "$_date1" && -n "$_date2" ]] || return
+#
+#   echo $((_date2 - _date1))
+# }
+#
+# date_range() {
+#   local _start_date="$1"
+#   local _stop_date="$2"
+#
+#   [[ -n "$_start_date" && -n "$_stop_date" ]] || return
+#
+#   local _range
+#   _range=$(date_diff "$1" "$2")
+#
+#   if ((_range < 0)); then
+#     _range=$(( _range * -1 ))
+#   fi
+#
+#   if [[ -n "$ZSH_VERSION" ]] ; then
+#     command -v strftime >&/dev/null || zmodload zsh/datetime
+#     strftime '%Y-%m-%d %H:%M:%S' "$_range"
+#   elif [[ -n "$BASH_VERSION" ]] ; then
+#     printf '%(%Y-%m-%d %H:%M:%S)T' "$_range"
+#   elif [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
+#     date -f '%s' -j "$_range" +'%Y-%m-%d %H:%M:%S'
+#   else
+#     date --date "@${_range}" +'%Y-%m-%d %H:%M:%S)
+#   fi
+#
+#   # for i in $(seq 0 "$range") ; do
+#   #  $_date --date "$1 $i day" +'%Y-%m-%d'
+#   # done
+# }
 #-----------------------------------------------------------------------------
 [[ -s "$HOME/.shell-prv" ]] && source "$HOME/.shell-prv"
 # --------------------------------------------------------------------------
