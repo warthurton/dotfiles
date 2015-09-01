@@ -395,11 +395,11 @@ let g:tcomment_types = { 'tmux' : '# %s' }
 
 " tmux-navigator
 let g:tmux_navigator_no_mappings = 1
-nnoremap <silent> <c-h> :TmuxNavigateLeft<cr>
-nnoremap <silent> <c-j> :TmuxNavigateDown<cr>
-nnoremap <silent> <c-k> :TmuxNavigateUp<cr>
-nnoremap <silent> <c-l> :TmuxNavigateRight<cr>
-nnoremap <silent> <c-\> :TmuxNavigatePrevious<cr>
+nnoremap <silent> <A-h> :TmuxNavigateLeft<cr>
+nnoremap <silent> <A-j> :TmuxNavigateDown<cr>
+nnoremap <silent> <A-k> :TmuxNavigateUp<cr>
+nnoremap <silent> <A-l> :TmuxNavigateRight<cr>
+nnoremap <silent> <A-\> :TmuxNavigatePrevious<cr>
 
 
 " undotree
@@ -467,6 +467,9 @@ nmap Q <nop>
 imap jk <Esc>
 nmap jk <Esc>
 vmap jk <Esc>
+
+nmap <M-f> e
+nmap <M-b> b
 
 nmap <leader>[ gt
 nmap <leader>] gT
