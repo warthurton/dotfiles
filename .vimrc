@@ -152,7 +152,7 @@ Plug 'kien/ctrlp.vim'
 Plug 'ksauzz/haproxy.vim',             { 'for': 'haproxy' }
 Plug 'kurayama/systemd-vim-syntax',    { 'for': 'systemd' }
 Plug 'leshill/vim-json',               { 'for': 'json' }
-Plug 'majutsushi/tagbar'
+" Plug 'majutsushi/tagbar'
 Plug 'mbbill/undotree'
 Plug 'mitsuhiko/vim-python-combined',  { 'for': 'python' }
 Plug 'mutewinter/nginx.vim',           { 'for': 'nginx' }
@@ -163,7 +163,6 @@ Plug 'powerman/vim-plugin-AnsiEsc'
 Plug 'scrooloose/nerdtree',            { 'on':  'NERDTreeToggle' }
 Plug 'scrooloose/syntastic',           { 'do': 'gem install rubocop' }
 Plug 'sheerun/vim-yardoc',             { 'for': 'yard' }
-" Plug 'szw/vim-ctrlspace'
 Plug 'szw/vim-tags'
 Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby', 'do': 'gem install rcodetools' }
 Plug 'tomtom/tcomment_vim'
@@ -364,19 +363,23 @@ vmap <leader>a: :Tabularize /:\zs<CR>
 
 
 " tagbar
+let g:tagbar_autoclose = 1
+let g:tagbar_autofocus = 1
+let g:tagbar_show_linenumbers = 1
+let g:tagbar_autoshowtag = 1
+let g:tagbar_autopreview = 1
 nmap <leader>T :TagbarToggle<CR>
 vmap <leader>T :TagbarToggle<CR>
 
-
 " tags (ctags)
 let g:vim_tags_auto_generate = 1
-let g:vim_tags_project_tags_command = "{CTAGS} -R {OPTIONS} {DIRECTORY} 2>/dev/null"
-let g:vim_tags_gems_tags_command = "{CTAGS} -R {OPTIONS} `bundle show --paths` 2>/dev/null"
+" let g:vim_tags_project_tags_command = "{CTAGS} -R {OPTIONS} {DIRECTORY} 2>/dev/null"
+" let g:vim_tags_gems_tags_command = "{CTAGS} -R {OPTIONS} `bundle show --paths` 2>/dev/null"
 let g:vim_tags_use_vim_dispatch = 1
 let g:vim_tags_use_language_field = 1
 let g:vim_tags_ignore_files = ['.gitignore', 'certs', 'checksums', 'coverage', 'data', 'log', 'pkg', 'tmp']
-let g:vim_tags_main_file = 'tags'
-let g:vim_tags_extension = '.tags'
+" let g:vim_tags_main_file = 'tags'
+" let g:vim_tags_extension = '.tags'
 let g:vim_tags_cache_dir = expand(g:cachedir.'/ctags')
 if !isdirectory(expand(g:cachedir . '/ctags'))
   call mkdir(expand(g:cachedir . '/ctags'), "p")
