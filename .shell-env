@@ -24,6 +24,13 @@ if [[ ! -d "$HOME/.rvm/bin" ]] ; then
   fi
 fi
 # --------------------------------------------------------------------------
+_safe_add_to_path() {
+  local _dir="$1"
+  PATH="${PATH#$_dir:}"
+  PATH="${PATH/:$_dir/}"
+  [[ -d "$dir" ]] && PATH="${_dir}:$PATH"
+  export PATH
+}
 
 for dir in \
   /{bin,sbin} \
@@ -37,12 +44,8 @@ for dir in \
   $RBENV_ROOT/bin \
   $HOME/.rvm/bin
 do
-  PATH="${PATH#$dir:}"
-  PATH="${PATH/:$dir/}"
-  [[ -d "$dir" ]] && PATH="${dir}:$PATH"
+  _safe_add_to_path "$dir"
 done
-
-export PATH
 
 # --------------------------------------------------------------------------
 # ruby, prefer rvm over rbenv
@@ -62,6 +65,12 @@ fi
 if [[ -d "/usr/syno" ]] ; then
   export TERM=${TERM:-cons25}
   [[ -s "$HOME/.certs/curl-cacert.pem" ]] && export CURL_CA_BUNDLE="$HOME/.certs/curl-cacert.pem"
+
+  if [[ -d "/usr/local/jre/bin" ]] ; then
+    export JAVA_HOME="/usr/local/jre"
+    _safe_add_to_path "$JAVA_HOME/bin"
+  fi
+
 fi
 
 # --------------------------------------------------------------------------
