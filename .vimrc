@@ -71,8 +71,7 @@ set splitright
 set tabstop=2
 set noterse
 set visualbell
-set tags+=tags
-set tags+=gems.tags
+" set tags+=tags
 set t_Co=256
 set t_vb=
 set wildignore+=*/.cache/*,*/tmp/*,*/.git/*,*/.neocon/*,*.log,*.so,*.swp,*.zip,*.gz,*.bz2,*.bmp,*.ppt
@@ -152,7 +151,7 @@ Plug 'kien/ctrlp.vim'
 Plug 'ksauzz/haproxy.vim',             { 'for': 'haproxy' }
 Plug 'kurayama/systemd-vim-syntax',    { 'for': 'systemd' }
 Plug 'leshill/vim-json',               { 'for': 'json' }
-" Plug 'majutsushi/tagbar'
+Plug 'majutsushi/tagbar'
 Plug 'mbbill/undotree'
 Plug 'mitsuhiko/vim-python-combined',  { 'for': 'python' }
 Plug 'mutewinter/nginx.vim',           { 'for': 'nginx' }
@@ -163,7 +162,7 @@ Plug 'powerman/vim-plugin-AnsiEsc'
 Plug 'scrooloose/nerdtree',            { 'on':  'NERDTreeToggle' }
 Plug 'scrooloose/syntastic',           { 'do': 'gem install rubocop' }
 Plug 'sheerun/vim-yardoc',             { 'for': 'yard' }
-Plug 'szw/vim-tags'
+" Plug 'szw/vim-tags'
 Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby', 'do': 'gem install rcodetools' }
 Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-bundler',              { 'for': 'ruby' }
@@ -184,6 +183,7 @@ Plug 'christoomey/vim-tmux-navigator', { 'for': 'ruby' }
 Plug 'jgdavey/vim-turbux',             { 'for': 'ruby' }
 Plug 'skalnik/vim-vroom',              { 'for': 'ruby' }
 Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
+Plug 'tpope/vim-rbenv',                { 'for': 'ruby' }
 
 if g:use_airline == 1       | Plug 'bling/vim-airline'                                | endif
 if g:use_ag == 1            | Plug 'rking/ag.vim'                                     | endif
@@ -372,18 +372,18 @@ nmap <leader>T :TagbarToggle<CR>
 vmap <leader>T :TagbarToggle<CR>
 
 " tags (ctags)
-let g:vim_tags_auto_generate = 1
-" let g:vim_tags_project_tags_command = "{CTAGS} -R {OPTIONS} {DIRECTORY} 2>/dev/null"
-" let g:vim_tags_gems_tags_command = "{CTAGS} -R {OPTIONS} `bundle show --paths` 2>/dev/null"
-let g:vim_tags_use_vim_dispatch = 1
-let g:vim_tags_use_language_field = 1
-let g:vim_tags_ignore_files = ['.gitignore', 'certs', 'checksums', 'coverage', 'data', 'log', 'pkg', 'tmp']
-" let g:vim_tags_main_file = 'tags'
-" let g:vim_tags_extension = '.tags'
-let g:vim_tags_cache_dir = expand(g:cachedir.'/ctags')
-if !isdirectory(expand(g:cachedir . '/ctags'))
-  call mkdir(expand(g:cachedir . '/ctags'), "p")
-endif
+" let g:vim_tags_auto_generate = 1
+" " let g:vim_tags_project_tags_command = "{CTAGS} -R {OPTIONS} {DIRECTORY} 2>/dev/null"
+" " let g:vim_tags_gems_tags_command = "{CTAGS} -R {OPTIONS} `bundle show --paths` 2>/dev/null"
+" let g:vim_tags_use_vim_dispatch = 1
+" let g:vim_tags_use_language_field = 1
+" let g:vim_tags_ignore_files = ['.gitignore', 'certs', 'checksums', 'coverage', 'data', 'log', 'pkg', 'tmp']
+" " let g:vim_tags_main_file = 'tags'
+" " let g:vim_tags_extension = '.tags'
+" let g:vim_tags_cache_dir = expand(g:cachedir.'/ctags')
+" if !isdirectory(expand(g:cachedir . '/ctags'))
+"   call mkdir(expand(g:cachedir . '/ctags'), "p")
+" endif
 
 
 " tcomment_vim
