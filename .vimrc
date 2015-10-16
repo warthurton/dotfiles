@@ -126,8 +126,6 @@ endif
 call plug#begin(vimhome . 'plugged')
 
 " Do I really use these?
-" Plug 'Shougo/vimproc.vim',            { 'do': 'make' }
-" Plug 'oplatek/Conque-Shell'
 " Plug 'junegunn/fzf',                  { 'dir': '~/.zsh/fzf', 'do': 'yes \| ./install' }
 " Plug 'tpope/vim-repeat'
 " Plug 'tpope/vim-sleuth'
@@ -135,55 +133,58 @@ call plug#begin(vimhome . 'plugged')
 " Plug 'tpope/vim-surround'
 " Plug 'vim-scripts/grep.vim'
 
+" Utils
 Plug 'AndrewRadev/splitjoin.vim'
-Plug 'JulesWang/css.vim',              { 'for': [ 'css', 'sass', 'scss' ] }
-Plug 'Shougo/vimshell.vim'
-Plug 'acustodioo/vim-tmux',            { 'for': 'tmux' }
 Plug 'airblade/vim-gitgutter'
 Plug 'bling/vim-bufferline'
-Plug 'chriskempson/base16-vim'
 Plug 'chrisbra/NrrwRgn'
-Plug 'fatih/vim-go',                   { 'for': 'go' }
+Plug 'chriskempson/base16-vim'
 Plug 'godlygeek/tabular'
 Plug 'kana/vim-textobj-user'
-Plug 'kchmck/vim-coffee-script',       { 'for': 'coffeescript' }
 Plug 'kien/ctrlp.vim'
+Plug 'mbbill/undotree'
+Plug 'scrooloose/nerdtree',            { 'on':  'NERDTreeToggle' }
+Plug 'tomtom/tcomment_vim'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-vividchalk'
+Plug 'xolox/vim-easytags'
+Plug 'xolox/vim-misc'
+Plug 'xolox/vim-shell'
+
+" Filetypes
+Plug 'JulesWang/css.vim',              { 'for': [ 'css', 'sass', 'scss' ] }
+Plug 'acustodioo/vim-tmux',            { 'for': 'tmux' }
+Plug 'fatih/vim-go',                   { 'for': 'go' }
+Plug 'kchmck/vim-coffee-script',       { 'for': 'coffeescript' }
 Plug 'ksauzz/haproxy.vim',             { 'for': 'haproxy' }
 Plug 'kurayama/systemd-vim-syntax',    { 'for': 'systemd' }
 Plug 'leshill/vim-json',               { 'for': 'json' }
-Plug 'majutsushi/tagbar'
-Plug 'mbbill/undotree'
 Plug 'mitsuhiko/vim-python-combined',  { 'for': 'python' }
 Plug 'mutewinter/nginx.vim',           { 'for': 'nginx' }
 Plug 'nelstrom/vim-textobj-rubyblock', { 'for': 'ruby' }
 Plug 'othree/html5.vim',               { 'for': 'html' }
 Plug 'pangloss/vim-javascript',        { 'for': 'javascript' }
-Plug 'powerman/vim-plugin-AnsiEsc'
-Plug 'scrooloose/nerdtree',            { 'on':  'NERDTreeToggle' }
-Plug 'scrooloose/syntastic',           { 'do': 'gem install rubocop' }
 Plug 'sheerun/vim-yardoc',             { 'for': 'yard' }
-" Plug 'szw/vim-tags'
-Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby', 'do': 'gem install rcodetools' }
-Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-bundler',              { 'for': 'ruby' }
 Plug 'tpope/vim-cucumber',             { 'for': 'ruby' }
-Plug 'tpope/vim-dispatch'
-Plug 'tpope/vim-endwise',              { 'for': 'ruby' }
-Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-haml',                 { 'for': 'haml' }
 Plug 'tpope/vim-markdown',             { 'for': 'markdown' }
-Plug 'tpope/vim-rails',                { 'for': 'ruby' }
-Plug 'tpope/vim-rake',                 { 'for': 'ruby' }
-Plug 'tpope/vim-vividchalk'
-Plug 'vim-ruby/vim-ruby',              { 'for': 'ruby' }
+
 
 " tmux / ruby / tests
+" Plug 'majutsushi/tagbar',              { 'for': 'ruby' }
 Plug 'benmills/vimux',                 { 'for': 'ruby' }
 Plug 'christoomey/vim-tmux-navigator', { 'for': 'ruby' }
 Plug 'jgdavey/vim-turbux',             { 'for': 'ruby' }
+Plug 'scrooloose/syntastic'
 Plug 'skalnik/vim-vroom',              { 'for': 'ruby' }
+Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby' }
 Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
+Plug 'tpope/vim-endwise',              { 'for': 'ruby' }
+Plug 'tpope/vim-rails',                { 'for': 'ruby' }
+Plug 'tpope/vim-rake',                 { 'for': 'ruby' }
 Plug 'tpope/vim-rbenv',                { 'for': 'ruby' }
+Plug 'vim-ruby/vim-ruby',              { 'for': 'ruby' }
 
 if g:use_airline == 1       | Plug 'bling/vim-airline'                                | endif
 if g:use_ag == 1            | Plug 'rking/ag.vim'                                     | endif
