@@ -1,9 +1,28 @@
+[core]
+	excludesfile = ~/.gitignore_global
+  editor = vim
+  pager = less -r
 [color]
   ui = auto
+[commit]
+	template = ~/.default-commit
 [pull]
 	rebase = true
 [push]
 	default = tracking
+[mergetool]
+  keepBackup = true
+[advice]
+  statusHints = false
+[diff]
+  mnemonicprefix = true
+  algorithm = patience
+[format]
+  subjectprefix = git
+[prompt]
+  showinfo = true
+[rerere]
+	enabled = true
 [filter "hawser"]
 	clean = git hawser clean %f
 	smudge = git hawser smudge %f
@@ -16,22 +35,6 @@
   required = true
   clean = git media clean %f
   smudge = git media smudge %f
-[mergetool]
-  keepBackup = true
-[core]
-  editor = vim
-  pager = less -r
-[advice]
-  statusHints = false
-[diff]
-  mnemonicprefix = true
-  algorithm = patience
-[format]
-  subjectprefix = git
-[prompt]
-  showinfo = true
-[rerere]
-	enabled = true
 [alias]
   aa = add --all
   amend = commit --amend
@@ -59,7 +62,6 @@
   hp = "!show_git_head"
   l = "!pretty_git_log"
   la = !git l --all
-  # long = log --abbrev-commit --date=relative --pretty="tformat:%h;%an;%s"
   lms = !git local-master-sync-check
   ls = ls-files
   merged = branch --merged
