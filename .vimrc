@@ -347,7 +347,7 @@ let g:syntastic_check_on_open            = 0
 let g:syntastic_enable_signs             = 1
 let g:syntastic_error_symbol             = '✗✗'
 let g:syntastic_loc_list_height          = 5
-let g:syntastic_sh_shellcheck_args       = '--exclude=SC2001'
+let g:syntastic_sh_shellcheck_args       = '--exclude=SC2001,SC1090,SC2164'
 let g:syntastic_sh_checkers              = ['shellcheck', 'sh']
 let g:syntastic_style_error_symbol       = '✗'
 let g:syntastic_style_warning_symbol     = '⚠'

@@ -12,6 +12,12 @@ for s in  ~/.shell-common \
 do
   [[ -f "$s" ]] && source "$s"
 done
+# ---------------------------------------------------------------------------
+predate() {
+  while read -r line ; do
+    strftime "%F %T $line\n" "$EPOCHSECONDS"
+  done
+}
 # --------------------------------------------------------------------------
 zstyle ':completion::complete:*' use-cache on
 compinit

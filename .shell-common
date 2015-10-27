@@ -49,10 +49,15 @@ alias m='$PAGER'
 alias l1="ls -1"
 alias ll="l -A"
 alias la="ls -A"
-alias datafart='curl --data-binary @- datafart.com'
 alias live_ip='dig +short myip.opendns.com @resolver1.opendns.com || curl -f4L http://ifconfig.me'
 alias to_csv='soffice --convert-to csv --headless'
+# alias predate="xargs -I{} bash -c \"printf '%(%F %T)T ' -1 ; echo '{}'\""
 # ---------------------------------------------------------------------------
+predate() {
+  while read -r line ; do
+    printf '%(%F %T)T %s\n' -1 "$line"
+  done
+}
 
 total() {
   tr '\n' '+' | sed -e 's/^/(/' -e 's/\+$/\)/'  | bc -q
