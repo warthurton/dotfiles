@@ -59,6 +59,15 @@ elif [[ -n $RBENV_ROOT ]] ; then
     eval "$(rbenv init -)"
   fi
 fi
+
+# --------------------------------------------------------------------------
+# GO
+
+if [[ -d "$HOME/.go/bin" ]] ; then
+  export GOPATH="$HOME/.go"
+  _safe_add_to_path "$GOPATH/bin"
+fi
+
 # --------------------------------------------------------------------------
 # Synology NAS
 
