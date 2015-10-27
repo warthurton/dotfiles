@@ -190,7 +190,7 @@ if g:use_airline == 1       | Plug 'bling/vim-airline'                          
 if g:use_ag == 1            | Plug 'rking/ag.vim'                                     | endif
 if g:use_dash == 1          | Plug 'rizzatti/dash.vim'                                | endif
 if g:use_neocomplete == 1   | Plug 'Shougo/neocomplete.vim'                           | endif
-if g:use_youcompleteme == 1 | Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' } | endif
+if g:use_youcompleteme == 1 | Plug 'Valloric/YouCompleteMe', { 'do': './install.py' } | endif
 if g:use_supertab == 1      | Plug 'ervandew/supertab'                                | endif
 
 call plug#end()
@@ -353,7 +353,7 @@ let g:syntastic_style_error_symbol       = '✗'
 let g:syntastic_style_warning_symbol     = '⚠'
 let g:syntastic_warning_symbol           = '⚠⚠'
 let g:syntastic_ruby_checkers            = ['rubocop', 'mri']
-let g:syntastic_ruby_rubocop_args        = '--display-cop-names --only-guide-cops --except "Metrics/LineLength, Style/Documentation, Metrics/MethodLength, Metrics/BlockNesting, Style/HashSyntax, Style/BlockDelimiters, Style/StringLiterals"'
+let g:syntastic_ruby_rubocop_args        = '--display-cop-names --only-guide-cops --except "Metrics/LineLength, Style/Documentation, Metrics/MethodLength, Metrics/BlockNesting, Style/HashSyntax, Style/BlockDelimiters, Style/StringLiterals, Style/DoubleNegation, Style/GuardClause, Style/TrailingBlankLines"'
 
 
 " tabular
