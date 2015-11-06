@@ -135,6 +135,7 @@ call plug#begin(vimhome . 'plugged')
 
 " Utils
 Plug 'AndrewRadev/splitjoin.vim'
+Plug 'FredKSchott/CoVim'
 Plug 'airblade/vim-gitgutter'
 Plug 'bling/vim-bufferline'
 Plug 'chrisbra/NrrwRgn'
@@ -143,6 +144,7 @@ Plug 'godlygeek/tabular'
 Plug 'kana/vim-textobj-user'
 Plug 'kien/ctrlp.vim'
 Plug 'mbbill/undotree'
+Plug 'oplatek/Conque-Shell'
 Plug 'scrooloose/nerdtree',            { 'on':  'NERDTreeToggle' }
 Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-fugitive'
@@ -245,6 +247,11 @@ let g:bufferline_modified            = '+'
 let g:bufferline_rotate              = 0
 let g:bufferline_show_bufnr          = 1
 let g:bufferline_solo_highlight      = 1
+
+
+" CoVim
+let CoVim_default_name = "chorn"
+let CoVim_default_port = "22222"
 
 
 " ctrlp.vim
