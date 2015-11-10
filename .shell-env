@@ -8,8 +8,11 @@ export VISUAL=vim
 export PAGER=less
 export LSCOLORS="Gxfxcxdxbxegedabagacad"
 export LESS="iRQXF"
-export GREP_OPTIONS='--color=auto'
 export HISTSIZE=100000
+
+if [[ $TMUX =~ tmate ]] ; then
+  alias tmux=tmate
+fi
 
 command -v ag >/dev/null 2>/dev/null && export FZF_DEFAULT_COMMAND='ag -l -g ""'
 
