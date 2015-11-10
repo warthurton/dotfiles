@@ -352,13 +352,9 @@ let g:syntastic_auto_loc_list            = 1
 let g:syntastic_auto_loc_list            = 1 " Close the location-list when errors are gone
 let g:syntastic_check_on_open            = 0
 let g:syntastic_enable_signs             = 1
-let g:syntastic_error_symbol             = '✗✗'
 let g:syntastic_loc_list_height          = 5
 let g:syntastic_sh_shellcheck_args       = '--exclude=SC2001,SC1090,SC2164'
 let g:syntastic_sh_checkers              = ['shellcheck', 'sh']
-let g:syntastic_style_error_symbol       = '✗'
-let g:syntastic_style_warning_symbol     = '⚠'
-let g:syntastic_warning_symbol           = '⚠⚠'
 let g:syntastic_ruby_checkers            = ['rubocop', 'mri']
 let g:syntastic_ruby_rubocop_args        = '--display-cop-names --only-guide-cops --except "Metrics/LineLength, Style/Documentation, Metrics/MethodLength, Metrics/BlockNesting, Style/HashSyntax, Style/BlockDelimiters, Style/StringLiterals, Style/DoubleNegation, Style/GuardClause, Style/TrailingBlankLines"'
 
