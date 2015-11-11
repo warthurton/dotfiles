@@ -1,240 +1,135 @@
-;;------------------------------------------------------------------------------
-(require 'cask "/usr/local/opt/cask/cask.el")
-(cask-initialize)
-;;------------------------------------------------------------------------------
-(require 'flymake-ruby)
-(add-hook 'ruby-mode-hook 'flymake-ruby-load)
-;;------------------------------------------------------------------------------
-(require 'web-mode)
-(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-;;------------------------------------------------------------------------------
-(load-theme 'base16-twilight-dark t)
-;;------------------------------------------------------------------------------
-(require 'saveplace)
-(setq-default save-place t)
-(setq save-place-file (expand-file-name ".places" user-emacs-directory))
-;;------------------------------------------------------------------------------
-(require 'discover)
-(global-discover-mode 1)
-;;------------------------------------------------------------------------------
-(require 'undo-tree)
-(global-undo-tree-mode 1)
-;;------------------------------------------------------------------------------
-;; I want this for dired-jump
-(require 'dired-x)
+;;; init.el --- Prelude's configuration entry point.
+;;
+;; Copyright (c) 2011 Bozhidar Batsov
+;;
+;; Author: Bozhidar Batsov <bozhidar@batsov.com>
+;; URL: http://batsov.com/prelude
+;; Version: 1.0.0
+;; Keywords: convenience
 
-;; I usually want to see just the file names
-(require 'dired-details)
-(dired-details-install)
+;; This file is not part of GNU Emacs.
 
-;; Nice listing
-(setq find-ls-option '("-print0 | xargs -0 ls -alhd" . ""))
+;;; Commentary:
 
-;; Always copy/delete recursively
-(setq dired-recursive-copies (quote always))
-(setq dired-recursive-deletes (quote top))
+;; This file simply sets up the default load path and requires
+;; the various modules defined within Emacs Prelude.
 
-;; Auto refresh dired, but be quiet about it
-(setq global-auto-revert-non-file-buffers t)
-(setq auto-revert-verbose nil)
+;;; License:
 
-;; Hide some files
-(setq dired-omit-files "^\\..*$\\|^\\.\\.$")
-(setq dired-omit-mode t)
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License
+;; as published by the Free Software Foundation; either version 3
+;; of the License, or (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;; Boston, MA 02110-1301, USA.
 
-;; List directories first
-(defun sof/dired-sort ()
-  "Dired sort hook to list directories first."
-  (save-excursion
-    (let (buffer-read-only)
-      (forward-line 2) ;; beyond dir. header
-      (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max))))
-  (and (featurep 'xemacs)
-       (fboundp 'dired-insert-set-properties)
-       (dired-insert-set-properties (point-min) (point-max)))
-  (set-buffer-modified-p nil))
+;;; Code:
+(defvar current-user
+      (getenv
+       (if (equal system-type 'windows-nt) "USERNAME" "USER")))
 
-(add-hook 'dired-after-readin-hook 'sof/dired-sort)
+(message "Prelude is powering up... Be patient, Master %s!" current-user)
 
-;; Automatically create missing directories when creating new files
-(defun my-create-non-existent-directory ()
-  (let ((parent-directory (file-name-directory buffer-file-name)))
-    (when (and (not (file-exists-p parent-directory))
-               (y-or-n-p (format "Directory `%s' does not exist! Create it?" parent-directory)))
-      (make-directory parent-directory t))))
-(add-to-list 'find-file-not-found-functions #'my-create-non-existent-directory)
+(when (version< emacs-version "24.1")
+  (error "Prelude requires at least GNU Emacs 24.1, but you're running %s" emacs-version))
 
-;; Use ls from emacs
+;; Always load newest byte code
+(setq load-prefer-newer t)
+
+(defvar prelude-dir (file-name-directory load-file-name)
+  "The root dir of the Emacs Prelude distribution.")
+(defvar prelude-core-dir (expand-file-name "core" prelude-dir)
+  "The home of Prelude's core functionality.")
+(defvar prelude-modules-dir (expand-file-name  "modules" prelude-dir)
+  "This directory houses all of the built-in Prelude modules.")
+(defvar prelude-personal-dir (expand-file-name "personal" prelude-dir)
+  "This directory is for your personal configuration.
+
+Users of Emacs Prelude are encouraged to keep their personal configuration
+changes in this directory.  All Emacs Lisp files there are loaded automatically
+by Prelude.")
+(defvar prelude-personal-preload-dir (expand-file-name "preload" prelude-personal-dir)
+  "This directory is for your personal configuration, that you want loaded before Prelude.")
+(defvar prelude-vendor-dir (expand-file-name "vendor" prelude-dir)
+  "This directory houses packages that are not yet available in ELPA (or MELPA).")
+(defvar prelude-savefile-dir (expand-file-name "savefile" prelude-dir)
+  "This folder stores all the automatically generated save/history-files.")
+(defvar prelude-modules-file (expand-file-name "prelude-modules.el" prelude-dir)
+  "This files contains a list of modules that will be loaded by Prelude.")
+
+(unless (file-exists-p prelude-savefile-dir)
+  (make-directory prelude-savefile-dir))
+
+(defun prelude-add-subfolders-to-load-path (parent-dir)
+ "Add all level PARENT-DIR subdirs to the `load-path'."
+ (dolist (f (directory-files parent-dir))
+   (let ((name (expand-file-name f parent-dir)))
+     (when (and (file-directory-p name)
+                (not (string-prefix-p "." f)))
+       (add-to-list 'load-path name)
+       (prelude-add-subfolders-to-load-path name)))))
+
+;; add Prelude's directories to Emacs's `load-path'
+(add-to-list 'load-path prelude-core-dir)
+(add-to-list 'load-path prelude-modules-dir)
+(add-to-list 'load-path prelude-vendor-dir)
+(prelude-add-subfolders-to-load-path prelude-vendor-dir)
+
+;; reduce the frequency of garbage collection by making it happen on
+;; each 50MB of allocated data (the default is on every 0.76MB)
+(setq gc-cons-threshold 50000000)
+
+;; warn when opening files bigger than 100MB
+(setq large-file-warning-threshold 100000000)
+
+;; preload the personal settings from `prelude-personal-preload-dir'
+(when (file-exists-p prelude-personal-preload-dir)
+  (message "Loading personal configuration files in %s..." prelude-personal-preload-dir)
+  (mapc 'load (directory-files prelude-personal-preload-dir 't "^[^#].*el$")))
+
+(message "Loading Prelude's core...")
+
+;; the core stuff
+(require 'prelude-packages)
+(require 'prelude-custom)  ;; Needs to be loaded before core, editor and ui
+(require 'prelude-ui)
+(require 'prelude-core)
+(require 'prelude-mode)
+(require 'prelude-editor)
+(require 'prelude-global-keybindings)
+
+;; OSX specific settings
 (when (eq system-type 'darwin)
-  (require 'ls-lisp)
-  (setq ls-lisp-use-insert-directory-program nil))
-;;------------------------------------------------------------------------------
-(add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.rake$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Rakefile$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.gemspec$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.ru$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Gemfile$" . ruby-mode))
+  (require 'prelude-osx))
 
-(require 'rbenv)
-(rbenv-use-global)
+(message "Loading Prelude's modules...")
 
-(require 'flymake-ruby)
-(require 'ruby-mode)
-(require 'inf-ruby)
-;;------------------------------------------------------------------------------
-(require 'rspec-mode)
-(setq rspec-use-rake-when-possible nil)
-(setq compilation-scroll-output 'first-error)
-;;------------------------------------------------------------------------------
-;;------------------------------------------------------------------------------
-;;------------------------------------------------------------------------------
-;;------------------------------------------------------------------------------
-;;------------------------------------------------------------------------------
-(tool-bar-mode -1)
+;; the modules
+(if (file-exists-p prelude-modules-file)
+    (load prelude-modules-file)
+  (message "Missing modules file %s" prelude-modules-file)
+  (message "You can get started by copying the bundled example file"))
 
-(setq
- inhibit-splash-screen t
- initial-scratch-message nil
- initial-major-mode 'org-mode
- echo-keystrokes 0.1
- use-dialog-box nil
- column-number-mode t
- line-number-mode t
- visible-bell nil
- global-font-lock-mode t
- make-backup-files nil
- tab-width 2
- indent-tabs-mode nil
- indicate-empty-lines t
- x-select-enable-clipboard t
- ns-use-srgb-colorspace t
- help-window-select t
- scroll-conservatively 5
- ring-bell-function 'ignore
- )
-(setq ring-bell-function (lambda () (message "*beep*")))
-(set-fringe-mode '(10 . 0))
+;; config changes made through the customize UI will be store here
+(setq custom-file (expand-file-name "custom.el" prelude-personal-dir))
 
-(setq backup-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms
-            `((".*" ,temporary-file-directory t)))
+;; load the personal settings (this includes `custom-file')
+(when (file-exists-p prelude-personal-dir)
+  (message "Loading personal configuration files in %s..." prelude-personal-dir)
+  (mapc 'load (directory-files prelude-personal-dir 't "^[^#].*el$")))
 
+(message "Prelude is ready to do thy bidding, Master %s!" current-user)
 
-(setq-default indent-tabs-mode nil)
-(setq-default tab-width 2)
-(setq-default c-basic-offset 2)
-(setq css-indent-offset 2)
-(setq js-indent-level 2)
-(setq web-mode-markup-indent-offset 2)
-(setq web-mode-code-indent-offset 2)
-(setq web-mode-css-indent-offset 2)
+(prelude-eval-after-init
+ ;; greet the use with some useful tip
+ (run-at-time 5 nil 'prelude-tip-of-the-day))
 
-(prefer-coding-system 'utf-8)
-(global-set-key (kbd "C-x C-b") 'buffer-menu)
-
-(setq default-frame-alist
-      '(
-	(width . 100)
-	(height . 50)
-	(font . "Source Code Pro-14")))
-
-
-(when (not indicate-empty-lines)
-  (toggle-indicate-empty-lines))
-
-(defalias 'yes-or-no-p 'y-or-n-p)
-
-;;------------------------------------------------------------------------------
-; (global-set-key (kbd "C-]") 'search-forward)
-; (global-set-key (kbd "C-cb") 'balance-windows)
-; (global-set-key (kbd "C-cg") 'goto-line)
-; (global-set-key (kbd "s-+") 'text-scale-increase)
-; (global-set-key (kbd "s--") 'text-scale-decrease)
-;;------------------------------------------------------------------------------
-; (require 'auto-complete-config)
-; (ac-config-default)
-;;------------------------------------------------------------------------------
-; (setq smex-save-file (expand-file-name ".smex-items" user-emacs-directory))
-; (smex-initialize)
-; (global-set-key (kbd "M-x") 'smex)
-; (global-set-key (kbd "M-X") 'smex-major-mode-commands)
-;;------------------------------------------------------------------------------
-; (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
-; (add-to-list 'auto-mode-alist '("\\.mdown$" . markdown-mode))
-; (add-hook 'markdown-mode-hook (lambda () (visual-line-mode t)))
-;------------------------------------------------------------------------------
-; (autoload 'color-theme-approximate-on "color-theme-approximate")
-; (color-theme-approximate-on)
-;------------------------------------------------------------------------------
-(when window-system
-  (setq frame-title-format '(buffer-file-name "%f" ("%b"))))
-(when (not (eq window-system 'mac))
-  (menu-bar-mode -1))
-
-;------------------------------------------------------------------------------
-;; (setq enh-ruby-program "/usr/local/opt/rbenv/shims/ruby")
-;; (autoload 'enh-ruby-mode "enh-ruby-mode" "Major mode for ruby files" t)
-;; (add-to-list 'auto-mode-alist '("\\.rb$" . enh-ruby-mode))
-;; (add-to-list 'auto-mode-alist '("\\.rake$" . enh-ruby-mode))
-;; (add-to-list 'auto-mode-alist '("Rakefile$" . enh-ruby-mode))
-;; (add-to-list 'auto-mode-alist '("\\.gemspec$" . enh-ruby-mode))
-;; (add-to-list 'auto-mode-alist '("\\.ru$" . enh-ruby-mode))
-;; (add-to-list 'auto-mode-alist '("Gemfile$" . enh-ruby-mode))
-
-;; (add-to-list 'interpreter-mode-alist '("ruby" . enh-ruby-mode))
-
-;; (setq enh-ruby-bounce-deep-indent t)
-;; (setq enh-ruby-hanging-brace-indent-level 2)
-
-;; (require 'cl) ; If you don't have it already
-
-;; (defun* get-closest-gemfile-root (&optional (file "Gemfile"))
-;;     "Determine the pathname of the first instance of FILE starting from the current directory towards root.
-;; This may not do the correct thing in presence of links. If it does not find FILE, then it shall return the name
-;; of FILE in the current directory, suitable for creation"
-;;     (let ((root (expand-file-name "/"))) ; the win32 builds should translate this correctly
-;;       (loop
-;;        for d = default-directory then (expand-file-name ".." d)
-;;        if (file-exists-p (expand-file-name file d))
-;;        return d
-;;        if (equal d root)
-;;        return nil)))
-
-;; (require 'compile)
-
-;; (defun rspec-compile-file ()
-;;   (interactive)
-;;   (compile (format "cd %s;bundle exec rspec %s"
-;;                    (get-closest-gemfile-root)
-;;                    (file-relative-name (buffer-file-name) (get-closest-gemfile-root))
-;;                    ) t))
-
-;; (defun rspec-compile-on-line ()
-;;   (interactive)
-;;   (compile (format "cd %s;bundle exec rspec %s -l %s"
-;;                    (get-closest-gemfile-root)
-;;                    (file-relative-name (buffer-file-name) (get-closest-gemfile-root))
-;;                    (line-number-at-pos)
-;;                    ) t))
-
-;; (add-hook 'enh-ruby-mode-hook
-;;           (lambda ()
-;;             (local-set-key (kbd "C-c l") 'rspec-compile-on-line)
-;;             (local-set-key (kbd "C-c k") 'rspec-compile-file)
-;;             ))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   (quote
-    ("3328e7238e0f6d0a5e1793539dfe55c2685f24b6cdff099c9a0c185b71fbfff9" default))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;;; init.el ends here

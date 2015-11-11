@@ -1,0 +1,23 @@
+
+;; ----- smex-history -----
+(
+ customize-face
+ describe-font
+ customize-variable-other-window
+ set-variable
+ whitespace-mode
+ menu-bar-mode
+ package-install
+)
+
+;; ----- smex-data -----
+(
+ (package-menu-mode . 1)
+ (package-install . 1)
+ (menu-bar-mode . 1)
+ (whitespace-mode . 2)
+ (set-variable . 3)
+ (customize-variable-other-window . 1)
+ (describe-font . 1)
+ (customize-face . 1)
+)
