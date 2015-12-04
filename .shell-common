@@ -26,9 +26,7 @@ elif [[ "${OSTYPE:0:5}" = "linux" ]] ; then
 fi
 # ---------------------------------------------------------------------------
 if [[ -d "/usr/syno" ]] ; then
-  if [[ -x "/opt/bin/ps" ]] ; then
-    alias ps="/opt/bin/ps"
-  else
+  if [[ "$(which ps)" == "/usr/bin/ps" ]] ; then
     alias p="ps w"
   fi
 fi
