@@ -7,6 +7,7 @@
  '(column-number-mode t)
  '(current-language-environment "UTF-8")
  '(menu-bar-mode nil)
+ '(safe-local-variable-values (quote ((encoding . utf-8))))
  '(show-paren-mode t)
  '(size-indication-mode t)
  '(tool-bar-mode nil)

@@ -3,7 +3,7 @@
 ;;; Code:
 (add-to-list 'load-path (or (file-name-directory #$) (car load-path)))
 
-;;;### (autoloads nil "yari" "yari.el" (22083 12195 0 0))
+;;;### (autoloads nil "yari" "yari.el" (22101 46385 0 0))
 ;;; Generated autoloads from yari.el
 
 (autoload 'yari-anything "yari" "\

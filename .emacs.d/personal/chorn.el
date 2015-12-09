@@ -9,6 +9,8 @@
  visible-bell nil
  tab-width 2
  indicate-empty-lines t
+ server-use-tcp t
+ prelude-guru nil
 )
 
 ;;------------------------------------------------------------------------------

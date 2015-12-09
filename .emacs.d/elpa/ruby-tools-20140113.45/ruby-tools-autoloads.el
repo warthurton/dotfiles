@@ -3,7 +3,7 @@
 ;;; Code:
 (add-to-list 'load-path (or (file-name-directory #$) (car load-path)))
 
-;;;### (autoloads nil "ruby-tools" "ruby-tools.el" (22083 12194 0
+;;;### (autoloads nil "ruby-tools" "ruby-tools.el" (22101 46385 0
 ;;;;;;  0))
 ;;; Generated autoloads from ruby-tools.el
 
@@ -14,7 +14,7 @@ Collection of handy functions for ruby-mode.
 
 ;;;***
 
-;;;### (autoloads nil nil ("ruby-tools-pkg.el") (22083 12194 500291
+;;;### (autoloads nil nil ("ruby-tools-pkg.el") (22101 46385 96618
 ;;;;;;  0))
 
 ;;;***

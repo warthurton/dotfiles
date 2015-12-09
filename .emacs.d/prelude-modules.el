@@ -11,10 +11,10 @@
 ;; (require 'prelude-evil)
 
 ;;; Programming languages support
-(require 'prelude-c)
-(require 'prelude-clojure)
-(require 'prelude-coffee)
-(require 'prelude-common-lisp)
+; (require 'prelude-c)
+; (require 'prelude-clojure)
+; (require 'prelude-coffee)
+; (require 'prelude-common-lisp)
 (require 'prelude-css)
 (require 'prelude-emacs-lisp)
 ;; (require 'prelude-erlang)
@@ -26,11 +26,11 @@
 (require 'prelude-lisp)
 ;; (require 'prelude-ocaml)
 (require 'prelude-org) ;; Org-mode helps you keep TODO lists, notes and more
-(require 'prelude-perl)
-(require 'prelude-python)
+; (require 'prelude-perl)
+; (require 'prelude-python)
 (require 'prelude-ruby)
 ;; (require 'prelude-scala)
-(require 'prelude-scheme)
+; (require 'prelude-scheme)
 (require 'prelude-shell)
 (require 'prelude-scss)
 (require 'prelude-web) ;; Emacs mode for web templates
