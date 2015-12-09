@@ -5,6 +5,7 @@ bindkey -m 2>/dev/null
 # --------------------------------------------------------------------------
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+
 for s in  ~/.shell-common \
           ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
           ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh \
@@ -234,4 +235,3 @@ unset RPROMPT
 
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=zsh sw=2 ts=2 expandtab:
-
