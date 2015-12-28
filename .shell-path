@@ -1,0 +1,64 @@
+# --------------------------------------------------------------------------
+# ruby
+
+if [[ ! -d "$HOME/.rvm/bin" ]] ; then
+  if [[ -d "/usr/local/opt/rbenv/bin" ]] ; then
+    export RBENV_ROOT="/usr/local/opt/rbenv"
+  elif [[ -d "$HOME/.rbenv/bin" ]] ; then
+    export RBENV_ROOT="$HOME/.rbenv"
+  fi
+fi
+# --------------------------------------------------------------------------
+_safe_add_to_path() {
+  local _dir="$1"
+  PATH="${PATH#$_dir:}"
+  PATH="${PATH/:$_dir/}"
+  [[ -d "$_dir" ]] && PATH="${_dir}:$PATH"
+  export PATH
+}
+
+for dir in \
+  /{bin,sbin} \
+  /{usr,opt}/{bin,sbin} \
+  /{usr,opt,Apps}/{local,X11,opt}/{bin,sbin} \
+  /{usr,opt}/local/heroku/bin \
+  /Applications/VMware\ Fusion.app/Contents/Library \
+  /Applications/Postgres.app/Contents/Versions/9.4/bin \
+  $HOME/bin \
+  $HOME/.linuxbrew/bin \
+  $RBENV_ROOT/bin \
+  $HOME/.rvm/bin
+do
+  _safe_add_to_path "$dir"
+done
+
+# --------------------------------------------------------------------------
+# ruby, prefer rvm over rbenv
+
+if [[ -d "$HOME/.rvm/bin" ]] ; then
+  source "$HOME/.rvm/scripts/rvm"
+elif [[ -n $RBENV_ROOT ]] ; then
+  if [[ -n $ZSH_VERSION ]] ; then
+    eval "$(rbenv init - zsh)"
+  else
+    eval "$(rbenv init -)"
+  fi
+fi
+
+# --------------------------------------------------------------------------
+# nodejs
+
+if [[ -d "$HOME/.nvm" ]] ;then
+  export NVM_DIR="$HOME/.nvm"
+  command -v brew >/dev/null 2>/dev/null && source "$(brew --prefix nvm)/nvm.sh"
+fi
+
+# --------------------------------------------------------------------------
+# GO
+
+if [[ -d "$HOME/.go/bin" ]] ; then
+  export GOPATH="$HOME/.go"
+  _safe_add_to_path "$GOPATH/bin"
+fi
+# --------------------------------------------------------------------------
+# vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:
