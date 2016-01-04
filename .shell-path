@@ -50,7 +50,11 @@ fi
 
 if [[ -d "$HOME/.nvm" ]] ;then
   export NVM_DIR="$HOME/.nvm"
-  command -v brew >/dev/null 2>/dev/null && source "$(brew --prefix nvm)/nvm.sh"
+  if [[ -s "$NVM_DIR/nvm.sh" ]] ; then
+    source "$NVM_DIR/nvm.sh"
+  else
+    command -v brew >/dev/null 2>/dev/null && source "$(brew --prefix nvm)/nvm.sh"
+  fi
 fi
 
 # --------------------------------------------------------------------------
