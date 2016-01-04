@@ -8,7 +8,6 @@ options: catname:Meow
 options: checkpoint
 options: color
 options: confirm
-options: decgraphics
 options: disclose:ni na -v -g -c
 options: dogname:Grrrr
 options: eight_bit_tty
@@ -40,7 +39,6 @@ options: showexp
 options: silent
 options: !splash_screen
 options: sortpack
-options: !sound
 options: standout
 options: suppress_alert:3.3.1
 options: time
