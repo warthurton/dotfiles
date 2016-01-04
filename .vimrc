@@ -139,24 +139,24 @@ call plug#begin(vimhome . 'plugged')
 " Plug 'vim-scripts/grep.vim'
 
 " Utils
-" Plug 'AndrewRadev/splitjoin.vim'
-" Plug 'FredKSchott/CoVim'
+Plug 'AndrewRadev/splitjoin.vim'
+Plug 'FredKSchott/CoVim'
 Plug 'airblade/vim-gitgutter'
-" Plug 'bling/vim-bufferline'
-" Plug 'chrisbra/NrrwRgn'
+Plug 'bling/vim-bufferline'
+Plug 'chrisbra/NrrwRgn'
 Plug 'chriskempson/base16-vim'
-" Plug 'godlygeek/tabular'
-" Plug 'kana/vim-textobj-user'
+Plug 'godlygeek/tabular'
+Plug 'kana/vim-textobj-user'
 Plug 'kien/ctrlp.vim'
 Plug 'mbbill/undotree'
-" Plug 'oplatek/Conque-Shell'
+Plug 'oplatek/Conque-Shell'
 Plug 'scrooloose/nerdtree',            { 'on':  'NERDTreeToggle' }
 Plug 'tomtom/tcomment_vim'
-" Plug 'tpope/vim-fugitive'
-" Plug 'tpope/vim-vividchalk'
-" Plug 'xolox/vim-easytags'
-" Plug 'xolox/vim-misc'
-" Plug 'xolox/vim-shell'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-vividchalk'
+Plug 'xolox/vim-easytags'
+Plug 'xolox/vim-misc'
+Plug 'xolox/vim-shell'
 
 " Filetypes
 Plug 'JulesWang/css.vim',              { 'for': [ 'css', 'sass', 'scss' ] }
@@ -168,7 +168,7 @@ Plug 'kurayama/systemd-vim-syntax',    { 'for': 'systemd' }
 Plug 'leshill/vim-json',               { 'for': 'json' }
 Plug 'mitsuhiko/vim-python-combined',  { 'for': 'python' }
 Plug 'mutewinter/nginx.vim',           { 'for': 'nginx' }
-" Plug 'nelstrom/vim-textobj-rubyblock', { 'for': 'ruby' }
+Plug 'nelstrom/vim-textobj-rubyblock', { 'for': 'ruby' }
 Plug 'othree/html5.vim',               { 'for': 'html' }
 Plug 'pangloss/vim-javascript',        { 'for': 'javascript' }
 Plug 'sheerun/vim-yardoc',             { 'for': 'yard' }
@@ -178,12 +178,12 @@ Plug 'tpope/vim-haml',                 { 'for': 'haml' }
 Plug 'tpope/vim-markdown',             { 'for': 'markdown' }
 
 " tmux / ruby / tests
-" Plug 'majutsushi/tagbar',              { 'for': 'ruby' }
-" Plug 'benmills/vimux',                 { 'for': 'ruby' }
-" Plug 'christoomey/vim-tmux-navigator', { 'for': 'ruby' }
-" Plug 'jgdavey/vim-turbux',             { 'for': 'ruby' }
-" Plug 'skalnik/vim-vroom',              { 'for': 'ruby' }
-" Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby' }
+Plug 'majutsushi/tagbar',              { 'for': 'ruby' }
+Plug 'benmills/vimux',                 { 'for': 'ruby' }
+Plug 'christoomey/vim-tmux-navigator', { 'for': 'ruby' }
+Plug 'jgdavey/vim-turbux',             { 'for': 'ruby' }
+Plug 'skalnik/vim-vroom',              { 'for': 'ruby' }
+Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby' }
 Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
 Plug 'tpope/vim-endwise',              { 'for': 'ruby' }
 Plug 'tpope/vim-rails',                { 'for': 'ruby' }
@@ -191,7 +191,7 @@ Plug 'tpope/vim-rake',                 { 'for': 'ruby' }
 Plug 'tpope/vim-rbenv',                { 'for': 'ruby' }
 Plug 'vim-ruby/vim-ruby',              { 'for': 'ruby' }
 "
-" Plug 'scrooloose/syntastic'
+Plug 'scrooloose/syntastic'
 
 if g:use_airline == 1       | Plug 'bling/vim-airline'                                | endif
 if g:use_ag == 1            | Plug 'rking/ag.vim'                                     | endif
@@ -202,12 +202,6 @@ if g:use_supertab == 1      | Plug 'ervandew/supertab'                          
 
 call plug#end()
 runtime macros/matchit.vim
-
-" if v:progname == 'nvim'
-"   set viminfo='512,<4096,s512,/512,:512
-" else
-"   set viminfo='512,<4096,s512,/512,:512,n~/.vim/viminfo
-" endif
 
 " airline
 let g:airline_detect_crypt                         = 1
