@@ -1,18 +1,23 @@
 
 let g:os=substitute(system('uname'), '\n', '', '')
-let vimhome = '~/.vim/'
-set clipboard+=unnamed
 
 if v:progname == 'nvim'
-  let vimhome = '~/.nvim/'
-  set clipboard+=unnamedplus
+  let g:vimhome = '~/.local/share/nvim/site/'
+  set viminfo='512,<4096,s512,/512,:512
+  if has("gui_running")
+    set clipboard+=unnamedplus
+  endif
+else
+  let g:vimhome = '~/.vim/'
+  set viminfo='512,<4096,s512,/512,:512,n~/.vim/viminfo
+  set clipboard+=unnamed
 endif
 
 let config_dirs = ['tmp', 'undo', 'cache', 'autoload', 'plugged', 'backup', 'swap']
 for dir in config_dirs
   try
-    if !isdirectory(expand(vimhome . dir))
-      call mkdir(expand(vimhome . dir), "p")
+    if !isdirectory(expand(g:vimhome . dir))
+      call mkdir(expand(g:vimhome . dir), "p")
     endif
   catch
   endtry
@@ -20,12 +25,12 @@ endfor
 
 let mapleader = ","
 set autoindent
-let &backupdir = expand(vimhome . 'backup')
+let &backupdir = expand(g:vimhome . 'backup')
 set background=dark
 set backspace=indent,eol,start
 set binary
-let g:cachedir = expand(vimhome . 'cache')
-let &directory = expand(vimhome . 'swap')
+let g:cachedir = expand(g:vimhome . 'cache')
+let &directory = expand(g:vimhome . 'swap')
 set noex
 set encoding=utf-8
 set noerrorbells
@@ -74,21 +79,21 @@ set visualbell
 " set tags+=tags
 set t_Co=256
 set t_vb=
-set wildignore+=*/.cache/*,*/tmp/*,*/.git/*,*/.neocon/*,*.log,*.so,*.swp,*.zip,*.gz,*.bz2,*.bmp,*.ppt
-set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe,*.dll
-set wildmenu
-set wildmode=longest,list
+" set wildignore+=*/.cache/*,*/tmp/*,*/.git/*,*/.neocon/*,*.log,*.so,*.swp,*.zip,*.gz,*.bz2,*.bmp,*.ppt
+" set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe,*.dll
+" set wildmenu
+" set wildmode=longest,list
 set writebackup
 
 if has('persistent_undo')
-  let &undodir = expand(vimhome . 'undo')
+  let &undodir = expand(g:vimhome . 'undo')
   set undolevels=1000
   set undoreload=10000
   set undofile
 endif
 
-if empty(glob(vimhome . 'autoload/plug.vim'))
-  execute "silent !curl -sfLo " . vimhome . "/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim"
+if empty(glob(g:vimhome . 'autoload/plug.vim'))
+  execute "silent !curl -sfLo " . g:vimhome . "/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim"
   autocmd VimEnter * PlugInstall
 endif
 
@@ -134,24 +139,24 @@ call plug#begin(vimhome . 'plugged')
 " Plug 'vim-scripts/grep.vim'
 
 " Utils
-Plug 'AndrewRadev/splitjoin.vim'
-Plug 'FredKSchott/CoVim'
+" Plug 'AndrewRadev/splitjoin.vim'
+" Plug 'FredKSchott/CoVim'
 Plug 'airblade/vim-gitgutter'
-Plug 'bling/vim-bufferline'
-Plug 'chrisbra/NrrwRgn'
+" Plug 'bling/vim-bufferline'
+" Plug 'chrisbra/NrrwRgn'
 Plug 'chriskempson/base16-vim'
-Plug 'godlygeek/tabular'
-Plug 'kana/vim-textobj-user'
+" Plug 'godlygeek/tabular'
+" Plug 'kana/vim-textobj-user'
 Plug 'kien/ctrlp.vim'
 Plug 'mbbill/undotree'
-Plug 'oplatek/Conque-Shell'
+" Plug 'oplatek/Conque-Shell'
 Plug 'scrooloose/nerdtree',            { 'on':  'NERDTreeToggle' }
 Plug 'tomtom/tcomment_vim'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-vividchalk'
-Plug 'xolox/vim-easytags'
-Plug 'xolox/vim-misc'
-Plug 'xolox/vim-shell'
+" Plug 'tpope/vim-fugitive'
+" Plug 'tpope/vim-vividchalk'
+" Plug 'xolox/vim-easytags'
+" Plug 'xolox/vim-misc'
+" Plug 'xolox/vim-shell'
 
 " Filetypes
 Plug 'JulesWang/css.vim',              { 'for': [ 'css', 'sass', 'scss' ] }
@@ -163,7 +168,7 @@ Plug 'kurayama/systemd-vim-syntax',    { 'for': 'systemd' }
 Plug 'leshill/vim-json',               { 'for': 'json' }
 Plug 'mitsuhiko/vim-python-combined',  { 'for': 'python' }
 Plug 'mutewinter/nginx.vim',           { 'for': 'nginx' }
-Plug 'nelstrom/vim-textobj-rubyblock', { 'for': 'ruby' }
+" Plug 'nelstrom/vim-textobj-rubyblock', { 'for': 'ruby' }
 Plug 'othree/html5.vim',               { 'for': 'html' }
 Plug 'pangloss/vim-javascript',        { 'for': 'javascript' }
 Plug 'sheerun/vim-yardoc',             { 'for': 'yard' }
@@ -172,21 +177,21 @@ Plug 'tpope/vim-cucumber',             { 'for': 'ruby' }
 Plug 'tpope/vim-haml',                 { 'for': 'haml' }
 Plug 'tpope/vim-markdown',             { 'for': 'markdown' }
 
-
 " tmux / ruby / tests
 " Plug 'majutsushi/tagbar',              { 'for': 'ruby' }
-Plug 'benmills/vimux',                 { 'for': 'ruby' }
-Plug 'christoomey/vim-tmux-navigator', { 'for': 'ruby' }
-Plug 'jgdavey/vim-turbux',             { 'for': 'ruby' }
-Plug 'scrooloose/syntastic'
-Plug 'skalnik/vim-vroom',              { 'for': 'ruby' }
-Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby' }
+" Plug 'benmills/vimux',                 { 'for': 'ruby' }
+" Plug 'christoomey/vim-tmux-navigator', { 'for': 'ruby' }
+" Plug 'jgdavey/vim-turbux',             { 'for': 'ruby' }
+" Plug 'skalnik/vim-vroom',              { 'for': 'ruby' }
+" Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby' }
 Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
 Plug 'tpope/vim-endwise',              { 'for': 'ruby' }
 Plug 'tpope/vim-rails',                { 'for': 'ruby' }
 Plug 'tpope/vim-rake',                 { 'for': 'ruby' }
 Plug 'tpope/vim-rbenv',                { 'for': 'ruby' }
 Plug 'vim-ruby/vim-ruby',              { 'for': 'ruby' }
+"
+" Plug 'scrooloose/syntastic'
 
 if g:use_airline == 1       | Plug 'bling/vim-airline'                                | endif
 if g:use_ag == 1            | Plug 'rking/ag.vim'                                     | endif
@@ -196,9 +201,13 @@ if g:use_youcompleteme == 1 | Plug 'Valloric/YouCompleteMe', { 'do': './install.
 if g:use_supertab == 1      | Plug 'ervandew/supertab'                                | endif
 
 call plug#end()
-set viminfo='512,<4096,s512,/512,:512,n~/.vim/viminfo
 runtime macros/matchit.vim
 
+" if v:progname == 'nvim'
+"   set viminfo='512,<4096,s512,/512,:512
+" else
+"   set viminfo='512,<4096,s512,/512,:512,n~/.vim/viminfo
+" endif
 
 " airline
 let g:airline_detect_crypt                         = 1
@@ -213,10 +222,10 @@ let g:airline#extensions#branch#format             = 1
 let g:airline#extensions#bufferline#enabled        = 1
 let g:airline#extensions#ctrlspace#enabled         = 1
 let g:airline#extensions#nrrwrgn#enabled           = 1
-let g:airline#extensions#syntastic#enabled         = 1
+let g:airline#extensions#syntastic#enabled         = 0
 let g:airline#extensions#tabline#enabled           = 0
-let g:airline#extensions#tagbar#enabled            = 1
-let g:airline#extensions#tmuxline#enabled          = 1
+let g:airline#extensions#tagbar#enabled            = 0
+let g:airline#extensions#tmuxline#enabled          = 0
 " let g:airline#extensions#tabline#show_close_button = 0
 " let g:airline#extensions#tabline#buffer_idx_mode   = 1
 " let g:airline#extensions#tabline#show_buffers      = 1
@@ -347,17 +356,17 @@ nmap <leader>ss :SplitjoinSplit<cr>
 
 
 " syntastic
+let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_jump                = 1
 let g:syntastic_auto_loc_list            = 1
-let g:syntastic_auto_loc_list            = 1 " Close the location-list when errors are gone
 let g:syntastic_check_on_open            = 0
+let g:syntastic_check_on_wq              = 0
 let g:syntastic_enable_signs             = 1
 let g:syntastic_loc_list_height          = 5
 let g:syntastic_sh_shellcheck_args       = '--exclude=SC2001,SC1090,SC2164'
 let g:syntastic_sh_checkers              = ['shellcheck', 'sh']
 let g:syntastic_ruby_checkers            = ['rubocop', 'mri']
 let g:syntastic_ruby_rubocop_args        = '--display-cop-names --config "$HOME/.rubocop.yml"'
-" let g:syntastic_ruby_rubocop_args        = '--display-cop-names --only-guide-cops --except "Metrics/LineLength, Style/Documentation, Metrics/MethodLength, Metrics/BlockNesting, Style/HashSyntax, Style/BlockDelimiters, Style/StringLiterals, Style/DoubleNegation, Style/GuardClause, Style/TrailingBlankLines"'
 
 
 " tabular
