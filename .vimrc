@@ -62,7 +62,10 @@ set ruler
 set scrolloff=3
 set secure
 set shiftwidth=2
-set shortmess+=I
+set shortmess=ilnrxsAI
+if version >= 704
+  set shortmess+=c
+endif
 set showcmd
 set showmatch
 set noshowmode
@@ -76,13 +79,12 @@ set splitright
 set tabstop=2
 set noterse
 set visualbell
-" set tags+=tags
 set t_Co=256
 set t_vb=
-" set wildignore+=*/.cache/*,*/tmp/*,*/.git/*,*/.neocon/*,*.log,*.so,*.swp,*.zip,*.gz,*.bz2,*.bmp,*.ppt
-" set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe,*.dll
-" set wildmenu
-" set wildmode=longest,list
+set wildignore+=*/.cache/*,*/tmp/*,*/.git/*,*/.neocon/*,*.log,*.so,*.swp,*.zip,*.gz,*.bz2,*.bmp,*.ppt
+set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe,*.dll
+set wildmenu
+set wildmode=longest,list
 set writebackup
 
 if has('persistent_undo')
@@ -140,7 +142,6 @@ call plug#begin(vimhome . 'plugged')
 
 " Utils
 Plug 'AndrewRadev/splitjoin.vim'
-Plug 'FredKSchott/CoVim'
 Plug 'airblade/vim-gitgutter'
 Plug 'bling/vim-bufferline'
 Plug 'chrisbra/NrrwRgn'
@@ -154,9 +155,12 @@ Plug 'scrooloose/nerdtree',            { 'on':  'NERDTreeToggle' }
 Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-vividchalk'
-Plug 'xolox/vim-easytags'
-Plug 'xolox/vim-misc'
-Plug 'xolox/vim-shell'
+if version >= 704
+  Plug 'FredKSchott/CoVim'
+  Plug 'xolox/vim-easytags'
+  Plug 'xolox/vim-misc'
+  Plug 'xolox/vim-shell'
+endif
 
 " Filetypes
 Plug 'JulesWang/css.vim',              { 'for': [ 'css', 'sass', 'scss' ] }
