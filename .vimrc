@@ -1,52 +1,61 @@
 
 let g:os=substitute(system('uname'), '\n', '', '')
 
-if v:progname == 'nvim'
-  let g:vimhome = '~/.local/share/nvim/site/'
-  set viminfo='512,<4096,s512,/512,:512
-  if has("gui_running")
-    set clipboard+=unnamedplus
-  endif
-else
+" Default settings that might need to be tweaked during vim/neovim
+set viminfo='512,<4096,s512,/512,:512
+
+if !has('nvim') " Normal vim or macvim
+
   let g:vimhome = '~/.vim/'
-  set viminfo='512,<4096,s512,/512,:512,n~/.vim/viminfo
-  set clipboard+=unnamed
+
+  let config_dirs = [ 'backup', 'cache', 'plugged', 'swap', 'tmp', 'undo', 'view' ]
+  for dir in config_dirs
+    try
+      if !isdirectory(expand(g:vimhome . dir))
+        call mkdir(expand(g:vimhome . dir), "p")
+      endif
+    catch
+    endtry
+  endfor
+
+  let &backupdir     = expand(g:vimhome . 'backup')
+  let &directory     = expand(g:vimhome . 'swap')
+  let &viewdir       = expand(g:vimhome . 'view')
+  let &undodir       = expand(g:vimhome . 'undo')
+  set viminfo+=n~/.vim/viminfo
+  set encoding=utf-8
+  if has('clipboard') | set clipboard+=unnamed | endif
+
+else " Neovim, uses a better directory hierarchy than normal vim
+
+  let g:vimhome = '~/.config/nvim/'
+  if g:os == 'Darwin' | set clipboard+=unnamedplus | endif
+
 endif
 
-let config_dirs = ['tmp', 'undo', 'cache', 'autoload', 'plugged', 'backup', 'swap']
-for dir in config_dirs
-  try
-    if !isdirectory(expand(g:vimhome . dir))
-      call mkdir(expand(g:vimhome . dir), "p")
-    endif
-  catch
-  endtry
-endfor
+let g:autoloadhome = expand(g:vimhome . 'autoload')
+let g:cachedir = expand(g:vimhome . 'cache')
 
 let mapleader = ","
 set autoindent
-let &backupdir = expand(g:vimhome . 'backup')
 set background=dark
 set backspace=indent,eol,start
 set binary
-let g:cachedir = expand(g:vimhome . 'cache')
-let &directory = expand(g:vimhome . 'swap')
 set noex
-set encoding=utf-8
 set noerrorbells
 set expandtab
 set exrc
 set nofoldenable
 set formatoptions=rq
 set nohidden
-set history=8192
+set history=10000
 set hls
 set ignorecase
 set incsearch
 set laststatus=2
 set lazyredraw
 set list
-set listchars=""          " Reset the listchars
+set listchars=""          " reset the listchars
 set listchars+=tab:\ \    " a tab should display as "  ", trailing whitespace as "."
 set listchars+=trail:.    " show trailing spaces as dots
 set listchars+=extends:>
@@ -63,9 +72,7 @@ set scrolloff=3
 set secure
 set shiftwidth=2
 set shortmess=ilnrxsAI
-if version >= 704
-  set shortmess+=c
-endif
+if version >= 704 | set shortmess+=c | endif
 set showcmd
 set showmatch
 set noshowmode
@@ -88,18 +95,12 @@ set wildmode=longest,list
 set writebackup
 
 if has('persistent_undo')
-  let &undodir = expand(g:vimhome . 'undo')
   set undolevels=1000
   set undoreload=10000
   set undofile
 endif
 
-if empty(glob(g:vimhome . 'autoload/plug.vim'))
-  execute "silent !curl -sfLo " . g:vimhome . "/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim"
-  autocmd VimEnter * PlugInstall
-endif
-
-if has("ruby")
+if has('ruby') || has('nvim')
   compiler ruby
 endif
 
@@ -114,9 +115,9 @@ if version >= 702          | let g:use_airline   = 1 | endif
 if g:os == 'Darwin'        | let g:use_dash      = 1 | endif
 
 if version >= 704
-  if has("lua")
+  if has('lua')
     let g:use_neocomplete = 1
-  elseif has("python")
+  elseif has('python')
     let g:use_youcompleteme = 1
   endif
 endif
@@ -128,6 +129,11 @@ endif
 if executable('ag')
   let g:use_ag = 1
   set grepprg=ag\ --nogroup\ --nocolor\ --numbers\ $*\ /dev/null
+endif
+
+if empty(glob(g:autoloadhome . '/plug.vim'))
+  execute "silent !curl -sflo " . g:autoloadhome . "/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+  autocmd VimEnter * PlugInstall | source $MYVIMRC
 endif
 
 call plug#begin(vimhome . 'plugged')
@@ -146,7 +152,10 @@ Plug 'airblade/vim-gitgutter'
 Plug 'bling/vim-bufferline'
 Plug 'chrisbra/NrrwRgn'
 Plug 'chriskempson/base16-vim'
+Plug 'easymotion/vim-easymotion'
 Plug 'godlygeek/tabular'
+Plug 'haya14busa/incsearch.vim'
+Plug 'haya14busa/incsearch-easymotion.vim'
 Plug 'kana/vim-textobj-user'
 Plug 'kien/ctrlp.vim'
 Plug 'mbbill/undotree'
@@ -229,15 +238,6 @@ let g:airline#extensions#tmuxline#enabled          = 0
 " let g:airline#extensions#tabline#show_buffers      = 1
 " let g:airline#extensions#tabline#show_tabs         = 1
 let g:airline_section_b                            = '%{getcwd()}'
-" nmap <leader>1 <Plug>AirlineSelectTab1
-" nmap <leader>2 <Plug>AirlineSelectTab2
-" nmap <leader>3 <Plug>AirlineSelectTab3
-" nmap <leader>4 <Plug>AirlineSelectTab4
-" nmap <leader>5 <Plug>AirlineSelectTab5
-" nmap <leader>6 <Plug>AirlineSelectTab6
-" nmap <leader>7 <Plug>AirlineSelectTab7
-" nmap <leader>8 <Plug>AirlineSelectTab8
-" nmap <leader>9 <Plug>AirlineSelectTab9
 
 
 " base16-vim
@@ -273,12 +273,49 @@ endif
 nnoremap <leader>. :CtrlPTag<cr>
 
 
+" easymotion
+" <leader>f{char} to move to {char}
+map  <leader>f <plug>(easymotion-bd-f)
+nmap <leader>f <plug>(easymotion-overwin-f)
+" s{char}{char} to move to {char}{char}
+nmap s <plug>(easymotion-overwin-f2)
+" move to line
+map <leader>l <plug>(easymotion-bd-jk)
+nmap <leader>l <plug>(easymotion-overwin-line)
+" move to word
+map  <leader>w <plug>(easymotion-bd-w)
+nmap <leader>w <plug>(easymotion-overwin-w)
+
+
+" easytags
+let g:easytags_file = g:vimhome . 'vimtags'
+
+
 " gitgutter
 highlight clear SignColumn
 let g:gitgutter_eager     = 0
 let g:gitgutter_enabled   = 1
 let g:gitgutter_max_signs = 10000
 let g:gitgutter_realtime  = 0
+
+
+" incsearch
+" you can use other keymappings like <c-l> instead of <cr> if you want to
+" use these mappings as default search and somtimes want to move cursor with
+" easymotion.
+" function! s:incsearch_config(...) abort
+"   return incsearch#util#deepextend(deepcopy({
+"   \   'modules': [incsearch#config#easymotion#module({'overwin': 1})],
+"   \   'keymap': {
+"   \     "\<cr>": '<over>(easymotion)'
+"   \   },
+"   \   'is_expr': 0
+"   \ }), get(a:, 1, {}))
+" endfunction
+"
+" noremap <silent><expr> /  incsearch#go(<sid>incsearch_config())
+" noremap <silent><expr> ?  incsearch#go(<sid>incsearch_config({'command': '?'}))
+" noremap <silent><expr> g/ incsearch#go(<sid>incsearch_config({'is_stay': 1}))
 
 
 " neocomplete.vim
@@ -530,4 +567,3 @@ if has("gui_running")
   let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
