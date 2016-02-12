@@ -8,6 +8,7 @@ export VISUAL=vim
 export PAGER=less
 export LESS="iRQXF"
 export HISTSIZE=100000
+export SHELLCHECK_OPTS="--shell=bash --exclude=SC2001,SC1090,SC2164"
 
 if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
   export LSCOLORS="Gxfxcxdxbxegedabagacad"
@@ -49,7 +50,7 @@ fi
 # --------------------------------------------------------------------------
 # ssh-agent, only for OS X
 
-if [[ -z _SSH_MAJOR_VER && -z _SSH_MINOR_VER ]] ; then
+if [[ -z "$_SSH_MAJOR_VER" && -z "$_SSH_MINOR_VER" ]] ; then
   if command -v ssh >/dev/null 2>/dev/null ; then
     declare -i _SSH_MAJOR_VER
     declare -i _SSH_MINOR_VER
@@ -58,7 +59,7 @@ if [[ -z _SSH_MAJOR_VER && -z _SSH_MINOR_VER ]] ; then
   fi
 fi
 
-if [[ "${OSTYPE:0:6}" = "darwin" && -n _SSH_MAJOR_VER && -n _SSH_MINOR_VER && -n $SSH_AUTH_SOCK && -S $SSH_AUTH_SOCK ]] ; then
+if [[ "${OSTYPE:0:6}" = "darwin" && -n "$_SSH_MAJOR_VER" && -n "$_SSH_MINOR_VER" && -n "$SSH_AUTH_SOCK" && -S "$SSH_AUTH_SOCK" ]] ; then
   if (( (_SSH_MAJOR_VER = 6 && _SSH_MINOR_VER >= 6) || _SSH_MAJOR_VER >= 7 )) ; then
     ssh-add -m -M >&/dev/null
   elif (( _SSH_MAJOR_VER = 6 && _SSH_MINOR_VER < 6 )) ; then
