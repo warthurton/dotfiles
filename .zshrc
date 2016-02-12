@@ -9,7 +9,8 @@ bindkey -m 2>/dev/null
 for s in  ~/.shell-common \
           ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
           ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh \
-          ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+          ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+          ~/.zsh/oh-my-zsh/plugins/safe-paste/safe-paste.plugin.zsh
 do
   [[ -f "$s" ]] && source "$s"
 done
@@ -196,7 +197,6 @@ build_multi_prompt() {
 }
 
 build_lprompt() {
-
   # user
   case $USER in
     chorn)
@@ -232,6 +232,11 @@ build_lprompt() {
 # export PROMPT="%f%b%k%u%s\$(build_lprompt)%f%b%k%u%s"
 export PROMPT="%f%b%k%u%s\$(build_multi_prompt)%f%b%k%u%s"
 unset RPROMPT
+
+# --------------------------------------------------------------------------
+# https://cirw.in/blog/bracketed-paste
+# Turn off bracketed paste mode!
+# printf '\e[?2004l'
 
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=zsh sw=2 ts=2 expandtab:
