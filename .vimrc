@@ -1,8 +1,7 @@
 
-let g:os=substitute(system('uname'), '\n', '', '')
-
 " Default settings that might need to be tweaked during vim/neovim
 set viminfo='512,<4096,s512,/512,:512
+
 
 if !has('nvim') " Normal vim or macvim
 
@@ -24,12 +23,18 @@ if !has('nvim') " Normal vim or macvim
   let &undodir       = expand(g:vimhome . 'undo')
   set viminfo+=n~/.vim/viminfo
   set encoding=utf-8
-  if has('clipboard') | set clipboard+=unnamed | endif
 
-else " Neovim, uses a better directory hierarchy than normal vim
+  if has('clipboard')
+    set clipboard+=unnamed
+  endif
+
+else " Neovim
 
   let g:vimhome = '~/.config/nvim/'
-  if g:os == 'Darwin' | set clipboard+=unnamedplus | endif
+
+  if executable('osascript')
+    set clipboard+=unnamedplus
+  endif
 
 endif
 
@@ -104,33 +109,6 @@ if has('ruby') || has('nvim')
   compiler ruby
 endif
 
-let g:use_ag            = 0
-let g:use_airline       = 0
-let g:use_dash          = 0
-let g:use_neocomplete   = 0
-let g:use_supertab      = 0
-let g:use_youcompleteme = 0
-
-if version >= 702          | let g:use_airline   = 1 | endif
-if g:os == 'Darwin'        | let g:use_dash      = 1 | endif
-
-if version >= 704
-  if has('lua')
-    let g:use_neocomplete = 1
-  elseif has('python')
-    let g:use_youcompleteme = 1
-  endif
-endif
-
-if g:use_neocomplete == 0 && g:use_youcompleteme == 0
-  let g:use_supertab = 1
-endif
-
-if executable('ag')
-  let g:use_ag = 1
-  set grepprg=ag\ --nogroup\ --nocolor\ --numbers\ $*\ /dev/null
-endif
-
 if empty(glob(g:autoloadhome . '/plug.vim'))
   execute "silent !curl -sflo " . g:autoloadhome . "/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
   autocmd VimEnter * PlugInstall | source $MYVIMRC
@@ -138,42 +116,30 @@ endif
 
 call plug#begin(vimhome . 'plugged')
 
-" Do I really use these?
-" Plug 'junegunn/fzf',                  { 'dir': '~/.zsh/fzf', 'do': 'yes \| ./install' }
-" Plug 'tpope/vim-repeat'
-" Plug 'tpope/vim-sleuth'
-" Plug 'tpope/vim-speeddating'
-" Plug 'tpope/vim-surround'
-" Plug 'vim-scripts/grep.vim'
-
 " Utils
 Plug 'AndrewRadev/splitjoin.vim'
-Plug 'airblade/vim-gitgutter'
+Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'bling/vim-bufferline'
 Plug 'chrisbra/NrrwRgn'
 Plug 'chriskempson/base16-vim'
 Plug 'easymotion/vim-easymotion'
 Plug 'godlygeek/tabular'
-Plug 'haya14busa/incsearch.vim'
-Plug 'haya14busa/incsearch-easymotion.vim'
+" Plug 'haya14busa/incsearch-easymotion.vim'
+" Plug 'haya14busa/incsearch.vim'
 Plug 'kana/vim-textobj-user'
 Plug 'kien/ctrlp.vim'
+Plug 'majutsushi/tagbar'
 Plug 'mbbill/undotree'
 Plug 'oplatek/Conque-Shell'
 Plug 'scrooloose/nerdtree',            { 'on':  'NERDTreeToggle' }
+Plug 'scrooloose/syntastic'
+Plug 'skalnik/vim-vroom'
 Plug 'tomtom/tcomment_vim'
-Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-vinegar'
 Plug 'tpope/vim-vividchalk'
-if version >= 704
-  Plug 'FredKSchott/CoVim'
-  Plug 'xolox/vim-easytags'
-  Plug 'xolox/vim-misc'
-  Plug 'xolox/vim-shell'
-endif
 
 " Filetypes
 Plug 'JulesWang/css.vim',              { 'for': [ 'css', 'sass', 'scss' ] }
-Plug 'acustodioo/vim-tmux',            { 'for': 'tmux' }
 Plug 'fatih/vim-go',                   { 'for': 'go' }
 Plug 'kchmck/vim-coffee-script',       { 'for': 'coffeescript' }
 Plug 'ksauzz/haproxy.vim',             { 'for': 'haproxy' }
@@ -181,37 +147,76 @@ Plug 'kurayama/systemd-vim-syntax',    { 'for': 'systemd' }
 Plug 'leshill/vim-json',               { 'for': 'json' }
 Plug 'mitsuhiko/vim-python-combined',  { 'for': 'python' }
 Plug 'mutewinter/nginx.vim',           { 'for': 'nginx' }
-Plug 'nelstrom/vim-textobj-rubyblock', { 'for': 'ruby' }
 Plug 'othree/html5.vim',               { 'for': 'html' }
 Plug 'pangloss/vim-javascript',        { 'for': 'javascript' }
-Plug 'sheerun/vim-yardoc',             { 'for': 'yard' }
-Plug 'tpope/vim-bundler',              { 'for': 'ruby' }
-Plug 'tpope/vim-cucumber',             { 'for': 'ruby' }
-Plug 'tpope/vim-haml',                 { 'for': 'haml' }
 Plug 'tpope/vim-markdown',             { 'for': 'markdown' }
 
-" tmux / ruby / tests
-Plug 'majutsushi/tagbar',              { 'for': 'ruby' }
-Plug 'benmills/vimux',                 { 'for': 'ruby' }
-Plug 'christoomey/vim-tmux-navigator', { 'for': 'ruby' }
-Plug 'jgdavey/vim-turbux',             { 'for': 'ruby' }
-Plug 'skalnik/vim-vroom',              { 'for': 'ruby' }
-Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby' }
-Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
-Plug 'tpope/vim-endwise',              { 'for': 'ruby' }
-Plug 'tpope/vim-rails',                { 'for': 'ruby' }
-Plug 'tpope/vim-rake',                 { 'for': 'ruby' }
-Plug 'tpope/vim-rbenv',                { 'for': 'ruby' }
-Plug 'vim-ruby/vim-ruby',              { 'for': 'ruby' }
-"
-Plug 'scrooloose/syntastic'
+if has('ruby') || has('nvim')
+  Plug 'nelstrom/vim-textobj-rubyblock', { 'for': 'ruby' }
+  Plug 'sheerun/vim-yardoc',             { 'for': 'yard' }
+  Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby', 'do': 'gem install rcodetools fastri' }
+  Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
+  Plug 'tpope/vim-bundler',              { 'for': 'ruby' }
+  Plug 'tpope/vim-cucumber',             { 'for': 'ruby' }
+  Plug 'tpope/vim-endwise',              { 'for': 'ruby' }
+  Plug 'tpope/vim-haml',                 { 'for': 'haml' }
+  Plug 'tpope/vim-rails',                { 'for': 'ruby' }
+  Plug 'tpope/vim-rake',                 { 'for': 'ruby' }
+  Plug 'tpope/vim-rbenv',                { 'for': 'ruby' }
+  Plug 'vim-ruby/vim-ruby',              { 'for': 'ruby' }
+endif
 
-if g:use_airline == 1       | Plug 'bling/vim-airline'                                | endif
-if g:use_ag == 1            | Plug 'rking/ag.vim'                                     | endif
-if g:use_dash == 1          | Plug 'rizzatti/dash.vim'                                | endif
-if g:use_neocomplete == 1   | Plug 'Shougo/neocomplete.vim'                           | endif
-if g:use_youcompleteme == 1 | Plug 'Valloric/YouCompleteMe', { 'do': './install.py' } | endif
-if g:use_supertab == 1      | Plug 'ervandew/supertab'                                | endif
+if executable('tmux')
+  Plug 'acustodioo/vim-tmux',            { 'for': 'tmux' }
+  Plug 'benmills/vimux'
+  Plug 'christoomey/vim-tmux-navigator'
+  Plug 'jgdavey/vim-turbux'
+endif
+
+if executable('git')
+  Plug 'airblade/vim-gitgutter'
+  Plug 'tpope/vim-fugitive'
+endif
+
+if executable('fzf')
+  Plug 'junegunn/fzf'
+endif
+
+if executable('ag')
+  Plug 'rking/ag.vim'
+  set grepprg=ag\ --nogroup\ --nocolor\ --numbers\ $*\ /dev/null
+  let g:ctrlp_user_command = 'ag --files-with-matches --nocolor -g "" %s'
+endif
+
+if executable('osascript')
+  Plug 'rizzatti/dash.vim'
+endif
+
+if version >= 702
+  Plug 'vim-airline/vim-airline'
+  Plug 'vim-airline/vim-airline-themes'
+endif
+
+if version >= 704
+  Plug 'FredKSchott/CoVim'
+  Plug 'xolox/vim-easytags'
+  Plug 'xolox/vim-misc'
+  Plug 'xolox/vim-shell'
+endif
+
+" let g:use_neocomplete = 0
+
+if has('nvim')
+  Plug 'Shougo/deoplete.nvim'
+  " Plug 'floobits/floobits-neovim'
+elseif version >= 704 && has('lua')
+  Plug 'Shougo/neocomplete.vim'
+  let g:use_neocomplete = 1
+elseif version >= 704 && has('python')
+  Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
+else
+  Plug 'ervandew/supertab'
+endif
 
 call plug#end()
 runtime macros/matchit.vim
@@ -238,7 +243,7 @@ let g:airline#extensions#tmuxline#enabled          = 0
 " let g:airline#extensions#tabline#show_buffers      = 1
 " let g:airline#extensions#tabline#show_tabs         = 1
 let g:airline_section_b                            = '%{getcwd()}'
-
+let g:airline_theme                                = 'tomorrow'
 
 " base16-vim
 if &term == 'xterm-256color' || &term == 'screen-256color' || &t_Co == 256
@@ -249,7 +254,7 @@ endif
 " bufferline
 let g:bufferline_active_buffer_left  = '['
 let g:bufferline_active_buffer_right = ']'
-let g:bufferline_echo                = 1
+let g:bufferline_echo                = 0
 let g:bufferline_modified            = '+'
 let g:bufferline_rotate              = 0
 let g:bufferline_show_bufnr          = 1
@@ -267,10 +272,11 @@ let g:ctrlp_map            = '<c-t>'
 let g:ctrlp_match_window   = 'bottom,order:btt,min:1,max:20,results:20'
 let g:ctrlp_show_hidden    = 1
 let g:ctrlp_use_caching    = 0
-if g:use_ag == 1
-  let g:ctrlp_user_command = 'ag --files-with-matches --nocolor -g "" %s'
-endif
 nnoremap <leader>. :CtrlPTag<cr>
+
+
+" deoplete
+let g:deoplete#enable_at_startup = 1
 
 
 " easymotion
@@ -319,7 +325,7 @@ let g:gitgutter_realtime  = 0
 
 
 " neocomplete.vim
-if g:use_neocomplete
+if exists('g:use_neocomplete')
   if !isdirectory(expand(g:cachedir . '/neocomplete'))
     call mkdir(expand(g:cachedir . '/neocomplete'), "p")
   endif
@@ -371,6 +377,7 @@ endif
 " nerdtree
 nmap <leader>n :NERDTreeToggle<CR>
 vmap <leader>n :NERDTreeToggle<CR>
+let NERDTreeHijackNetrw = 1
 
 
 " rspec
@@ -398,7 +405,6 @@ let g:syntastic_check_on_open            = 0
 let g:syntastic_check_on_wq              = 0
 let g:syntastic_enable_signs             = 1
 let g:syntastic_loc_list_height          = 5
-let g:syntastic_sh_shellcheck_args       = '--exclude=SC2001,SC1090,SC2164'
 let g:syntastic_sh_checkers              = ['shellcheck', 'sh']
 let g:syntastic_ruby_checkers            = ['rubocop', 'mri']
 let g:syntastic_ruby_rubocop_args        = '--display-cop-names --config "$HOME/.rubocop.yml"'
