@@ -1,9 +1,12 @@
 
-" Default settings that might need to be tweaked during vim/neovim
-set viminfo='512,<4096,s512,/512,:512
+if has('nvim') " neovim
+  let g:vimhome = '~/.config/nvim/'
 
+  if executable('osascript')
+    set clipboard+=unnamedplus
+  endif
 
-if !has('nvim') " Normal vim or macvim
+else " vim or macvim
 
   let g:vimhome = '~/.vim/'
 
@@ -21,19 +24,11 @@ if !has('nvim') " Normal vim or macvim
   let &directory     = expand(g:vimhome . 'swap')
   let &viewdir       = expand(g:vimhome . 'view')
   let &undodir       = expand(g:vimhome . 'undo')
-  set viminfo+=n~/.vim/viminfo
+  set viminfo='512,<4096,s512,/512,:512,n~/.vim/viminfo
   set encoding=utf-8
 
   if has('clipboard')
     set clipboard+=unnamed
-  endif
-
-else " Neovim
-
-  let g:vimhome = '~/.config/nvim/'
-
-  if executable('osascript')
-    set clipboard+=unnamedplus
   endif
 
 endif
@@ -117,65 +112,69 @@ endif
 call plug#begin(vimhome . 'plugged')
 
 " Utils
-Plug 'AndrewRadev/splitjoin.vim'
 Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'bling/vim-bufferline'
-Plug 'chrisbra/NrrwRgn'
-Plug 'chriskempson/base16-vim'
-Plug 'easymotion/vim-easymotion'
-Plug 'godlygeek/tabular'
-" Plug 'haya14busa/incsearch-easymotion.vim'
-" Plug 'haya14busa/incsearch.vim'
-Plug 'kana/vim-textobj-user'
-Plug 'kien/ctrlp.vim'
-Plug 'majutsushi/tagbar'
-Plug 'mbbill/undotree'
 Plug 'oplatek/Conque-Shell'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'easymotion/vim-easymotion'
+Plug 'haya14busa/incsearch-easymotion.vim'
+Plug 'haya14busa/incsearch.vim'
 Plug 'scrooloose/nerdtree',            { 'on':  'NERDTreeToggle' }
+Plug 'chrisbra/NrrwRgn'
+Plug 'jceb/vim-orgmode'
+Plug 'tpope/vim-speeddating'
+Plug 'AndrewRadev/splitjoin.vim'
 Plug 'scrooloose/syntastic'
-Plug 'skalnik/vim-vroom'
+Plug 'godlygeek/tabular'
+Plug 'majutsushi/tagbar'
 Plug 'tomtom/tcomment_vim'
+Plug 'kana/vim-textobj-user'
+Plug 'mbbill/undotree'
 Plug 'tpope/vim-vinegar'
-Plug 'tpope/vim-vividchalk'
+Plug 'skalnik/vim-vroom'
 
 " Filetypes
+Plug 'kchmck/vim-coffee-script',       { 'for': 'coffeescript' }
 Plug 'JulesWang/css.vim',              { 'for': [ 'css', 'sass', 'scss' ] }
 Plug 'fatih/vim-go',                   { 'for': 'go' }
-Plug 'kchmck/vim-coffee-script',       { 'for': 'coffeescript' }
+Plug 'tpope/vim-haml',                 { 'for': 'haml' }
 Plug 'ksauzz/haproxy.vim',             { 'for': 'haproxy' }
-Plug 'kurayama/systemd-vim-syntax',    { 'for': 'systemd' }
-Plug 'leshill/vim-json',               { 'for': 'json' }
-Plug 'mitsuhiko/vim-python-combined',  { 'for': 'python' }
-Plug 'mutewinter/nginx.vim',           { 'for': 'nginx' }
 Plug 'othree/html5.vim',               { 'for': 'html' }
 Plug 'pangloss/vim-javascript',        { 'for': 'javascript' }
+Plug 'leshill/vim-json',               { 'for': 'json' }
 Plug 'tpope/vim-markdown',             { 'for': 'markdown' }
+Plug 'mutewinter/nginx.vim',           { 'for': 'nginx' }
+Plug 'mitsuhiko/vim-python-combined',  { 'for': 'python' }
+Plug 'kurayama/systemd-vim-syntax',    { 'for': 'systemd' }
+Plug 'sheerun/vim-yardoc',             { 'for': 'yard' }
+
+" colorschemes
+Plug 'tpope/vim-vividchalk'
+Plug 'chriskempson/base16-vim'
 
 if has('ruby') || has('nvim')
-  Plug 'nelstrom/vim-textobj-rubyblock', { 'for': 'ruby' }
-  Plug 'sheerun/vim-yardoc',             { 'for': 'yard' }
-  Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby', 'do': 'gem install rcodetools fastri' }
-  Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
   Plug 'tpope/vim-bundler',              { 'for': 'ruby' }
   Plug 'tpope/vim-cucumber',             { 'for': 'ruby' }
   Plug 'tpope/vim-endwise',              { 'for': 'ruby' }
-  Plug 'tpope/vim-haml',                 { 'for': 'haml' }
   Plug 'tpope/vim-rails',                { 'for': 'ruby' }
   Plug 'tpope/vim-rake',                 { 'for': 'ruby' }
   Plug 'tpope/vim-rbenv',                { 'for': 'ruby' }
+  Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
   Plug 'vim-ruby/vim-ruby',              { 'for': 'ruby' }
+  Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby', 'do': 'gem install rcodetools fastri' }
+  Plug 'nelstrom/vim-textobj-rubyblock', { 'for': 'ruby' }
 endif
 
 if executable('tmux')
   Plug 'acustodioo/vim-tmux',            { 'for': 'tmux' }
-  Plug 'benmills/vimux'
   Plug 'christoomey/vim-tmux-navigator'
   Plug 'jgdavey/vim-turbux'
+  Plug 'benmills/vimux'
 endif
 
 if executable('git')
-  Plug 'airblade/vim-gitgutter'
   Plug 'tpope/vim-fugitive'
+  Plug 'airblade/vim-gitgutter'
 endif
 
 if executable('fzf')
@@ -204,11 +203,9 @@ if version >= 704
   Plug 'xolox/vim-shell'
 endif
 
-" let g:use_neocomplete = 0
-
 if has('nvim')
   Plug 'Shougo/deoplete.nvim'
-  " Plug 'floobits/floobits-neovim'
+  Plug 'floobits/floobits-neovim'
 elseif version >= 704 && has('lua')
   Plug 'Shougo/neocomplete.vim'
   let g:use_neocomplete = 1
@@ -234,16 +231,17 @@ let g:airline#extensions#branch#format             = 1
 let g:airline#extensions#bufferline#enabled        = 1
 let g:airline#extensions#ctrlspace#enabled         = 1
 let g:airline#extensions#nrrwrgn#enabled           = 1
-let g:airline#extensions#syntastic#enabled         = 0
-let g:airline#extensions#tabline#enabled           = 0
-let g:airline#extensions#tagbar#enabled            = 0
-let g:airline#extensions#tmuxline#enabled          = 0
-" let g:airline#extensions#tabline#show_close_button = 0
-" let g:airline#extensions#tabline#buffer_idx_mode   = 1
-" let g:airline#extensions#tabline#show_buffers      = 1
-" let g:airline#extensions#tabline#show_tabs         = 1
+let g:airline#extensions#syntastic#enabled         = 1
+let g:airline#extensions#tabline#enabled           = 1
+let g:airline#extensions#tagbar#enabled            = 1
+let g:airline#extensions#tmuxline#enabled          = 1
+let g:airline#extensions#tabline#show_close_button = 0
+let g:airline#extensions#tabline#buffer_idx_mode   = 1
+let g:airline#extensions#tabline#show_buffers      = 1
+let g:airline#extensions#tabline#show_tabs         = 1
 let g:airline_section_b                            = '%{getcwd()}'
 let g:airline_theme                                = 'tomorrow'
+
 
 " base16-vim
 if &term == 'xterm-256color' || &term == 'screen-256color' || &t_Co == 256
@@ -262,35 +260,38 @@ let g:bufferline_solo_highlight      = 1
 
 
 " CoVim
-let CoVim_default_name = "chorn"
+let CoVim_default_name = $USER
 let CoVim_default_port = "22222"
 
 
 " ctrlp.vim
-let g:ctrlp_extensions     = ['funky']
-let g:ctrlp_map            = '<c-t>'
-let g:ctrlp_match_window   = 'bottom,order:btt,min:1,max:20,results:20'
-let g:ctrlp_show_hidden    = 1
-let g:ctrlp_use_caching    = 0
-nnoremap <leader>. :CtrlPTag<cr>
-
+let g:ctrlp_cmd          = 'CtrlP'
+let g:ctrlp_map          = '<c-p>'
+let g:ctrlp_reuse_window = 'netrw\|help\|quickfix'
+let g:ctrlp_show_hidden  = 1
+let g:ctrlp_use_caching  = 0
 
 " deoplete
 let g:deoplete#enable_at_startup = 1
 
 
 " easymotion
-" <leader>f{char} to move to {char}
-map  <leader>f <plug>(easymotion-bd-f)
-nmap <leader>f <plug>(easymotion-overwin-f)
-" s{char}{char} to move to {char}{char}
-nmap s <plug>(easymotion-overwin-f2)
-" move to line
-map <leader>l <plug>(easymotion-bd-jk)
-nmap <leader>l <plug>(easymotion-overwin-line)
-" move to word
-map  <leader>w <plug>(easymotion-bd-w)
-nmap <leader>w <plug>(easymotion-overwin-w)
+" map <leader> <Plug>(easymotion-prefix)
+"
+" " <leader>f{char} to move to {char}
+" map  <leader>f <plug>(easymotion-bd-f)
+" nmap <leader>f <plug>(easymotion-overwin-f)
+"
+" " s{char}{char} to move to {char}{char}
+" nmap s <plug>(easymotion-overwin-f2)
+"
+" " move to line
+" map <leader>l <plug>(easymotion-bd-jk)
+" nmap <leader>l <plug>(easymotion-overwin-line)
+"
+" " move to word
+" map  <leader>w <plug>(easymotion-bd-w)
+" nmap <leader>w <plug>(easymotion-overwin-w)
 
 
 " easytags
@@ -306,22 +307,20 @@ let g:gitgutter_realtime  = 0
 
 
 " incsearch
-" you can use other keymappings like <c-l> instead of <cr> if you want to
-" use these mappings as default search and somtimes want to move cursor with
-" easymotion.
-" function! s:incsearch_config(...) abort
-"   return incsearch#util#deepextend(deepcopy({
-"   \   'modules': [incsearch#config#easymotion#module({'overwin': 1})],
-"   \   'keymap': {
-"   \     "\<cr>": '<over>(easymotion)'
-"   \   },
-"   \   'is_expr': 0
-"   \ }), get(a:, 1, {}))
-" endfunction
-"
-" noremap <silent><expr> /  incsearch#go(<sid>incsearch_config())
-" noremap <silent><expr> ?  incsearch#go(<sid>incsearch_config({'command': '?'}))
-" noremap <silent><expr> g/ incsearch#go(<sid>incsearch_config({'is_stay': 1}))
+" you can use other keymappings like <c-l> instead of <cr> if you want to use these mappings as default search and somtimes want to move cursor with easymotion.
+function! s:incsearch_config(...) abort
+  return incsearch#util#deepextend(deepcopy({
+  \   'modules': [incsearch#config#easymotion#module({'overwin': 1})],
+  \   'keymap': {
+  \     "\<cr>": '<over>(easymotion)'
+  \   },
+  \   'is_expr': 0
+  \ }), get(a:, 1, {}))
+endfunction
+
+noremap <silent><expr> /  incsearch#go(<sid>incsearch_config())
+noremap <silent><expr> ?  incsearch#go(<sid>incsearch_config({'command': '?'}))
+noremap <silent><expr> g/ incsearch#go(<sid>incsearch_config({'is_stay': 1}))
 
 
 " neocomplete.vim
@@ -357,20 +356,14 @@ if exists('g:use_neocomplete')
       \ 'vimshell' : expand(vimhome . 'vimshell')
       \ }
 
-  " inoremap <expr><C-g> neocomplete#undo_completion()
-  " inoremap <expr><C-l> neocomplete#complete_common_string()
   inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
   function! s:my_cr_function()
     return pumvisible() ? neocomplete#close_popup() : "\<CR>"
   endfunction
 
-  " <TAB>: completion.
   inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
-  "" <C-h>, <BS>: close popup and delete backword char.
   inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
   inoremap <expr><BS>  neocomplete#smart_close_popup()."\<C-h>"
-  " inoremap <expr><C-y> neocomplete#close_popup()
-  " inoremap <expr><C-e> neocomplete#cancel_popup()
 endif
 
 
@@ -378,14 +371,6 @@ endif
 nmap <leader>n :NERDTreeToggle<CR>
 vmap <leader>n :NERDTreeToggle<CR>
 let NERDTreeHijackNetrw = 1
-
-
-" rspec
-let g:rspec_command = "compiler rspec | set makeprg=zeus | Make rspec {spec}"
-map <leader>ra :call RunAllSpecs()<CR>
-map <leader>rl :call RunLastSpec()<CR>
-map <leader>rr :call RunCurrentSpecFile()<CR>
-map <leader>rs :call RunNearestSpec()<CR>
 
 
 " ruby-xmpfilter
@@ -569,7 +554,5 @@ if has("gui_running")
   set anti
   set cursorline
   set mousehide
-  let &t_SI = "\<Esc>]50;CursorShape=1\x7"
-  let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
