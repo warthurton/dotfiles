@@ -115,17 +115,16 @@ call plug#begin(vimhome . 'plugged')
 Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'bling/vim-bufferline'
 Plug 'oplatek/Conque-Shell'
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'easymotion/vim-easymotion'
-Plug 'haya14busa/incsearch-easymotion.vim'
+Plug 'ctrlpvim/ctrlp.vim',             { 'on': 'CtrlP' }
+Plug 'junegunn/fzf',                   { 'dir': '~/.zsh/fzf', 'do': './install --all' }
 Plug 'haya14busa/incsearch.vim'
-Plug 'scrooloose/nerdtree',            { 'on':  'NERDTreeToggle' }
+Plug 'scrooloose/nerdtree',            { 'on': 'NERDTreeToggle' }
 Plug 'chrisbra/NrrwRgn'
 Plug 'jceb/vim-orgmode'
 Plug 'tpope/vim-speeddating'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'scrooloose/syntastic'
-Plug 'godlygeek/tabular'
+Plug 'godlygeek/tabular',              { 'on': 'Tabularize' }
 Plug 'majutsushi/tagbar'
 Plug 'tomtom/tcomment_vim'
 Plug 'kana/vim-textobj-user'
@@ -136,6 +135,7 @@ Plug 'skalnik/vim-vroom'
 " Filetypes
 Plug 'kchmck/vim-coffee-script',       { 'for': 'coffeescript' }
 Plug 'JulesWang/css.vim',              { 'for': [ 'css', 'sass', 'scss' ] }
+Plug 'elixir-lang/vim-elixir',         { 'for': 'elixir' }
 Plug 'fatih/vim-go',                   { 'for': 'go' }
 Plug 'tpope/vim-haml',                 { 'for': 'haml' }
 Plug 'ksauzz/haproxy.vim',             { 'for': 'haproxy' }
@@ -146,6 +146,7 @@ Plug 'tpope/vim-markdown',             { 'for': 'markdown' }
 Plug 'mutewinter/nginx.vim',           { 'for': 'nginx' }
 Plug 'mitsuhiko/vim-python-combined',  { 'for': 'python' }
 Plug 'kurayama/systemd-vim-syntax',    { 'for': 'systemd' }
+Plug 'acustodioo/vim-tmux',            { 'for': 'tmux' }
 Plug 'sheerun/vim-yardoc',             { 'for': 'yard' }
 
 " colorschemes
@@ -165,20 +166,19 @@ if has('ruby') || has('nvim')
   Plug 'nelstrom/vim-textobj-rubyblock', { 'for': 'ruby' }
 endif
 
+if executable('elixir')
+  Plug 'spiegela/vimix',                 { 'for': 'elixir' }
+endif
+
 if executable('tmux')
-  Plug 'acustodioo/vim-tmux',            { 'for': 'tmux' }
-  Plug 'christoomey/vim-tmux-navigator'
-  Plug 'jgdavey/vim-turbux'
-  Plug 'benmills/vimux'
+  Plug 'christoomey/vim-tmux-navigator', { 'on': [] }
+  Plug 'jgdavey/vim-turbux',             { 'on': [] }
+  Plug 'benmills/vimux',                 { 'on': [] }
 endif
 
 if executable('git')
   Plug 'tpope/vim-fugitive'
   Plug 'airblade/vim-gitgutter'
-endif
-
-if executable('fzf')
-  Plug 'junegunn/fzf'
 endif
 
 if executable('ag')
@@ -197,7 +197,7 @@ if version >= 702
 endif
 
 if version >= 704
-  Plug 'FredKSchott/CoVim'
+  " Plug 'FredKSchott/CoVim'
   Plug 'xolox/vim-easytags'
   Plug 'xolox/vim-misc'
   Plug 'xolox/vim-shell'
@@ -275,25 +275,6 @@ let g:ctrlp_use_caching  = 0
 let g:deoplete#enable_at_startup = 1
 
 
-" easymotion
-" map <leader> <Plug>(easymotion-prefix)
-"
-" " <leader>f{char} to move to {char}
-" map  <leader>f <plug>(easymotion-bd-f)
-" nmap <leader>f <plug>(easymotion-overwin-f)
-"
-" " s{char}{char} to move to {char}{char}
-" nmap s <plug>(easymotion-overwin-f2)
-"
-" " move to line
-" map <leader>l <plug>(easymotion-bd-jk)
-" nmap <leader>l <plug>(easymotion-overwin-line)
-"
-" " move to word
-" map  <leader>w <plug>(easymotion-bd-w)
-" nmap <leader>w <plug>(easymotion-overwin-w)
-
-
 " easytags
 let g:easytags_file = g:vimhome . 'vimtags'
 
@@ -307,20 +288,9 @@ let g:gitgutter_realtime  = 0
 
 
 " incsearch
-" you can use other keymappings like <c-l> instead of <cr> if you want to use these mappings as default search and somtimes want to move cursor with easymotion.
-function! s:incsearch_config(...) abort
-  return incsearch#util#deepextend(deepcopy({
-  \   'modules': [incsearch#config#easymotion#module({'overwin': 1})],
-  \   'keymap': {
-  \     "\<cr>": '<over>(easymotion)'
-  \   },
-  \   'is_expr': 0
-  \ }), get(a:, 1, {}))
-endfunction
-
-noremap <silent><expr> /  incsearch#go(<sid>incsearch_config())
-noremap <silent><expr> ?  incsearch#go(<sid>incsearch_config({'command': '?'}))
-noremap <silent><expr> g/ incsearch#go(<sid>incsearch_config({'is_stay': 1}))
+map <leader>/ <Plug>(incsearch-forward)
+map <leader>? <Plug>(incsearch-backward)
+map g/ <Plug>(incsearch-stay)
 
 
 " neocomplete.vim
@@ -437,13 +407,14 @@ let g:tcomment_types = { 'tmux' : '# %s' }
 
 
 " tmux-navigator
-let g:tmux_navigator_no_mappings = 1
-nnoremap <silent> <A-h> :TmuxNavigateLeft<cr>
-nnoremap <silent> <A-j> :TmuxNavigateDown<cr>
-nnoremap <silent> <A-k> :TmuxNavigateUp<cr>
-nnoremap <silent> <A-l> :TmuxNavigateRight<cr>
-nnoremap <silent> <A-\> :TmuxNavigatePrevious<cr>
-
+if !empty($TMUX)
+  let g:tmux_navigator_no_mappings = 1
+  nnoremap <silent> <A-h> :TmuxNavigateLeft<cr>
+  nnoremap <silent> <A-j> :TmuxNavigateDown<cr>
+  nnoremap <silent> <A-k> :TmuxNavigateUp<cr>
+  nnoremap <silent> <A-l> :TmuxNavigateRight<cr>
+  nnoremap <silent> <A-\> :TmuxNavigatePrevious<cr>
+endif
 
 " undotree
 nmap <leader>u :UndotreeToggle<CR>
@@ -477,21 +448,28 @@ if has('autocmd')
     autocmd VimEnter .git/PULLREQ_EDITMSG nested setlocal filetype=markdown
   augroup END
 
-  augroup gitCommitEditMsg
-    autocmd!
-    autocmd BufReadPost *
-      \ if @% == '.git/COMMIT_EDITMSG' |
-      \   exe "normal gg" |
-      \ endif
-  augroup END
+  " augroup gitCommitEditMsg
+  "   autocmd!
+  "   autocmd BufReadPost *
+  "     \ if @% == '.git/COMMIT_EDITMSG' |
+  "     \   exe "normal gg" |
+  "     \ endif
+  " augroup END
 
-  augroup vimrcEx
-    autocmd!
-    autocmd BufReadPost *
-      \ if line("'\"") > 0 && line("'\"") <= line("$") |
-      \   exe "normal g`\"" |
-      \ endif
-  augroup END
+  " augroup vimrcEx
+  "   autocmd!
+  "   autocmd BufReadPost *
+  "     \ if line("'\"") > 0 && line("'\"") <= line("$") |
+  "     \   exe "normal g`\"" |
+  "     \ endif
+  " augroup END
+
+  if !empty($TMUX)
+    augroup RunningTmux
+      autocmd!
+      autocmd VimEnter * call plug#load('vim-tmux-navigator', 'vim-turbux', 'vimux')
+    augroup END
+  endif
 
 endif
 
