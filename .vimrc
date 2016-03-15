@@ -88,6 +88,7 @@ set noterse
 set visualbell
 set t_Co=256
 set t_vb=
+set winaltkeys=no
 set wildignore+=*/.cache/*,*/tmp/*,*/.git/*,*/.neocon/*,*.log,*.so,*.swp,*.zip,*.gz,*.bz2,*.bmp,*.ppt
 set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe,*.dll
 set wildmenu
@@ -127,7 +128,7 @@ Plug 'scrooloose/syntastic'
 Plug 'godlygeek/tabular',              { 'on': 'Tabularize' }
 Plug 'majutsushi/tagbar'
 Plug 'tomtom/tcomment_vim'
-Plug 'kana/vim-textobj-user'
+" Plug 'kana/vim-textobj-user'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-vinegar'
 Plug 'skalnik/vim-vroom'
@@ -162,8 +163,10 @@ if has('ruby') || has('nvim')
   Plug 'tpope/vim-rbenv',                { 'for': 'ruby' }
   Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
   Plug 'vim-ruby/vim-ruby',              { 'for': 'ruby' }
-  Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby', 'do': 'gem install rcodetools fastri' }
-  Plug 'nelstrom/vim-textobj-rubyblock', { 'for': 'ruby' }
+  " Plug 'nelstrom/vim-textobj-rubyblock', { 'for': 'ruby' }
+  " Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby', 'do': 'gem install seeing_is_believing' }
+  " Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby', 'do': 'gem install rcodetools fastri seeing_is_believing' }
+  " Plug 'hwartig/vim-seeing-is-believing',{ 'for': 'ruby' }
 endif
 
 if executable('elixir')
@@ -271,6 +274,7 @@ let g:ctrlp_reuse_window = 'netrw\|help\|quickfix'
 let g:ctrlp_show_hidden  = 1
 let g:ctrlp_use_caching  = 0
 
+
 " deoplete
 let g:deoplete#enable_at_startup = 1
 
@@ -344,7 +348,11 @@ let NERDTreeHijackNetrw = 1
 
 
 " ruby-xmpfilter
-let g:xmpfilter_cmd = "xmpfilter --annotations --rails"
+" if executable('seeing_is_believing')
+" let g:xmpfilter_cmd = "seeing_is_believing"
+" else
+  " let g:xmpfilter_cmd = "xmpfilter --annotations --rails"
+" endif
 
 
 " splitjoin.vim
@@ -423,24 +431,54 @@ vmap <leader>u :UndotreeToggle<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has('autocmd')
-  augroup Ruby
-    autocmd!
-    autocmd FileType ruby nmap <buffer> <F5> <Plug>(xmpfilter-mark)
-    autocmd FileType ruby imap <buffer> <F5> <Plug>(xmpfilter-mark)
-    autocmd FileType ruby vmap <buffer> <F5> <Plug>(xmpfilter-mark)
-    autocmd FileType ruby nmap <buffer> <F6> <Plug>(xmpfilter-run)
-    autocmd FileType ruby imap <buffer> <F6> <Plug>(xmpfilter-run)
-    autocmd FileType ruby vmap <buffer> <F6> <Plug>(xmpfilter-run)
-
-    " autocmd BufNewFile,BufRead *.cap      nested setlocal filetype=ruby
-    " autocmd BufNewFile,BufRead *.thor     nested setlocal filetype=ruby
-    " autocmd BufNewFile,BufRead *.html.erb nested setlocal filetype=eruby.html
-    " autocmd BufNewFile,BufRead *.js.erb   nested setlocal filetype=eruby.javascript
-    " autocmd BufNewFile,BufRead *.rb.erb   nested setlocal filetype=eruby.ruby
-    " autocmd BufNewFile,BufRead *.sh.erb   nested setlocal filetype=eruby.sh
-    " autocmd BufNewFile,BufRead *.yml.erb  nested setlocal filetype=eruby.yaml
-    " autocmd BufNewFile,BufRead *.txt.erb  nested setlocal filetype=eruby.text
-  augroup END
+  " augroup RubyXmpFilter
+  "   autocmd!
+  "
+  "   " if executable('seeing_is_believing')
+  "   if has('nvim') " neovim
+  "     autocmd FileType ruby nmap <buffer> <M-m> <Plug>(seeing_is_believing-mark)
+  "     autocmd FileType ruby xmap <buffer> <M-m> <Plug>(seeing_is_believing-mark)
+  "     autocmd FileType ruby imap <buffer> <M-m> <Plug>(seeing_is_believing-mark)
+  "
+  "     autocmd FileType ruby nmap <buffer> <M-c> <Plug>(seeing_is_believing-clean)
+  "     autocmd FileType ruby xmap <buffer> <M-c> <Plug>(seeing_is_believing-clean)
+  "     autocmd FileType ruby imap <buffer> <M-c> <Plug>(seeing_is_believing-clean)
+  "
+  "     autocmd FileType ruby nmap <buffer> <M-r> <Plug>(seeing_is_believing-run_-x)
+  "     autocmd FileType ruby xmap <buffer> <M-r> <Plug>(seeing_is_believing-run_-x)
+  "     autocmd FileType ruby imap <buffer> <M-r> <Plug>(seeing_is_believing-run_-x)
+  "
+  "     autocmd FileType ruby nmap <buffer> <F5> <Plug>(seeing_is_believing-run)
+  "     autocmd FileType ruby xmap <buffer> <F5> <Plug>(seeing_is_believing-run)
+  "     autocmd FileType ruby imap <buffer> <F5> <Plug>(seeing_is_believing-run)
+  "   else
+  "     autocmd FileType ruby nmap <buffer> <A-m> <Plug>(seeing_is_believing-mark)
+  "     autocmd FileType ruby xmap <buffer> <A-m> <Plug>(seeing_is_believing-mark)
+  "     autocmd FileType ruby imap <buffer> <A-m> <Plug>(seeing_is_believing-mark)
+  "
+  "     autocmd FileType ruby nmap <buffer> <A-c> <Plug>(seeing_is_believing-clean)
+  "     autocmd FileType ruby xmap <buffer> <A-c> <Plug>(seeing_is_believing-clean)
+  "     autocmd FileType ruby imap <buffer> <A-c> <Plug>(seeing_is_believing-clean)
+  "
+  "     autocmd FileType ruby nmap <buffer> <A-r> <Plug>(seeing_is_believing-run_-x)
+  "     autocmd FileType ruby xmap <buffer> <A-r> <Plug>(seeing_is_believing-run_-x)
+  "     autocmd FileType ruby imap <buffer> <A-r> <Plug>(seeing_is_believing-run_-x)
+  "
+  "     autocmd FileType ruby nmap <buffer> <F5> <Plug>(seeing_is_believing-run)
+  "     autocmd FileType ruby xmap <buffer> <F5> <Plug>(seeing_is_believing-run)
+  "     autocmd FileType ruby imap <buffer> <F5> <Plug>(seeing_is_believing-run)
+  "   endif
+  "   " elseif executable('xmpfilter')
+  "     " autocmd FileType ruby nmap <buffer> <A-m> <Plug>(xmpfilter-mark)
+  "     " autocmd FileType ruby xmap <buffer> <A-m> <Plug>(xmpfilter-mark)
+  "     " autocmd FileType ruby imap <buffer> <A-m> <Plug>(xmpfilter-mark)
+  "     "
+  "     " autocmd FileType ruby nmap <buffer> <A-r> <Plug>(xmpfilter-run)
+  "     " autocmd FileType ruby xmap <buffer> <A-r> <Plug>(xmpfilter-run)
+  "     " autocmd FileType ruby imap <buffer> <A-r> <Plug>(xmpfilter-run)
+  "   " endif
+  "
+  " augroup END
 
   augroup GitCommits
     autocmd!
