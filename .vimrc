@@ -101,10 +101,6 @@ if has('persistent_undo')
   set undofile
 endif
 
-if has('ruby') || has('nvim')
-  compiler ruby
-endif
-
 if empty(glob(g:autoloadhome . '/plug.vim'))
   execute "silent !curl -sflo " . g:autoloadhome . "/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
   autocmd VimEnter * PlugInstall | source $MYVIMRC
@@ -113,22 +109,21 @@ endif
 call plug#begin(vimhome . 'plugged')
 
 " Utils
+Plug 'chriskempson/base16-vim'
 Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'bling/vim-bufferline'
-Plug 'oplatek/Conque-Shell'
+Plug 'oplatek/Conque-Shell',           { 'on': 'ConqueTerm' }
 Plug 'ctrlpvim/ctrlp.vim',             { 'on': 'CtrlP' }
 Plug 'junegunn/fzf',                   { 'dir': '~/.zsh/fzf', 'do': './install --all' }
 Plug 'haya14busa/incsearch.vim'
 Plug 'scrooloose/nerdtree',            { 'on': 'NERDTreeToggle' }
 Plug 'chrisbra/NrrwRgn'
-Plug 'jceb/vim-orgmode'
 Plug 'tpope/vim-speeddating'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'scrooloose/syntastic'
 Plug 'godlygeek/tabular',              { 'on': 'Tabularize' }
 Plug 'majutsushi/tagbar'
 Plug 'tomtom/tcomment_vim'
-" Plug 'kana/vim-textobj-user'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-vinegar'
 Plug 'skalnik/vim-vroom'
@@ -137,6 +132,7 @@ Plug 'skalnik/vim-vroom'
 Plug 'kchmck/vim-coffee-script',       { 'for': 'coffeescript' }
 Plug 'JulesWang/css.vim',              { 'for': [ 'css', 'sass', 'scss' ] }
 Plug 'elixir-lang/vim-elixir',         { 'for': 'elixir' }
+Plug 'spiegela/vimix',                 { 'for': 'elixir' }
 Plug 'fatih/vim-go',                   { 'for': 'go' }
 Plug 'tpope/vim-haml',                 { 'for': 'haml' }
 Plug 'ksauzz/haproxy.vim',             { 'for': 'haproxy' }
@@ -145,14 +141,12 @@ Plug 'pangloss/vim-javascript',        { 'for': 'javascript' }
 Plug 'leshill/vim-json',               { 'for': 'json' }
 Plug 'tpope/vim-markdown',             { 'for': 'markdown' }
 Plug 'mutewinter/nginx.vim',           { 'for': 'nginx' }
+Plug 'jceb/vim-orgmode',               { 'for': 'orgmode' }
 Plug 'mitsuhiko/vim-python-combined',  { 'for': 'python' }
 Plug 'kurayama/systemd-vim-syntax',    { 'for': 'systemd' }
 Plug 'acustodioo/vim-tmux',            { 'for': 'tmux' }
 Plug 'sheerun/vim-yardoc',             { 'for': 'yard' }
 
-" colorschemes
-Plug 'tpope/vim-vividchalk'
-Plug 'chriskempson/base16-vim'
 
 if has('ruby') || has('nvim')
   Plug 'tpope/vim-bundler',              { 'for': 'ruby' }
@@ -163,14 +157,6 @@ if has('ruby') || has('nvim')
   Plug 'tpope/vim-rbenv',                { 'for': 'ruby' }
   Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
   Plug 'vim-ruby/vim-ruby',              { 'for': 'ruby' }
-  " Plug 'nelstrom/vim-textobj-rubyblock', { 'for': 'ruby' }
-  " Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby', 'do': 'gem install seeing_is_believing' }
-  " Plug 't9md/vim-ruby-xmpfilter',        { 'for': 'ruby', 'do': 'gem install rcodetools fastri seeing_is_believing' }
-  " Plug 'hwartig/vim-seeing-is-believing',{ 'for': 'ruby' }
-endif
-
-if executable('elixir')
-  Plug 'spiegela/vimix',                 { 'for': 'elixir' }
 endif
 
 if executable('tmux')
@@ -190,17 +176,12 @@ if executable('ag')
   let g:ctrlp_user_command = 'ag --files-with-matches --nocolor -g "" %s'
 endif
 
-if executable('osascript')
-  Plug 'rizzatti/dash.vim'
-endif
-
 if version >= 702
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
 endif
 
 if version >= 704
-  " Plug 'FredKSchott/CoVim'
   Plug 'xolox/vim-easytags'
   Plug 'xolox/vim-misc'
   Plug 'xolox/vim-shell'
@@ -208,14 +189,12 @@ endif
 
 if has('nvim')
   Plug 'Shougo/deoplete.nvim'
-  Plug 'floobits/floobits-neovim'
+  " Plug 'floobits/floobits-neovim'
 elseif version >= 704 && has('lua')
   Plug 'Shougo/neocomplete.vim'
   let g:use_neocomplete = 1
 elseif version >= 704 && has('python')
   Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
-else
-  Plug 'ervandew/supertab'
 endif
 
 call plug#end()
@@ -280,7 +259,7 @@ let g:deoplete#enable_at_startup = 1
 
 
 " easytags
-let g:easytags_file = g:vimhome . 'vimtags'
+let g:easytags_file = expand(g:cachedir . '/easytags')
 
 
 " gitgutter
@@ -299,10 +278,7 @@ map g/ <Plug>(incsearch-stay)
 
 " neocomplete.vim
 if exists('g:use_neocomplete')
-  if !isdirectory(expand(g:cachedir . '/neocomplete'))
-    call mkdir(expand(g:cachedir . '/neocomplete'), "p")
-  endif
-  let g:neocomplete#data_directory                    = g:cachedir.'/neocomplete'
+  let g:neocomplete#data_directory                    = expand(g:cachedir)
   let g:neocomplete#auto_completion_start_length      = 2
   let g:neocomplete#disable_auto_complete             = 0
   let g:neocomplete#enable_at_startup                 = 1
@@ -325,10 +301,10 @@ if exists('g:use_neocomplete')
   let g:neocomplete#sources#omni#input_patterns       = {}
   let g:neocomplete#sources#syntax#min_keyword_length = 4
 
-  let g:neocomplete#sources#dictionary#dictionaries = {
-      \ 'default' : '',
-      \ 'vimshell' : expand(vimhome . 'vimshell')
-      \ }
+  " let g:neocomplete#sources#dictionary#dictionaries = {
+  "     \ 'default' : '',
+  "     \ 'vimshell' : expand(vimhome . 'vimshell')
+  "     \ }
 
   inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
   function! s:my_cr_function()
@@ -345,14 +321,6 @@ endif
 nmap <leader>n :NERDTreeToggle<CR>
 vmap <leader>n :NERDTreeToggle<CR>
 let NERDTreeHijackNetrw = 1
-
-
-" ruby-xmpfilter
-" if executable('seeing_is_believing')
-" let g:xmpfilter_cmd = "seeing_is_believing"
-" else
-  " let g:xmpfilter_cmd = "xmpfilter --annotations --rails"
-" endif
 
 
 " splitjoin.vim
@@ -389,20 +357,6 @@ let g:tagbar_autopreview = 1
 nmap <leader>T :TagbarToggle<CR>
 vmap <leader>T :TagbarToggle<CR>
 
-" tags (ctags)
-" let g:vim_tags_auto_generate = 1
-" " let g:vim_tags_project_tags_command = "{CTAGS} -R {OPTIONS} {DIRECTORY} 2>/dev/null"
-" " let g:vim_tags_gems_tags_command = "{CTAGS} -R {OPTIONS} `bundle show --paths` 2>/dev/null"
-" let g:vim_tags_use_vim_dispatch = 1
-" let g:vim_tags_use_language_field = 1
-" let g:vim_tags_ignore_files = ['.gitignore', 'certs', 'checksums', 'coverage', 'data', 'log', 'pkg', 'tmp']
-" " let g:vim_tags_main_file = 'tags'
-" " let g:vim_tags_extension = '.tags'
-" let g:vim_tags_cache_dir = expand(g:cachedir.'/ctags')
-" if !isdirectory(expand(g:cachedir . '/ctags'))
-"   call mkdir(expand(g:cachedir . '/ctags'), "p")
-" endif
-
 
 " tcomment_vim
 map \\ gcc
@@ -428,79 +382,13 @@ endif
 nmap <leader>u :UndotreeToggle<CR>
 vmap <leader>u :UndotreeToggle<CR>
 
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has('autocmd')
-  " augroup RubyXmpFilter
-  "   autocmd!
-  "
-  "   " if executable('seeing_is_believing')
-  "   if has('nvim') " neovim
-  "     autocmd FileType ruby nmap <buffer> <M-m> <Plug>(seeing_is_believing-mark)
-  "     autocmd FileType ruby xmap <buffer> <M-m> <Plug>(seeing_is_believing-mark)
-  "     autocmd FileType ruby imap <buffer> <M-m> <Plug>(seeing_is_believing-mark)
-  "
-  "     autocmd FileType ruby nmap <buffer> <M-c> <Plug>(seeing_is_believing-clean)
-  "     autocmd FileType ruby xmap <buffer> <M-c> <Plug>(seeing_is_believing-clean)
-  "     autocmd FileType ruby imap <buffer> <M-c> <Plug>(seeing_is_believing-clean)
-  "
-  "     autocmd FileType ruby nmap <buffer> <M-r> <Plug>(seeing_is_believing-run_-x)
-  "     autocmd FileType ruby xmap <buffer> <M-r> <Plug>(seeing_is_believing-run_-x)
-  "     autocmd FileType ruby imap <buffer> <M-r> <Plug>(seeing_is_believing-run_-x)
-  "
-  "     autocmd FileType ruby nmap <buffer> <F5> <Plug>(seeing_is_believing-run)
-  "     autocmd FileType ruby xmap <buffer> <F5> <Plug>(seeing_is_believing-run)
-  "     autocmd FileType ruby imap <buffer> <F5> <Plug>(seeing_is_believing-run)
-  "   else
-  "     autocmd FileType ruby nmap <buffer> <A-m> <Plug>(seeing_is_believing-mark)
-  "     autocmd FileType ruby xmap <buffer> <A-m> <Plug>(seeing_is_believing-mark)
-  "     autocmd FileType ruby imap <buffer> <A-m> <Plug>(seeing_is_believing-mark)
-  "
-  "     autocmd FileType ruby nmap <buffer> <A-c> <Plug>(seeing_is_believing-clean)
-  "     autocmd FileType ruby xmap <buffer> <A-c> <Plug>(seeing_is_believing-clean)
-  "     autocmd FileType ruby imap <buffer> <A-c> <Plug>(seeing_is_believing-clean)
-  "
-  "     autocmd FileType ruby nmap <buffer> <A-r> <Plug>(seeing_is_believing-run_-x)
-  "     autocmd FileType ruby xmap <buffer> <A-r> <Plug>(seeing_is_believing-run_-x)
-  "     autocmd FileType ruby imap <buffer> <A-r> <Plug>(seeing_is_believing-run_-x)
-  "
-  "     autocmd FileType ruby nmap <buffer> <F5> <Plug>(seeing_is_believing-run)
-  "     autocmd FileType ruby xmap <buffer> <F5> <Plug>(seeing_is_believing-run)
-  "     autocmd FileType ruby imap <buffer> <F5> <Plug>(seeing_is_believing-run)
-  "   endif
-  "   " elseif executable('xmpfilter')
-  "     " autocmd FileType ruby nmap <buffer> <A-m> <Plug>(xmpfilter-mark)
-  "     " autocmd FileType ruby xmap <buffer> <A-m> <Plug>(xmpfilter-mark)
-  "     " autocmd FileType ruby imap <buffer> <A-m> <Plug>(xmpfilter-mark)
-  "     "
-  "     " autocmd FileType ruby nmap <buffer> <A-r> <Plug>(xmpfilter-run)
-  "     " autocmd FileType ruby xmap <buffer> <A-r> <Plug>(xmpfilter-run)
-  "     " autocmd FileType ruby imap <buffer> <A-r> <Plug>(xmpfilter-run)
-  "   " endif
-  "
-  " augroup END
-
   augroup GitCommits
     autocmd!
     autocmd FileType gitcommit            nested setlocal nospell
     autocmd VimEnter .git/PULLREQ_EDITMSG nested setlocal filetype=markdown
   augroup END
-
-  " augroup gitCommitEditMsg
-  "   autocmd!
-  "   autocmd BufReadPost *
-  "     \ if @% == '.git/COMMIT_EDITMSG' |
-  "     \   exe "normal gg" |
-  "     \ endif
-  " augroup END
-
-  " augroup vimrcEx
-  "   autocmd!
-  "   autocmd BufReadPost *
-  "     \ if line("'\"") > 0 && line("'\"") <= line("$") |
-  "     \   exe "normal g`\"" |
-  "     \ endif
-  " augroup END
 
   if !empty($TMUX)
     augroup RunningTmux
@@ -508,7 +396,6 @@ if has('autocmd')
       autocmd VimEnter * call plug#load('vim-tmux-navigator', 'vim-turbux', 'vimux')
     augroup END
   endif
-
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -544,20 +431,12 @@ vmap <Tab> >gv
 vmap <S-Tab> <gv
 cmap %% <C-R>=expand('%:h').'/'<cr>
 
-command! KillWhitespace :normal :%s/ *$//g<cr><c-o><cr>
 syntax on
 filetype on
 filetype plugin on
 filetype indent on
 
-for _cs in ['vividchalk', 'base16-twilight']
-  try
-    execute 'colorscheme' _cs
-  catch
-  endtry
-endfor
-
-" My colorscheme overrides
+execute 'colorscheme' 'base16-twilight'
 highlight LineNr ctermfg=236 ctermbg=234
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
