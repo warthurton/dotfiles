@@ -35,15 +35,13 @@ fi
 
 if [[ "${OSTYPE:0:5}" = "linux" ]] ; then
   if command -v gpg-agent >/dev/null 2>/dev/null ; then
-    __gai="$HOME/.gnupg/gpg-agent-info"
-
-    [[ -z "$GPG_AGENT_INFO" ]] && [[ -f "$__gai" ]] && source "$__gai"
-
-    [[ -n "$GPG_AGENT_INFO" && -S $(echo "$GPG_AGENT_INFO" | cut -f 1 -d :) ]] || unset GPG_AGENT_INFO
-
-    [[ -z "$GPG_AGENT_INFO" ]] && eval "$(gpg-agent --daemon --write-env-file "$__gai")"
-
-    [[ -n "$GPG_AGENT_INFO" ]] && [[ -S $(echo "$GPG_AGENT_INFO" | cut -f 1 -d :) ]] && export GPG_AGENT_INFO
+    if [[ $(gpg-agent --version | head -1 | cut -f 3 -d ' ') =~ 2\.0  ]] ; then
+      __gai="$HOME/.gnupg/gpg-agent-info"
+      [[ -z "$GPG_AGENT_INFO" ]] && [[ -f "$__gai" ]] && source "$__gai"
+      [[ -n "$GPG_AGENT_INFO" && -S $(echo "$GPG_AGENT_INFO" | cut -f 1 -d :) ]] || unset GPG_AGENT_INFO
+      [[ -z "$GPG_AGENT_INFO" ]] && eval "$(gpg-agent --daemon --write-env-file "$__gai")"
+      [[ -n "$GPG_AGENT_INFO" ]] && [[ -S $(echo "$GPG_AGENT_INFO" | cut -f 1 -d :) ]] && export GPG_AGENT_INFO
+    fi
   fi
 fi
 
