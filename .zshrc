@@ -28,8 +28,14 @@ bashcompinit
 zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:*' get-revision true
 zstyle ':vcs_info:*' check-for-changes true
-zstyle ':vcs_info:*' stagedstr ' %F{10}\U03B4%f'
-zstyle ':vcs_info:*' unstagedstr ' %F{11}\U03B4%f'
+
+if [[ "$LANG" == "C" ]] ; then
+  zstyle ':vcs_info:*' stagedstr ' %F{10}+%f'
+  zstyle ':vcs_info:*' unstagedstr ' %F{11}+%f'
+else
+  zstyle ':vcs_info:*' stagedstr ' %F{10}\U03B4%f'
+  zstyle ':vcs_info:*' unstagedstr ' %F{11}\U03B4%f'
+fi
 
 __vcs_info_git_format='%c%u %b %F{8}%8.8i%f %m'
 
