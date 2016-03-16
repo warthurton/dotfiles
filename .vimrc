@@ -436,7 +436,13 @@ filetype on
 filetype plugin on
 filetype indent on
 
-execute 'colorscheme' 'base16-twilight'
+for _cs in ['vividchalk', 'base16-twilight']
+  try
+    execute 'colorscheme' _cs
+  catch
+  endtry
+endfor
+
 highlight LineNr ctermfg=236 ctermbg=234
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
