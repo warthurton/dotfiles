@@ -150,6 +150,15 @@ REQ
   openssl req -new -x509 -days 3650 -utf8 -sha512 -key "${key}" -out "${crt}" -reqexts exts -batch -config "${req}"
   cat "${crt}" "${key}" > "${pem}" && rm "${key}" "${crt}" "${req}"
 }
+
+ssl_pin_sha256() {
+  local _cert="$1"
+  local _tmp="${HOME}/.$$.key"
+  openssl x509 -noout -in "${_cert}" -pubkey | openssl asn1parse -noout -inform pem -out "$_tmp"
+  openssl dgst -sha256 -binary "$_tmp" | openssl enc -base64
+  rm "$_tmp"
+}
+
 #-----------------------------------------------------------------------------
 # date_diff() {
 #   local _start_date="$1"
