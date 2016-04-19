@@ -3,14 +3,12 @@ alias -g M='|& $PAGER'
 bindkey -e
 bindkey -m 2>/dev/null
 # --------------------------------------------------------------------------
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-
 for s in  ~/.shell-common \
           ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
           ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh \
           ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
-          ~/.zsh/oh-my-zsh/plugins/safe-paste/safe-paste.plugin.zsh
+          ~/.zsh/oh-my-zsh/plugins/safe-paste/safe-paste.plugin.zsh \
+          ~/.fzf.zsh
 do
   [[ -f "$s" ]] && source "$s"
 done

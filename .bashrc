@@ -17,9 +17,10 @@ fi
 # --------------------------------------------------------------------------
 [[ -s "$HOME/.shell-env" ]] && source "$HOME/.shell-env"
 [[ -z "$PS1" ]] && return
-# [[ -f ~/.fzf.bash ]] && source ~/.fzf.bash
-# [[ -f ~/.travis/travis.sh ]] && source ~/.travis/travis.sh
-[[ -s "$HOME/.shell-common" ]] && source "$HOME/.shell-common"
+
+for s in "$HOME/.shell-common" "$HOME/.fzf.bash" ; do
+  [[ -s "$s" ]] && source "$s"
+done
 # --------------------------------------------------------------------------
 
 pw() { p | "$PAGER" ; }
