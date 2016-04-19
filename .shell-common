@@ -36,12 +36,6 @@ if command -v ag >/dev/null 2>/dev/null ; then
   alias ag_next='g $(git diff --name-only master..HEAD . | sed -e "s/^/ --ignore=/")'
 fi
 # ---------------------------------------------------------------------------
-if command -v jrnl >/dev/null 2>/dev/null ; then
-  alias j='jrnl'
-  alias j_recent="jrnl -from \"\$(gdate --date 'yesterday' +'%F %H:%M')\" "
-  alias j_last='jrnl -from "$([[ $(date +%u) -eq 1 ]] && echo friday || echo yesterday)"'
-fi
-# ---------------------------------------------------------------------------
 alias list_to_regex="sed -e 's/[^0-9]//g' | tr '\n' '|' | sed -e 's/^/(/' -e 's/\|$/)/'"
 alias m='$PAGER'
 alias l1="ls -1"

@@ -22,8 +22,6 @@ fi
 
 command -v ag >/dev/null 2>/dev/null && export FZF_DEFAULT_COMMAND='ag -l -g ""'
 # --------------------------------------------------------------------------
-[[ -f ~/.shell-path ]] && source ~/.shell-path
-# --------------------------------------------------------------------------
 # Synology NAS
 
 if [[ -d "/usr/syno" ]] ; then
