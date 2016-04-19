@@ -238,9 +238,4 @@ export PROMPT="%f%b%k%u%s\$(build_multi_prompt)%f%b%k%u%s"
 unset RPROMPT
 
 # --------------------------------------------------------------------------
-# https://cirw.in/blog/bracketed-paste
-# Turn off bracketed paste mode!
-# printf '\e[?2004l'
-
-# --------------------------------------------------------------------------
 # vim: set syntax=sh ft=zsh sw=2 ts=2 expandtab:
