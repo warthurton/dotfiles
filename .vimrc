@@ -114,7 +114,7 @@ Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'bling/vim-bufferline'
 Plug 'oplatek/Conque-Shell',           { 'on': 'ConqueTerm' }
 Plug 'ctrlpvim/ctrlp.vim',             { 'on': 'CtrlP' }
-Plug 'junegunn/fzf',                   { 'dir': '~/.zsh/fzf', 'do': './install --all' }
+Plug 'junegunn/fzf'
 Plug 'haya14busa/incsearch.vim'
 Plug 'scrooloose/nerdtree',            { 'on': 'NERDTreeToggle' }
 Plug 'chrisbra/NrrwRgn'
