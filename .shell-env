@@ -31,9 +31,15 @@ fi
 # --------------------------------------------------------------------------
 # gpg-agent, only for linux, on OS X use gpgtools instead
 
-if [[ "${OSTYPE:0:5}" = "linux" ]] ; then
+if [[ "${OSTYPE:0:5}" = "linux" ]] && command -v gpg >/dev/null 2>/dev/null ; then
+  if [[ -n "$ZSH_VERSION" && -n "$TTY" ]] ; then
+    export GPG_TTY="$TTY"
+  else
+    export GPG_TTY=$(tty)
+  fi
+
   if command -v gpg-agent >/dev/null 2>/dev/null ; then
-    if [[ $(gpg-agent --version | head -1 | cut -f 3 -d ' ') =~ 2\.0  ]] ; then
+    if [[ "${$(gpg-agent --version | head -1 | cut -f 3 -d ' '):0:3}" != "2.1"  ]] ; then
       __gai="$HOME/.gnupg/gpg-agent-info"
       [[ -z "$GPG_AGENT_INFO" ]] && [[ -f "$__gai" ]] && source "$__gai"
       [[ -n "$GPG_AGENT_INFO" && -S $(echo "$GPG_AGENT_INFO" | cut -f 1 -d :) ]] || unset GPG_AGENT_INFO
