@@ -4,7 +4,8 @@ export SAVEHIST=10000000 # The maximum number of events to save in the history f
 export WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
 unset MULTIBYTE
 # --------------------------------------------------------------------------
-[[ -f "$HOME/.shell-env" ]] && source "$HOME/.shell-env"
+[[ -s "$HOME/.shell-path" ]] && source "$HOME/.shell-path"
+[[ -s "$HOME/.shell-env" ]] && source "$HOME/.shell-env"
 
 fpath=(~/.zsh/zsh-completions/src $fpath)
 typeset -gU fpath path
