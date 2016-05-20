@@ -130,6 +130,7 @@ Plug 'skalnik/vim-vroom'
 
 " Filetypes
 Plug 'kchmck/vim-coffee-script',       { 'for': 'coffeescript' }
+Plug 'rhysd/vim-crystal',              { 'for': 'crystal' }
 Plug 'JulesWang/css.vim',              { 'for': [ 'css', 'sass', 'scss' ] }
 Plug 'elixir-lang/vim-elixir',         { 'for': 'elixir' }
 Plug 'spiegela/vimix',                 { 'for': 'elixir' }
