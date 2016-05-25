@@ -21,7 +21,7 @@ for dir in \
   /{usr,opt,Apps}/{local,X11,opt}/{bin,sbin} \
   /{usr,opt}/local/heroku/bin \
   /Applications/VMware\ Fusion.app/Contents/Library \
-  /Applications/Postgres.app/Contents/Versions/9.4/bin \
+  /Applications/Postgres.app/Contents/Versions/latest/bin \
   $HOME/bin \
   $HOME/.rbenv/bin \
   $HOME/.rvm/bin
