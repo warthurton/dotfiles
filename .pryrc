@@ -16,7 +16,6 @@ _pry_things[:preferred_gems].each do |gem|
     _pry_things[:missing_gems] << gem
   end
 end
-warn "Pry might be better with:\ngem install #{_pry_things[:missing_gems].join(' ')}" if _pry_things[:missing_gems].size > 0
 
 default_command_set = Pry::CommandSet.new do
   command "caller_method" do |depth|
