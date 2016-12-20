@@ -1,40 +1,32 @@
 
-if has('nvim') " neovim
+let g:vimhome = '~/.vim/'
+
+if has('nvim')
   let g:vimhome = '~/.config/nvim/'
-
-  if executable('osascript')
-    set clipboard+=unnamedplus
-  endif
-
-else " vim or macvim
-
-  let g:vimhome = '~/.vim/'
-
-  let config_dirs = [ 'backup', 'cache', 'plugged', 'swap', 'tmp', 'undo', 'view' ]
-  for dir in config_dirs
-    try
-      if !isdirectory(expand(g:vimhome . dir))
-        call mkdir(expand(g:vimhome . dir), "p")
-      endif
-    catch
-    endtry
-  endfor
-
-  let &backupdir     = expand(g:vimhome . 'backup')
-  let &directory     = expand(g:vimhome . 'swap')
-  let &viewdir       = expand(g:vimhome . 'view')
-  let &undodir       = expand(g:vimhome . 'undo')
-  set viminfo='512,<4096,s512,/512,:512,n~/.vim/viminfo
-  set encoding=utf-8
-
-  if has('clipboard')
-    set clipboard+=unnamed
-  endif
-
 endif
 
+let config_dirs = [ 'backup', 'cache', 'plugged', 'swap', 'tmp', 'undo', 'view' ]
+for dir in config_dirs
+  try
+    if !isdirectory(expand(g:vimhome . dir))
+      call mkdir(expand(g:vimhome . dir), "p")
+    endif
+  catch
+  endtry
+endfor
+
+let &backupdir     = expand(g:vimhome . 'backup')
+let &directory     = expand(g:vimhome . 'swap')
+let &viewdir       = expand(g:vimhome . 'view')
+let &undodir       = expand(g:vimhome . 'undo')
 let g:autoloadhome = expand(g:vimhome . 'autoload')
 let g:cachedir = expand(g:vimhome . 'cache')
+
+if has('nvim') && executable('osascript')
+  set clipboard+=unnamedplus
+elseif has('clipboard')
+  set clipboard+=unnamed
+endif
 
 let mapleader = ","
 set autoindent
@@ -43,13 +35,14 @@ set backspace=indent,eol,start
 set binary
 set noex
 set noerrorbells
+set encoding=utf-8
 set expandtab
 set exrc
 set nofoldenable
 set formatoptions=rq
 set nohidden
-set history=10000
-set hls
+set history=1000
+set hlsearch
 set ignorecase
 set incsearch
 set laststatus=2
@@ -72,7 +65,9 @@ set scrolloff=3
 set secure
 set shiftwidth=2
 set shortmess=ilnrxsAI
-if version >= 704 | set shortmess+=c | endif
+if version >= 704
+  set shortmess+=c
+endif
 set showcmd
 set showmatch
 set noshowmode
@@ -85,9 +80,15 @@ set splitbelow
 set splitright
 set tabstop=2
 set noterse
+set viminfo='100,<1000,s1000,:1000,n~/.vim/viminfo
 set visualbell
 set t_Co=256
 set t_vb=
+if version >= 800 && empty($TMUX)
+  set termguicolors
+endif
+set ttimeout
+set ttimeoutlen=50
 set winaltkeys=no
 set wildignore+=*/.cache/*,*/tmp/*,*/.git/*,*/.neocon/*,*.log,*.so,*.swp,*.zip,*.gz,*.bz2,*.bmp,*.ppt
 set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe,*.dll
@@ -132,17 +133,20 @@ Plug 'skalnik/vim-vroom'
 Plug 'kchmck/vim-coffee-script',       { 'for': 'coffeescript' }
 Plug 'rhysd/vim-crystal',              { 'for': 'crystal' }
 Plug 'JulesWang/css.vim',              { 'for': [ 'css', 'sass', 'scss' ] }
+Plug 'chrisbra/csv.vim',               { 'for': 'csv' }
 Plug 'elixir-lang/vim-elixir',         { 'for': 'elixir' }
 Plug 'spiegela/vimix',                 { 'for': 'elixir' }
+Plug 'elmcast/elm-vim',                { 'for': 'elm' }
 Plug 'fatih/vim-go',                   { 'for': 'go' }
 Plug 'tpope/vim-haml',                 { 'for': 'haml' }
 Plug 'ksauzz/haproxy.vim',             { 'for': 'haproxy' }
 Plug 'othree/html5.vim',               { 'for': 'html' }
-Plug 'pangloss/vim-javascript',        { 'for': 'javascript' }
+Plug 'othree/yajs.vim',                { 'for': 'javascript' }
+" Plug 'pangloss/vim-javascript',        { 'for': 'javascript' }
 Plug 'leshill/vim-json',               { 'for': 'json' }
+Plug 'mxw/vim-jsx',                    { 'for': 'javascript' }
 Plug 'tpope/vim-markdown',             { 'for': 'markdown' }
 Plug 'mutewinter/nginx.vim',           { 'for': 'nginx' }
-Plug 'jceb/vim-orgmode',               { 'for': 'orgmode' }
 Plug 'mitsuhiko/vim-python-combined',  { 'for': 'python' }
 Plug 'kurayama/systemd-vim-syntax',    { 'for': 'systemd' }
 Plug 'acustodioo/vim-tmux',            { 'for': 'tmux' }
@@ -190,12 +194,13 @@ endif
 
 if has('nvim')
   Plug 'Shougo/deoplete.nvim'
-  " Plug 'floobits/floobits-neovim'
 elseif version >= 704 && has('lua')
   Plug 'Shougo/neocomplete.vim'
   let g:use_neocomplete = 1
 elseif version >= 704 && has('python')
-  Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
+  " Plug 'Valloric/YouCompleteMe', { 'do': './install.py --all' }
+  " Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --gocode-completer --racer-completer --tern-completer' }
+  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --tern-completer' }
 endif
 
 call plug#end()
@@ -207,7 +212,7 @@ let g:airline_detect_iminsert                      = 0
 let g:airline_detect_modified                      = 1
 let g:airline_detect_paste                         = 1
 let g:airline_inactive_collapse                    = 1
-let g:airline_powerline_fonts                      = 0
+let g:airline_powerline_fonts                      = 1
 let g:airline_left_sep                             = ''
 let g:airline_right_sep                            = ''
 let g:airline#extensions#branch#format             = 1
@@ -224,12 +229,6 @@ let g:airline#extensions#tabline#show_buffers      = 1
 let g:airline#extensions#tabline#show_tabs         = 1
 let g:airline_section_b                            = '%{getcwd()}'
 let g:airline_theme                                = 'tomorrow'
-
-
-" base16-vim
-if &term == 'xterm-256color' || &term == 'screen-256color' || &t_Co == 256
-  let base16colorspace = 256
-endif
 
 
 " bufferline
@@ -261,7 +260,6 @@ let g:deoplete#enable_at_startup = 1
 
 " easytags
 let g:easytags_file = expand(g:cachedir . '/easytags')
-
 
 " gitgutter
 highlight clear SignColumn
@@ -415,6 +413,11 @@ imap jk <Esc>
 nmap jk <Esc>
 vmap jk <Esc>
 
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
 nmap <M-f> e
 nmap <M-b> b
 
@@ -437,18 +440,15 @@ filetype on
 filetype plugin on
 filetype indent on
 
-for _cs in ['vividchalk', 'base16-twilight']
-  try
-    execute 'colorscheme' _cs
-  catch
-  endtry
-endfor
-
-highlight LineNr ctermfg=236 ctermbg=234
+if filereadable(expand("~/.vimrc_background"))
+  let base16colorspace = 256
+  source ~/.vimrc_background
+  highlight LineNr ctermfg=236 ctermbg=234
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has("gui_running")
-  set guifont=Source\ Code\ Pro\ Light:h14
+  set guifont=Sauce\ Code\ Powerline:h15
   set guioptions-=m  "remove menu bar
   set guioptions-=T  "remove toolbar
   set guioptions-=L  "remove toolbar
