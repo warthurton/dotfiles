@@ -198,9 +198,7 @@ elseif version >= 704 && has('lua')
   Plug 'Shougo/neocomplete.vim'
   let g:use_neocomplete = 1
 elseif version >= 704 && has('python')
-  " Plug 'Valloric/YouCompleteMe', { 'do': './install.py --all' }
-  " Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --gocode-completer --racer-completer --tern-completer' }
-  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --tern-completer' }
+  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --all' }
 endif
 
 call plug#end()
