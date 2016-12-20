@@ -8,9 +8,8 @@ export VISUAL=vim
 export PAGER=less
 export LESS="iRQXF"
 export HISTSIZE=100000
+export MAILCHECK=0
 export SHELLCHECK_OPTS="--shell=bash --exclude=SC2001,SC1090,SC2164"
-export BASE16_THEME=twilight
-export BASE16_SHELL="$HOME/.config/base16-shell/"
 
 if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
   export LSCOLORS="Gxfxcxdxbxegedabagacad"
@@ -81,7 +80,8 @@ fi
 # --------------------------------------------------------------------------
 [[ -z "$PS1" ]] && return
 
-[[ -f "${BASE16_SHELL}/scripts/base16-${BASE16_THEME}.sh" ]] && source "${BASE16_SHELL}/scripts/base16-${BASE16_THEME}.sh"
+BASE16_SHELL=$HOME/.config/base16-shell/
+[[ -s $BASE16_SHELL/profile_helper.sh ]] && eval "$($BASE16_SHELL/profile_helper.sh)"
 
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:
