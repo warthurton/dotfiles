@@ -197,8 +197,8 @@ if has('nvim')
 elseif version >= 704 && has('lua')
   Plug 'Shougo/neocomplete.vim'
   let g:use_neocomplete = 1
-elseif version >= 704 && has('python')
-  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --all' }
+" elseif version >= 704 && has('python')
+"   Plug 'Valloric/YouCompleteMe', { 'do': './install.py --all' }
 endif
 
 call plug#end()
@@ -274,35 +274,35 @@ map g/ <Plug>(incsearch-stay)
 
 
 " neocomplete.vim
+let g:neocomplete#data_directory                    = expand(g:cachedir)
+let g:neocomplete#auto_completion_start_length      = 2
+let g:neocomplete#disable_auto_complete             = 0
+let g:neocomplete#enable_at_startup                 = 1
+let g:neocomplete#enable_auto_close_preview         = 1
+let g:neocomplete#enable_auto_select                = 0
+let g:neocomplete#enable_insert_char_pre            = 1
+let g:neocomplete#enable_omni_fallback              = 0
+let g:neocomplete#enable_smart_case                 = 1
+let g:neocomplete#force_omni_input_patterns         = {}
+let g:neocomplete#force_omni_input_patterns.ruby    = '[^. *\t]\.\w*\|\h\w*::\w*|\s*#'
+let g:neocomplete#force_overwrite_completefunc      = 1
+let g:neocomplete#keyword_patterns                  = {}
+let g:neocomplete#keyword_patterns._                = '\h\w*'
+let g:neocomplete#lock_buffer_name_pattern          = '\*ku\*'
+let g:neocomplete#manual_completion_start_length    = 0
+let g:neocomplete#min_keyword_length                = 3
+let g:neocomplete#same_filetypes                    = {}
+let g:neocomplete#same_filetypes._                  = '_'
+let g:neocomplete#same_filetypes.gitconfig          = '_'
+let g:neocomplete#sources#omni#input_patterns       = {}
+let g:neocomplete#sources#syntax#min_keyword_length = 4
+
+" let g:neocomplete#sources#dictionary#dictionaries = {
+"     \ 'default' : '',
+"     \ 'vimshell' : expand(vimhome . 'vimshell')
+"     \ }
+
 if exists('g:use_neocomplete')
-  let g:neocomplete#data_directory                    = expand(g:cachedir)
-  let g:neocomplete#auto_completion_start_length      = 2
-  let g:neocomplete#disable_auto_complete             = 0
-  let g:neocomplete#enable_at_startup                 = 1
-  let g:neocomplete#enable_auto_close_preview         = 1
-  let g:neocomplete#enable_auto_select                = 0
-  let g:neocomplete#enable_insert_char_pre            = 1
-  let g:neocomplete#enable_omni_fallback              = 0
-  let g:neocomplete#enable_smart_case                 = 1
-  let g:neocomplete#force_omni_input_patterns         = {}
-  let g:neocomplete#force_omni_input_patterns.ruby    = '[^. *\t]\.\w*\|\h\w*::\w*|\s*#'
-  let g:neocomplete#force_overwrite_completefunc      = 1
-  let g:neocomplete#keyword_patterns                  = {}
-  let g:neocomplete#keyword_patterns._                = '\h\w*'
-  let g:neocomplete#lock_buffer_name_pattern          = '\*ku\*'
-  let g:neocomplete#manual_completion_start_length    = 0
-  let g:neocomplete#min_keyword_length                = 3
-  let g:neocomplete#same_filetypes                    = {}
-  let g:neocomplete#same_filetypes._                  = '_'
-  let g:neocomplete#same_filetypes.gitconfig          = '_'
-  let g:neocomplete#sources#omni#input_patterns       = {}
-  let g:neocomplete#sources#syntax#min_keyword_length = 4
-
-  " let g:neocomplete#sources#dictionary#dictionaries = {
-  "     \ 'default' : '',
-  "     \ 'vimshell' : expand(vimhome . 'vimshell')
-  "     \ }
-
   inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
   function! s:my_cr_function()
     return pumvisible() ? neocomplete#close_popup() : "\<CR>"
