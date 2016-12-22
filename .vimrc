@@ -145,9 +145,10 @@ Plug 'othree/html5.vim',               { 'for': 'html' }
 Plug 'tpope/vim-markdown',             { 'for': 'markdown' }
 Plug 'mutewinter/nginx.vim',           { 'for': 'nginx' }
 Plug 'mitsuhiko/vim-python-combined',  { 'for': 'python' }
+Plug 'slim-template/vim-slim',         { 'for': 'slim' }
 Plug 'kurayama/systemd-vim-syntax',    { 'for': 'systemd' }
-Plug 'acustodioo/vim-tmux',            { 'for': 'tmux' }
 Plug 'sheerun/vim-yardoc',             { 'for': 'yard' }
+Plug 'tmux-plugins/vim-tmux',          { 'for': 'tmux' }
 
 Plug '1995eaton/vim-better-javascript-completion', { 'for': 'javascript' }
 Plug 'othree/yajs.vim',                            { 'for': 'javascript' }
