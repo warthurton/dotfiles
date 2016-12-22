@@ -433,6 +433,9 @@ vmap <Tab> >gv
 vmap <S-Tab> <gv
 cmap %% <C-R>=expand('%:h').'/'<cr>
 
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
+
 syntax on
 filetype plugin indent on
 
