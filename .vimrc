@@ -142,16 +142,18 @@ Plug 'fatih/vim-go',                   { 'for': 'go' }
 Plug 'tpope/vim-haml',                 { 'for': 'haml' }
 Plug 'ksauzz/haproxy.vim',             { 'for': 'haproxy' }
 Plug 'othree/html5.vim',               { 'for': 'html' }
-Plug 'othree/yajs.vim',                { 'for': 'javascript' }
-" Plug 'pangloss/vim-javascript',        { 'for': 'javascript' }
-Plug 'leshill/vim-json',               { 'for': 'json' }
-Plug 'mxw/vim-jsx',                    { 'for': 'javascript' }
 Plug 'tpope/vim-markdown',             { 'for': 'markdown' }
 Plug 'mutewinter/nginx.vim',           { 'for': 'nginx' }
 Plug 'mitsuhiko/vim-python-combined',  { 'for': 'python' }
 Plug 'kurayama/systemd-vim-syntax',    { 'for': 'systemd' }
 Plug 'acustodioo/vim-tmux',            { 'for': 'tmux' }
 Plug 'sheerun/vim-yardoc',             { 'for': 'yard' }
+
+Plug '1995eaton/vim-better-javascript-completion', { 'for': 'javascript' }
+Plug 'othree/yajs.vim',                            { 'for': 'javascript' }
+Plug 'othree/javascript-libraries-syntax.vim',     { 'for': 'javascript' }
+Plug 'mxw/vim-jsx' ,                               { 'for': 'javascript' }
+Plug 'othree/jspc.vim',                            { 'for': 'javascript' }
 
 Plug 'tpope/vim-bundler',              { 'for': 'ruby' }
 Plug 'tpope/vim-cucumber',             { 'for': 'ruby' }
@@ -233,6 +235,12 @@ let g:airline_section_b                            = '%{getcwd()}'
 let g:airline_theme                                = 'tomorrow'
 
 
+" better-javascript-completion
+let g:vimjs#casesensistive = 0
+let g:vimjs#smartcomplete = 1
+let g:vimjs#chromeapis = 1
+
+
 " bufferline
 let g:bufferline_active_buffer_left  = '['
 let g:bufferline_active_buffer_right = ']'
@@ -275,6 +283,10 @@ let g:gitgutter_realtime  = 0
 map <leader>/ <Plug>(incsearch-forward)
 map <leader>? <Plug>(incsearch-backward)
 map g/ <Plug>(incsearch-stay)
+
+
+" javascript-libraries-syntax
+let g:used_javascript_libs = 'jquery,react,flux,requirejs,jasmine,chai,d3'
 
 
 " neocomplete.vim
