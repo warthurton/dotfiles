@@ -131,7 +131,7 @@ Plug 'tpope/vim-vinegar'
 Plug 'skalnik/vim-vroom'
 
 " Filetypes
-Plug 'kchmck/vim-coffee-script',       { 'for': 'coffeescript' }
+Plug 'kchmck/vim-coffee-script',       { 'for': 'coffee' }
 Plug 'rhysd/vim-crystal',              { 'for': 'crystal' }
 Plug 'JulesWang/css.vim',              { 'for': [ 'css', 'sass', 'scss' ] }
 Plug 'chrisbra/csv.vim',               { 'for': 'csv' }
