@@ -7,10 +7,20 @@ function! SafeDirectory(dir)
   return a:expanded
 endfunction
 
-let g:vimhome = '~/.vim/'
-
 if has('nvim')
-  let g:vimhome = '~/.config/nvim/'
+  let g:vimhome = '~/.config/nvim'
+  set viminfo='100,<1000,s1000,:1000
+
+  if executable('osascript')
+    set clipboard+=unnamedplus
+  endif
+else
+  let g:vimhome = '~/.vim'
+  set viminfo='100,<1000,s1000,:1000,n~/.vim/viminfo
+
+  if has('clipboard')
+    set clipboard+=unnamed
+  endif
 endif
 
 let g:backupdir    = SafeDirectory(g:vimhome . '/backup')
@@ -19,12 +29,6 @@ let g:viewdir      = SafeDirectory(g:vimhome . '/view')
 let g:undodir      = SafeDirectory(g:vimhome . '/undo')
 let g:autoloadhome = SafeDirectory(g:vimhome . '/autoload')
 let g:cachedir     = SafeDirectory(g:vimhome . '/cache')
-
-if has('nvim') && executable('osascript')
-  set clipboard+=unnamedplus
-elseif has('clipboard')
-  set clipboard+=unnamed
-endif
 
 let mapleader = ","
 set autoindent
@@ -119,7 +123,6 @@ Plug 'scrooloose/nerdtree',            { 'on': 'NERDTreeToggle' }
 Plug 'chrisbra/NrrwRgn'
 Plug 'tpope/vim-speeddating'
 Plug 'AndrewRadev/splitjoin.vim'
-Plug 'scrooloose/syntastic'
 Plug 'godlygeek/tabular',              { 'on': 'Tabularize' }
 Plug 'majutsushi/tagbar'
 Plug 'tomtom/tcomment_vim'
@@ -150,16 +153,19 @@ Plug 'kurayama/systemd-vim-syntax',    { 'for': 'systemd' }
 Plug 'acustodioo/vim-tmux',            { 'for': 'tmux' }
 Plug 'sheerun/vim-yardoc',             { 'for': 'yard' }
 
+Plug 'tpope/vim-bundler',              { 'for': 'ruby' }
+Plug 'tpope/vim-cucumber',             { 'for': 'ruby' }
+Plug 'tpope/vim-endwise',              { 'for': 'ruby' }
+Plug 'tpope/vim-rails',                { 'for': 'ruby' }
+Plug 'tpope/vim-rake',                 { 'for': 'ruby' }
+Plug 'tpope/vim-rbenv',                { 'for': 'ruby' }
+Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
+Plug 'vim-ruby/vim-ruby',              { 'for': 'ruby' }
 
-if has('ruby') || has('nvim')
-  Plug 'tpope/vim-bundler',              { 'for': 'ruby' }
-  Plug 'tpope/vim-cucumber',             { 'for': 'ruby' }
-  Plug 'tpope/vim-endwise',              { 'for': 'ruby' }
-  Plug 'tpope/vim-rails',                { 'for': 'ruby' }
-  Plug 'tpope/vim-rake',                 { 'for': 'ruby' }
-  Plug 'tpope/vim-rbenv',                { 'for': 'ruby' }
-  Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
-  Plug 'vim-ruby/vim-ruby',              { 'for': 'ruby' }
+if has('nvim')
+  Plug 'neomake/neomake'
+else
+  Plug 'scrooloose/syntastic'
 endif
 
 if executable('tmux')
