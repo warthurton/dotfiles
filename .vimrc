@@ -9,7 +9,7 @@ endfunction
 
 if has('nvim')
   let g:vimhome = '~/.config/nvim'
-  set viminfo='100,<1000,s1000,:1000
+  set shada='100,<1000,s1000,:1000
 
   if executable('osascript')
     set clipboard+=unnamedplus
@@ -82,7 +82,6 @@ set splitbelow
 set splitright
 set tabstop=2
 set noterse
-set viminfo='100,<1000,s1000,:1000,n~/.vim/viminfo
 set visualbell
 set t_Co=256
 set t_vb=
