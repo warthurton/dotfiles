@@ -9,7 +9,7 @@ for s in  ~/.shell-common \
           ~/.config/oh-my-zsh/plugins/safe-paste/safe-paste.plugin.zsh \
           ~/.config/zsh-git-prompt/zshrc.sh \
           ~/.config/zsh-autosuggestions/zsh-autosuggestions.zsh \
-          ~/.config/fzf/fzf.zsh
+          ~/.fzf.zsh
 do
   [[ -f "$s" ]] && source "$s"
 done
