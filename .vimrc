@@ -1,26 +1,24 @@
 
+function! SafeDirectory(dir)
+  let a:expanded = expand(a:dir)
+  if !isdirectory(a:expanded)
+    call mkdir(a:expanded)
+  endif
+  return a:expanded
+endfunction
+
 let g:vimhome = '~/.vim/'
 
 if has('nvim')
   let g:vimhome = '~/.config/nvim/'
 endif
 
-let config_dirs = [ 'backup', 'cache', 'plugged', 'swap', 'tmp', 'undo', 'view' ]
-for dir in config_dirs
-  try
-    if !isdirectory(expand(g:vimhome . dir))
-      call mkdir(expand(g:vimhome . dir), "p")
-    endif
-  catch
-  endtry
-endfor
-
-let &backupdir     = expand(g:vimhome . 'backup')
-let &directory     = expand(g:vimhome . 'swap')
-let &viewdir       = expand(g:vimhome . 'view')
-let &undodir       = expand(g:vimhome . 'undo')
-let g:autoloadhome = expand(g:vimhome . 'autoload')
-let g:cachedir = expand(g:vimhome . 'cache')
+let g:backupdir    = SafeDirectory(g:vimhome . '/backup')
+let g:directory    = SafeDirectory(g:vimhome . '/swap')
+let g:viewdir      = SafeDirectory(g:vimhome . '/view')
+let g:undodir      = SafeDirectory(g:vimhome . '/undo')
+let g:autoloadhome = SafeDirectory(g:vimhome . '/autoload')
+let g:cachedir     = SafeDirectory(g:vimhome . '/cache')
 
 if has('nvim') && executable('osascript')
   set clipboard+=unnamedplus
@@ -107,7 +105,7 @@ if empty(glob(g:autoloadhome . '/plug.vim'))
   autocmd VimEnter * PlugInstall | source $MYVIMRC
 endif
 
-call plug#begin(vimhome . 'plugged')
+call plug#begin(SafeDirectory(g:vimhome . '/plugged'))
 
 " Utils
 Plug 'chriskempson/base16-vim'
@@ -257,7 +255,7 @@ let g:deoplete#enable_at_startup = 1
 
 
 " easytags
-let g:easytags_file = expand(g:cachedir . '/easytags')
+let g:easytags_file = g:cachedir . '/easytags'
 
 " gitgutter
 highlight clear SignColumn
@@ -274,7 +272,7 @@ map g/ <Plug>(incsearch-stay)
 
 
 " neocomplete.vim
-let g:neocomplete#data_directory                    = expand(g:cachedir)
+let g:neocomplete#data_directory                    = SafeDirectory(g:cachedir . '/neocomplete')
 let g:neocomplete#auto_completion_start_length      = 2
 let g:neocomplete#disable_auto_complete             = 0
 let g:neocomplete#enable_at_startup                 = 1
