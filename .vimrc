@@ -112,12 +112,12 @@ endif
 call plug#begin(SafeDirectory(g:vimhome . '/plugged'))
 
 " Utils
+Plug 'rking/ag.vim'
 Plug 'chriskempson/base16-vim'
 Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'bling/vim-bufferline'
 Plug 'oplatek/Conque-Shell',           { 'on': 'ConqueTerm' }
-Plug 'ctrlpvim/ctrlp.vim',             { 'on': 'CtrlP' }
-Plug 'junegunn/fzf'
+Plug 'ctrlpvim/ctrlp.vim'
 Plug 'haya14busa/incsearch.vim'
 Plug 'scrooloose/nerdtree',            { 'on': 'NERDTreeToggle' }
 Plug 'chrisbra/NrrwRgn'
@@ -253,7 +253,7 @@ let g:ctrlp_cmd          = 'CtrlP'
 let g:ctrlp_map          = '<c-p>'
 let g:ctrlp_reuse_window = 'netrw\|help\|quickfix'
 let g:ctrlp_show_hidden  = 1
-let g:ctrlp_use_caching  = 0
+let g:ctrlp_use_caching  = 1
 
 
 " deoplete
