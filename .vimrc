@@ -434,9 +434,7 @@ vmap <S-Tab> <gv
 cmap %% <C-R>=expand('%:h').'/'<cr>
 
 syntax on
-filetype on
-filetype plugin on
-filetype indent on
+filetype plugin indent on
 
 if filereadable(expand("~/.vimrc_background"))
   let base16colorspace = 256
