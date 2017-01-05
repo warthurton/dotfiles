@@ -23,10 +23,10 @@ else
   endif
 endif
 
-let g:backupdir    = SafeDirectory(g:vimhome . '/backup')
-let g:directory    = SafeDirectory(g:vimhome . '/swap')
-let g:viewdir      = SafeDirectory(g:vimhome . '/view')
-let g:undodir      = SafeDirectory(g:vimhome . '/undo')
+let &backupdir    = SafeDirectory(g:vimhome . '/backup')
+let &directory    = SafeDirectory(g:vimhome . '/swap')
+let &viewdir      = SafeDirectory(g:vimhome . '/view')
+let &undodir      = SafeDirectory(g:vimhome . '/undo')
 let g:autoloadhome = SafeDirectory(g:vimhome . '/autoload')
 let g:cachedir     = SafeDirectory(g:vimhome . '/cache')
 
