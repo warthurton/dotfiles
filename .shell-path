@@ -7,6 +7,8 @@ _safe_add_to_path() {
   export PATH
 }
 
+# --------------------------------------------------------------------------
+
 for dir in \
   /{bin,sbin} \
   /{usr,opt}/{bin,sbin} \
@@ -14,34 +16,21 @@ for dir in \
   /{usr,opt}/local/heroku/bin \
   /Applications/VMware\ Fusion.app/Contents/Library \
   /Applications/Postgres.app/Contents/Versions/latest/bin \
-  $HOME/bin \
-  $HOME/.goenv/bin \
-  $HOME/.exenv/bin \
-  $HOME/.nodenv/bin \
-  $HOME/.rbenv/bin
+  $HOME/.cargo/bin \
+  $HOME/bin
 do
   _safe_add_to_path "$dir"
 done
 
 # --------------------------------------------------------------------------
-# Ruby
+# Languages with *env version manangers
 
-if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+for _version_manager in rbenv nodenv exenv goenv ; do
+  _safe_add_to_path "$HOME/.${_version_manager}/bin"
 
-# --------------------------------------------------------------------------
-# nodejs
+  which "$_version_manager" > /dev/null && eval "$(${_version_manager} init ${ZSH_VERSION:+zsh} - )"
 
-if which nodenv > /dev/null; then eval "$(nodenv init -)"; fi
-
-# --------------------------------------------------------------------------
-# Elixir
-
-# if which exenv > /dev/null; then eval "$(exenv init -)"; fi
-
-# --------------------------------------------------------------------------
-# GO
-
-if which goenv > /dev/null; then eval "$(goenv init -)"; fi
+done
 
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:

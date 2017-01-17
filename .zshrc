@@ -26,58 +26,53 @@ compinit
 bashcompinit
 
 #-----------------------------------------------------------------------------
-_ruby_version() {
-  local raw
+_pretty_language_version() {
+  local _language="$1"
+  local _version
 
-  if (( $+commands[ruby] )) ; then
-    raw=$(ruby --version)
-    export RUBY_VERSION="${${raw/ruby /}/ *}"
+  (( $+commands[$_language] )) || return
 
-    echo -n "${_RUBY/ */}"
-  fi
+  _version=$($_language --version)
+  _version="${_version/v/}"
+
+  case $_language in
+    node)
+      ;;
+    ruby)
+      _version="${_version/ruby /}"
+      _version="${_version/ *}"
+      ;;
+    elixir)
+      _version="${_version/Erlang*Elixir }"
+      ;;
+  esac
+
+  echo "$_version"
 }
 
-_node_version() {
-  local raw
+#-----------------------------------------------------------------------------
+_export_pretty_language_versions() {
+  local _version
+  local _language_export
 
-  if (( $+commands[node] )) ; then
-    raw=$(node --version)
-    export NODE_VERSION="${raw/v/}"
-
-    echo -n "${_node/ */}"
-  fi
-}
-
-
-_darwin_unlocked() {
-  export DARWIN_UNLOCKED=""
-
-  if [[ "${OSTYPE:0:6}" = "darwin" && $USER != "root" && $(defaults read com.apple.screensaver askForPassword) != "1" ]] ; then
-    export DARWIN_UNLOCKED="\U1F513"
-  fi
+  for _language in ruby node elixir ; do
+    _version=$(_pretty_language_version "$_language")
+    _language_export="${(U)_language}_VERSION=\"${_version}\""
+    eval "$_language_export"
+  done
 }
 
 precmd() {
-  if (( $RANDOM % 10 )) ; then  # These updates don't need to run every time.
-    _darwin_unlocked
-    _ruby_version
-    _node_version
-  fi
+  (( $RANDOM % 10 )) && _export_pretty_language_versions
   print -Pn "\e]0;\a"
 }
 
 build_multi_prompt() {
-  # security
-  [[ -n $DARWIN_UNLOCKED ]] && echo -n "%F{11}${DARWIN_UNLOCKED} "
-
-  # ruby
-  [[ -n $RUBY_VERSION ]] && echo -n "%F{6}rb-${RUBY_VERSION} "
-
-  # elixir
-  [[ -n "$ELIXIR_VERSION" ]] && echo -n "%F{6}ex-${ELIXIR_VERSION} "
-
-  # nodejs
-  [[ -n "$NODE_VERSION" ]] && echo -n "%F{6}js-${NODE_VERSION} "
+  for _language in ruby node elixir ; do
+    _language_env="${(U)_language}_VERSION"
+    [[ -n "${(P)_language_env}" ]] && \
+      echo -n "%F{6}${_language}-${(P)_language_env} "
+  done
 
   echo -n "%f$(git_super_status) "
 
