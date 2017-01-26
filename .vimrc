@@ -10,15 +10,13 @@ endfunction
 if has('nvim')
   let g:vimhome = '~/.config/nvim'
   set shada='100,<1000,s1000,:1000
-
-  if executable('osascript')
-    set clipboard+=unnamedplus
-  endif
+  set clipboard+=unnamedplus
 else
   let g:vimhome = '~/.vim'
   set viminfo='100,<1000,s1000,:1000,n~/.vim/viminfo
 
   if has('clipboard')
+    set guioptions+=aA
     set clipboard+=unnamed
   endif
 endif
@@ -66,10 +64,7 @@ set ruler
 set scrolloff=3
 set secure
 set shiftwidth=2
-set shortmess=ilnrxsAI
-if version >= 704
-  set shortmess+=c
-endif
+set shortmess=firxI
 set showcmd
 set showmatch
 set noshowmode
@@ -83,11 +78,8 @@ set splitright
 set tabstop=2
 set noterse
 set visualbell
-set t_Co=256
 set t_vb=
-if version >= 800 && empty($TMUX)
-  set termguicolors
-endif
+set t_Co=256
 set ttimeout
 set ttimeoutlen=50
 set winaltkeys=no
@@ -101,6 +93,15 @@ if has('persistent_undo')
   set undolevels=1000
   set undoreload=10000
   set undofile
+endif
+
+if has('termguicolors')
+  set termguicolors
+endif
+
+if !empty($TMUX) " vim bug w/ tmux
+  set t_8f=[38;2;%lu;%lu;%lum
+  set t_8b=[48;2;%lu;%lu;%lum
 endif
 
 if empty(glob(g:autoloadhome . '/plug.vim'))
@@ -203,8 +204,8 @@ if has('nvim')
 elseif version >= 704 && has('lua')
   Plug 'Shougo/neocomplete.vim'
   let g:use_neocomplete = 1
-" elseif version >= 704 && has('python')
-"   Plug 'Valloric/YouCompleteMe', { 'do': './install.py --all' }
+elseif version >= 704 && has('python')
+  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --all' }
 endif
 
 call plug#end()
@@ -313,20 +314,14 @@ let g:neocomplete#same_filetypes.gitconfig          = '_'
 let g:neocomplete#sources#omni#input_patterns       = {}
 let g:neocomplete#sources#syntax#min_keyword_length = 4
 
-" let g:neocomplete#sources#dictionary#dictionaries = {
-"     \ 'default' : '',
-"     \ 'vimshell' : expand(vimhome . 'vimshell')
-"     \ }
-
 if exists('g:use_neocomplete')
+  inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
+  inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+  inoremap <expr><BS>  neocomplete#smart_close_popup()."\<C-h>"
   inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
   function! s:my_cr_function()
     return pumvisible() ? neocomplete#close_popup() : "\<CR>"
   endfunction
-
-  inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
-  inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-  inoremap <expr><BS>  neocomplete#smart_close_popup()."\<C-h>"
 endif
 
 
@@ -390,6 +385,7 @@ if !empty($TMUX)
   nnoremap <silent> <A-l> :TmuxNavigateRight<cr>
   nnoremap <silent> <A-\> :TmuxNavigatePrevious<cr>
 endif
+
 
 " undotree
 nmap <leader>u :UndotreeToggle<CR>
