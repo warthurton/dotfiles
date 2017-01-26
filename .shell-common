@@ -83,35 +83,6 @@ confsync() {
   done
 }
 
-#-----------------------------------------------------------------------------
-kernel_purge() {
-  local _removed
-  _removed=($(dpkg -l 'linux-*' | grep '^rc' | cut -f 3 -d ' '))
-  local _vcurrent
-  _vcurrent=$(uname -r | sed -re 's/-[a-z]+$//')
-  local _vnewest
-  _vnewest=$(dpkg -l 'linux-image-*' | grep -E '^ii +linux-image-[[:digit:]]+\.[[:digit:]]+\.' | sed -e 's/^.*linux-image-//' -e 's/ .*$//' | tail -1 | sed -re 's/-[a-z]+$//')
-  local _old
-  _old=($(dpkg -l 'linux-*' | grep -E '^ii +linux-[^ ]+-[[:digit:]]+\.[[:digit:]]+\.' | grep -Ev "(${_vcurrent}|${_vnewest})" | cut -f 3 -d ' '))
-
-  [[ -n ${_removed[@]} ]] && sudo apt-get purge "${_removed[@]}"
-  [[ -n ${_old[@]} ]]     && sudo apt-get purge "${_old[@]}"
-}
-# tmux ---------------------------------------------------------------------
-alias tatt='tmux attach -t $USER || tmux new -s $USER'
-
-tnew() {
-  local h="$1"
-  [[ -z $h ]] && return
-  tmux neww -n "$h" "exec ssh ${h}"
-}
-
-tneww() {
-  local h="$1"
-  [[ -z $h ]] && return
-  tmux neww -n "${h}.1" "exec ssh ${h}"
-  tmux neww -n "${h}.2" "exec ssh ${h}"
-}
 # openssl ---------------------------------------------------------------------
 newssl() {
   local h="$1"
@@ -206,7 +177,7 @@ ssl_pin_sha256() {
 #   # done
 # }
 #-----------------------------------------------------------------------------
-for script in "$HOME/.shell-prv" "${BASE16_SHELL}/scripts/base16-${BASE16_THEME}.sh" ; do
+for script in "$HOME/.shell-prv" "$HOME/.base16_theme" ; do
   [[ -s "$script" ]] && source "$script"
 done
 # --------------------------------------------------------------------------
