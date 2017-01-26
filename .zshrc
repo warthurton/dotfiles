@@ -14,16 +14,19 @@ do
   [[ -f "$s" ]] && source "$s"
 done
 # ---------------------------------------------------------------------------
-predate() {
-  while read -r line ; do
-    strftime "%F %T $line\n" "$EPOCHSECONDS"
-  done
-}
-# --------------------------------------------------------------------------
-zstyle ':completion::complete:*' use-cache on
-zstyle ':vcs_info:*' check-for-changes false
-compinit
-bashcompinit
+_oh_my_plugins="~/.config/oh-my-zsh/plugins"
+
+if [[ -d "${_oh_my_plugins}" ]] ; then
+  while read -r _zsh_completion_file ; do
+    
+  done < <(find "${_oh_my_plugins}" -type f -name '_*')
+fi
+
+# predate() {
+#   while read -r line ; do
+#     strftime "%F %T $line\n" "$EPOCHSECONDS"
+#   done
+# }
 
 #-----------------------------------------------------------------------------
 _pretty_language_version() {

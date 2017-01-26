@@ -23,7 +23,23 @@ for s in "$HOME/.shell-common" "$HOME/.fzf.bash" ; do
   [[ -s "$s" ]] && source "$s"
 done
 # --------------------------------------------------------------------------
+_completion_loader() {
+  local _command="$1"
+  local _completion
+  local _completion_script
+  for _completion_dir in /etc/bash_completion.d /usr/local/etc/bash_completion.d ; do
+    _completion="${_completion_dir}/${_command}"
 
+    for _completion_script in "${_completion}" "${_completion}.sh" ; do
+      if [[ -s "${_completion_script}" ]] ; then
+        source "${_completion_script}" >/dev/null 2>&1 && return 124
+      fi
+    done
+  done
+}
+
+complete -D -F _completion_loader -o bashdefault -o default
+# --------------------------------------------------------------------------
 pw() { p | "$PAGER" ; }
 
 if ! command -v __git_ps1 >/dev/null 2>/dev/null ; then
