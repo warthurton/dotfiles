@@ -29,8 +29,11 @@ for _version_manager in rbenv nodenv exenv goenv ; do
   _safe_add_to_path "$HOME/.${_version_manager}/bin"
 
   which "$_version_manager" > /dev/null && eval "$(${_version_manager} init ${ZSH_VERSION:+zsh} - )"
-
 done
+
+if command -v nodenv > /dev/null ; then
+  _safe_add_to_path "$(dirname \"$(nodenv which npm)\")"
+fi
 
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:
