@@ -74,7 +74,7 @@ build_multi_prompt() {
       echo -n "%F{6}${_language}-${(P)_language_env} "
   done
 
-  echo -n "%f$(git_super_status) "
+  command -v git_super_status > /dev/null && echo -n "%f$(git_super_status) "
 
   echo -n '%F{7}%~\n'
 
