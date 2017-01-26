@@ -80,8 +80,10 @@ fi
 # --------------------------------------------------------------------------
 [[ -z "$PS1" ]] && return
 
-BASE16_SHELL=$HOME/.config/base16-shell/
-[[ -s $BASE16_SHELL/profile_helper.sh ]] && eval "$($BASE16_SHELL/profile_helper.sh)"
+if [[ -s "$HOME/.config/base16-shell/profile_helper.sh" ]] ; then
+  export BASE16_SHELL="$HOME/.config/base16-shell"
+  eval "$($BASE16_SHELL/profile_helper.sh)"
+fi
 
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:
