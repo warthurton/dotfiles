@@ -13,7 +13,6 @@ if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
   alias stop="simple_launchctl unload"
   simple_launchctl() { find ~/Library/LaunchAgents -name '*.plist' -name '*'"$2"'*' -ok launchctl "$1" -w {} \; ; }
   [[ -x "/Applications/LibreOffice.app/Contents/MacOS/soffice" ]] && alias soffice="/Applications/LibreOffice.app/Contents/MacOS/soffice"
-  [[ -x "/usr/local/opt/macvim/MacVim.app/Contents/MacOS/Vim"  ]] && alias vim="/usr/local/opt/macvim/MacVim.app/Contents/MacOS/Vim"
 # Linux ---------------------------------------------------------------------
 elif [[ "${OSTYPE:0:5}" = "linux" ]] ; then
   alias ls="/bin/ls --color=auto -F"
