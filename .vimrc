@@ -1,10 +1,10 @@
 
 function! SafeDirectory(dir)
-  let a:expanded = expand(a:dir)
-  if !isdirectory(a:expanded)
-    call mkdir(a:expanded)
+  let expanded = expand(a:dir)
+  if !isdirectory(expanded)
+    call mkdir(expanded)
   endif
-  return a:expanded
+  return expanded
 endfunction
 
 if has('nvim')
@@ -28,11 +28,12 @@ let &undodir      = SafeDirectory(g:vimhome . '/undo')
 let g:autoloadhome = SafeDirectory(g:vimhome . '/autoload')
 let g:cachedir     = SafeDirectory(g:vimhome . '/cache')
 
-let mapleader = ","
+let g:mapleader = ","
 set autoindent
 set background=dark
 set backspace=indent,eol,start
 set binary
+set cursorline
 set noex
 set noerrorbells
 set encoding=utf-8
@@ -112,17 +113,19 @@ endif
 call plug#begin(SafeDirectory(g:vimhome . '/plugged'))
 
 " Utils
-Plug 'rking/ag.vim'
 Plug 'chriskempson/base16-vim'
 Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'bling/vim-bufferline'
-Plug 'oplatek/Conque-Shell',           { 'on': 'ConqueTerm' }
-Plug 'ctrlpvim/ctrlp.vim'
+Plug 'tpope/vim-dispatch'
+Plug 'junegunn/fzf.vim'
 Plug 'haya14busa/incsearch.vim'
 Plug 'scrooloose/nerdtree',            { 'on': 'NERDTreeToggle' }
+Plug 'terryma/vim-multiple-cursors'
 Plug 'chrisbra/NrrwRgn'
+Plug 'tpope/vim-rbenv'
 Plug 'tpope/vim-speeddating'
 Plug 'AndrewRadev/splitjoin.vim'
+Plug 'scrooloose/syntastic'
 Plug 'godlygeek/tabular',              { 'on': 'Tabularize' }
 Plug 'majutsushi/tagbar'
 Plug 'tomtom/tcomment_vim'
@@ -161,17 +164,11 @@ Plug 'tpope/vim-cucumber',             { 'for': 'ruby' }
 Plug 'tpope/vim-endwise',              { 'for': 'ruby' }
 Plug 'tpope/vim-rails',                { 'for': 'ruby' }
 Plug 'tpope/vim-rake',                 { 'for': 'ruby' }
-Plug 'tpope/vim-rbenv',                { 'for': 'ruby' }
 Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
 Plug 'vim-ruby/vim-ruby',              { 'for': 'ruby' }
 
-if has('nvim')
-  Plug 'neomake/neomake'
-else
-  Plug 'scrooloose/syntastic'
-endif
 
-if executable('tmux')
+if !empty($TMUX)
   Plug 'christoomey/vim-tmux-navigator', { 'on': [] }
   Plug 'jgdavey/vim-turbux',             { 'on': [] }
   Plug 'benmills/vimux',                 { 'on': [] }
@@ -180,12 +177,6 @@ endif
 if executable('git')
   Plug 'tpope/vim-fugitive'
   Plug 'airblade/vim-gitgutter'
-endif
-
-if executable('ag')
-  Plug 'rking/ag.vim'
-  set grepprg=ag\ --nogroup\ --nocolor\ --numbers\ $*\ /dev/null
-  let g:ctrlp_user_command = 'ag --files-with-matches --nocolor -g "" %s'
 endif
 
 if version >= 702
@@ -252,25 +243,20 @@ let g:bufferline_show_bufnr          = 1
 let g:bufferline_solo_highlight      = 1
 
 
-" CoVim
-let CoVim_default_name = $USER
-let CoVim_default_port = "22222"
-
-
-" ctrlp.vim
-let g:ctrlp_cmd          = 'CtrlP'
-let g:ctrlp_map          = '<c-p>'
-let g:ctrlp_reuse_window = 'netrw\|help\|quickfix'
-let g:ctrlp_show_hidden  = 1
-let g:ctrlp_use_caching  = 1
-
-
 " deoplete
 let g:deoplete#enable_at_startup = 1
 
 
 " easytags
 let g:easytags_file = g:cachedir . '/easytags'
+
+
+" fzf
+command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --glob "!_build/*" --glob "!deps/*" --glob "!.DS_Store" --glob "!public/*" --glob "!log/*" --glob "!tmp/*" --glob "!vendor/*" --color "always" '.shellescape(<q-args>), 1, <bang>0)
+map <C-p> :Files<cr>
+" map <C-g> :Find
+map <C-/> :Lines<cr>
+"
 
 " gitgutter
 highlight clear SignColumn
@@ -328,7 +314,11 @@ endif
 " nerdtree
 nmap <leader>n :NERDTreeToggle<CR>
 vmap <leader>n :NERDTreeToggle<CR>
-let NERDTreeHijackNetrw = 1
+let g:NERDTreeHijackNetrw = 1
+
+
+" rspec
+let g:rspec_command = "Dispatch rspec {spec}"
 
 
 " splitjoin.vim
@@ -338,7 +328,7 @@ nmap <leader>ss :SplitjoinSplit<cr>
 
 " syntastic
 let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_jump                = 1
+let g:syntastic_auto_jump                = 3
 let g:syntastic_auto_loc_list            = 1
 let g:syntastic_check_on_open            = 0
 let g:syntastic_check_on_wq              = 0
@@ -347,6 +337,7 @@ let g:syntastic_loc_list_height          = 5
 let g:syntastic_sh_checkers              = ['shellcheck', 'sh']
 let g:syntastic_ruby_checkers            = ['rubocop', 'mri']
 let g:syntastic_ruby_rubocop_args        = '--display-cop-names --config "$HOME/.rubocop.yml"'
+let g:syntastic_ignore_files             = ['\m^/usr/include/', '\m\c\.h$', '\m-min\.js$']
 
 
 " tabular
@@ -390,6 +381,27 @@ endif
 " undotree
 nmap <leader>u :UndotreeToggle<CR>
 vmap <leader>u :UndotreeToggle<CR>
+
+
+" vroom
+let g:vroom_cucumber_path = '__run=cucumber ; bundle show spinach >& /dev/null && __run=spinach ; bundle exec $__run'
+
+let g:vroom_use_bundle_exec = 1
+let g:vroom_use_binstubs = 0
+let g:vroom_ignore_color_flag = 1
+let g:vroom_use_dispatch = 1
+
+if has('nvim')
+  let g:vroom_use_terminal = 1
+elseif !empty($TMUX)
+  let g:vroom_use_vimux = 1
+endif
+
+map <Leader>t :VroomRunTestFile<cr>
+map <Leader>s :VroomRunNearestTest<cr>
+map <Leader>l :VroomRunLastTest<CR>
+" map <Leader>a :call RunAllSpecs()<CR>
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has('autocmd')
@@ -452,7 +464,7 @@ syntax on
 filetype plugin indent on
 
 if filereadable(expand("~/.vimrc_background"))
-  let base16colorspace = 256
+  let g:base16colorspace = 256
   source ~/.vimrc_background
   highlight LineNr ctermfg=236 ctermbg=234
 endif
