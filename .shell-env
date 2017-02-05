@@ -10,6 +10,7 @@ export LESS="iRQXF"
 export HISTSIZE=100000
 export MAILCHECK=0
 export SHELLCHECK_OPTS="--shell=bash --exclude=SC2001,SC1090,SC2164"
+export GOPATH="$HOME/.go"
 
 if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
   export LSCOLORS="Gxfxcxdxbxegedabagacad"
