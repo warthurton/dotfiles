@@ -56,6 +56,24 @@ downloaded_in() {
   for f in "$@" ; do stat -r "$f" | awk '{print ($11 - $12) " seconds"}' ; done
 }
 
+ps_owners() {
+  local _pid="${1:-$$}"
+  local _what_to_print="$2"
+  local _skip_pid_1="$3"
+  [[ -z "$_what_to_print" ]] && _what_to_print="user"
+  [[ -z "$_skip_pid_1" ]] && _skip_pid_1="no"
+  [[ $_pid -eq 1 && "$_skip_pid_1" != "no" ]] && return
+  read -r _user _ppid < <(ps -o user,ppid -p "$_pid" | grep -v PPID)
+  [[ "${_what_to_print}" == "user" ]] && echo "$_user"
+  [[ "${_what_to_print}" != "user" ]] && echo "$_pid"
+  [[ $_pid -ne 1 ]] && ps_owners "$_ppid" "$_what_to_print" "$_skip_pid_1"
+}
+
+am_i_someone_else() {
+  [[ $(ps_owners $$ user skip_pid_1 | uniq | wc -l) -gt 1 ]] && return 0
+  return 1
+}
+
 # MySQL ---------------------------------------------------------------------
 alias mydump="mysqldump --allow-keywords --add-locks --hex-blob --max_allowed_packet=1G --lock-tables=false --lock-all-tables=false --quick --quote-names --complete-insert=false --extended-insert=false"
 # Ruby ---------------------------------------------------------------------
