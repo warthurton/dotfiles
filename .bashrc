@@ -38,7 +38,9 @@ _completion_loader() {
   done
 }
 
-complete -D -F _completion_loader -o bashdefault -o default
+if [[ "${BASH_VERSINFO[0]}" -gt 3 ]] ; then
+  complete -D -F _completion_loader -o bashdefault -o default
+fi
 # --------------------------------------------------------------------------
 pw() { p | "$PAGER" ; }
 
@@ -50,12 +52,11 @@ fi
 _ps1_time_color() { echo -n ''; }
 _ps1_id_color() { echo -n ''; }
 _ps1_id() { echo -n ''; }
-_ps1_ruby() { echo -n ''; }
 _ps1_git_color() { echo -n ''; }
 _ps1_git() { echo -n ''; }
 
 ps1_update() {
-  export PS1='\[$__reset\]\[$(_ps1_time_color)\]\t\[$__reset\] \[$(_ps1_id_color)\]$(_ps1_id)\[$__reset\]@\[$(_ps1_time_color)\]\h\[$__reset\]$(_ps1_ruby)\[$(_ps1_git_color)\]$(_ps1_git)\[$__reset\] \w \$ '
+  export PS1='\[$__reset\]\[$(_ps1_time_color)\]\t\[$__reset\] \[$(_ps1_id_color)\]$(_ps1_id)\[$__reset\]@\[$(_ps1_time_color)\]\h\[$__reset\]\[$(_ps1_git_color)\]$(_ps1_git)\[$__reset\] \w \$ '
 }
 export PROMPT_COMMAND="ps1_update"
 
@@ -85,21 +86,13 @@ _ps1_id_color() {
   return 0
 }
 _ps1_id() {
-  if [[ $EUID -eq 0 ]] ; then
-    echo -n "__ROOT__"
+  if am_i_someone_else ; then
+    echo -n "__${USER}__"
   else
     echo -n "$USER"
   fi
   return 0
 }
-if command -v ruby >/dev/null 2>/dev/null ; then
-  _ps1_ruby() {
-    _RUBY_VERSION=$(ruby --version)
-    _RUBY=${_RUBY_VERSION/ruby /ruby-}
-    printf "%s" " ${_RUBY/ */}"
-    return 0
-  }
-fi
 if command -v git >/dev/null 2>/dev/null ; then
   _ps1_git_color() {
     declare __LOCAL_GIT_STATUS

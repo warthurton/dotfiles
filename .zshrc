@@ -14,14 +14,6 @@ do
   [[ -f "$s" ]] && source "$s"
 done
 # ---------------------------------------------------------------------------
-_oh_my_plugins="~/.config/oh-my-zsh/plugins"
-
-if [[ -d "${_oh_my_plugins}" ]] ; then
-  while read -r _zsh_completion_file ; do
-    
-  done < <(find "${_oh_my_plugins}" -type f -name '_*')
-fi
-
 # predate() {
 #   while read -r line ; do
 #     strftime "%F %T $line\n" "$EPOCHSECONDS"
@@ -84,28 +76,23 @@ build_multi_prompt() {
   # Time
   echo -n '%F{8}%D{%H:%M:%S} '
 
-  # user
-  case $USER in
-    chorn)
-      echo -n '%F{4}%n'
-      ;;
-    root)
-      echo -n '%F{9}__ROOT__'
-      ;;
-    *)
-      echo -n '%F{11}%n'
-      ;;
-  esac
+  if am_i_someone_else ; then
+    echo -n '%F{9}__%n__'
+  else
+    echo -n '%F{4}%n'
+  fi
 
   # host
-  case $HOST in
-    Shodan*)
-      echo -n "%F{15}@%F{4}%m"
-      ;;
-    *)
-      echo -n "%F{15}@%F{14}%m"
-      ;;
-  esac
+  if [[ -z $TMUX ]] ; then
+    case $HOST in
+      Shodan*)
+        echo -n "%F{15}@%F{4}%m"
+        ;;
+      *)
+        echo -n "%F{15}@%F{14}%m"
+        ;;
+    esac
+  fi
 
   # path
   echo -n ' %(?.%F{7}.%F{15})%? %(!.#.$) '
