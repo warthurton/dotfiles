@@ -4,61 +4,21 @@ bindkey -e
 bindkey -m 2>/dev/null
 # --------------------------------------------------------------------------
 for s in  ~/.shell-common \
-          ~/.config/zsh-history-substring-search/zsh-history-substring-search.zsh \
-          ~/.config/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
-          ~/.config/oh-my-zsh/plugins/safe-paste/safe-paste.plugin.zsh \
-          ~/.config/zsh-git-prompt/zshrc.sh \
-          ~/.config/zsh-autosuggestions/zsh-autosuggestions.zsh \
+          ~/.ghq/github.com/olivierverdier/zsh-git-prompt/zshrc.sh \
+          ~/.ghq/github.com/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh \
+          ~/.ghq/github.com/zsh-users/zsh-completions/zsh-completions.plugin.zsh \
+          ~/.ghq/github.com/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh \
+          ~/.ghq/github.com/robbyrussell/oh-my-zsh/plugins/safe-paste/safe-paste.plugin.zsh \
+          ~/.ghq/github.com/b4b4r07/emoji-cli/emoji-cli.zsh \
+          ~/.ghq/github.com/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
           ~/.fzf.zsh
 do
   [[ -f "$s" ]] && source "$s"
 done
-# ---------------------------------------------------------------------------
-# predate() {
-#   while read -r line ; do
-#     strftime "%F %T $line\n" "$EPOCHSECONDS"
-#   done
-# }
 
 #-----------------------------------------------------------------------------
-_pretty_language_version() {
-  local _language="$1"
-  local _version
-
-  (( $+commands[$_language] )) || return
-
-  _version=$($_language --version)
-  _version="${_version/v/}"
-
-  case $_language in
-    node)
-      ;;
-    ruby)
-      _version="${_version/ruby /}"
-      _version="${_version/ *}"
-      ;;
-    elixir)
-      _version="${_version/Erlang*Elixir }"
-      ;;
-  esac
-
-  echo "$_version"
-}
-
-#-----------------------------------------------------------------------------
-_export_pretty_language_versions() {
-  local _version
-  local _language_export
-
-  for _language in ruby node elixir ; do
-    _version=$(_pretty_language_version "$_language")
-    _language_export="${(U)_language}_VERSION=\"${_version}\""
-    eval "$_language_export"
-  done
-}
-
 precmd() {
-  (( $RANDOM % 10 )) && _export_pretty_language_versions
+  (( $RANDOM % 50 )) && _export_pretty_language_versions
   print -Pn "\e]0;\a"
 }
 
@@ -100,6 +60,5 @@ build_multi_prompt() {
 
 export PROMPT="%f%b%k%u%s\$(build_multi_prompt)%f%b%k%u%s"
 unset RPROMPT
-
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=zsh sw=2 ts=2 expandtab:

@@ -15,13 +15,11 @@ if [[ "$BASH_VERSINFO" -gt "3" ]] ; then
 fi
 
 # --------------------------------------------------------------------------
-[[ -s "$HOME/.shell-env" ]] && source "$HOME/.shell-env"
-[[ -s "$HOME/.shell-path" ]] && source "$HOME/.shell-path"
-[[ -z "$PS1" ]] && return
-
-for s in "$HOME/.shell-common" "$HOME/.fzf.bash" ; do
+for s in "$HOME/.shell-path"  "$HOME/.shell-env" "$HOME/.shell-common" "$HOME/.fzf.bash" ; do
   [[ -s "$s" ]] && source "$s"
 done
+
+[[ -z "$PS1" ]] && return
 # --------------------------------------------------------------------------
 _completion_loader() {
   local _command="$1"

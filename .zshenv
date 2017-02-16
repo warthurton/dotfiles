@@ -6,9 +6,8 @@ export WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
 [[ -s "$HOME/.shell-path" ]] && source "$HOME/.shell-path"
 [[ -s "$HOME/.shell-env" ]] && source "$HOME/.shell-env"
 
-fpath=(~/.config/zsh-completions/src $fpath)
-
-_oh_my_plugins="$HOME/.config/oh-my-zsh/plugins"
+fpath=($HOME/.ghq/github.com/zsh-users/zsh-completions/src $fpath)
+_oh_my_plugins="$HOME/.ghq/github.com/robbyrussell/oh-my-zsh/plugins"
 
 if [[ -d "${_oh_my_plugins}" ]] ; then
   while read -r _zsh_completion_file ; do
@@ -38,6 +37,7 @@ zmodload zsh/zutil
 autoload -Uz colors && colors
 autoload -Uz compinit && compinit
 autoload -Uz bashcompinit && bashcompinit
+autoload -Uz add-zsh-hook
 # autoload -Uz vcs_info
 # --------------------------------------------------------------------------
 # Changing Directories

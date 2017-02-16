@@ -27,12 +27,38 @@ done
 
 for _version_manager in rbenv nodenv exenv goenv ; do
   _safe_add_to_path "$HOME/.${_version_manager}/bin"
+  _safe_add_to_path "$HOME/.${_version_manager}/shims"
 
-  which "$_version_manager" > /dev/null && eval "$(${_version_manager} init ${ZSH_VERSION:+zsh} - )"
+  eval "export __${_version_manager}=$(which ${_version_manager})"
 done
 
-if command -v nodenv > /dev/null ; then
-  _safe_add_to_path "$(dirname \"$(nodenv which npm)\")"
+if [[ -n "${__rbenv}" ]] ; then
+  rbenv() {
+    eval "unset -f rbenv ; $(${__rbenv} init ${ZSH_VERSION:+zsh} - )"
+    rbenv $*
+  }
+fi
+
+if [[ -n "${__nodenv}" ]] ; then
+  nodenv() {
+    eval "unset -f nodenv ; $(${__nodenv} init ${ZSH_VERSION:+zsh} - )"
+    _safe_add_to_path "$(dirname \"$(nodenv which npm)\")"
+    nodenv $*
+  }
+fi
+
+if [[ -n "${__exenv}" ]] ; then
+  exenv() {
+    eval "unset -f exenv ; $(${__exenv} init ${ZSH_VERSION:+zsh} - )"
+    exenv $*
+  }
+fi
+
+if [[ -n "${__goenv}" ]] ; then
+  goenv() {
+    eval "unset -f goenv ; $(${__goenv} init ${ZSH_VERSION:+zsh} - )"
+    goenv $*
+  }
 fi
 
 # --------------------------------------------------------------------------
