@@ -7,6 +7,7 @@ export WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
 [[ -s "$HOME/.shell-env" ]] && source "$HOME/.shell-env"
 
 fpath=($HOME/.ghq/github.com/zsh-users/zsh-completions/src $fpath)
+
 _oh_my_plugins="$HOME/.ghq/github.com/robbyrussell/oh-my-zsh/plugins"
 
 if [[ -d "${_oh_my_plugins}" ]] ; then
@@ -38,7 +39,6 @@ autoload -Uz colors && colors
 autoload -Uz compinit && compinit
 autoload -Uz bashcompinit && bashcompinit
 autoload -Uz add-zsh-hook
-# autoload -Uz vcs_info
 # --------------------------------------------------------------------------
 # Changing Directories
 setopt auto_cd                # Auto changes to a directory without typing cd.
