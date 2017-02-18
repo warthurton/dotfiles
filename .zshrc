@@ -2,6 +2,28 @@
 alias -g M='|& $PAGER'
 bindkey -e
 bindkey -m 2>/dev/null
+
+typeset -g -A git_theme
+
+git_theme=(
+  prefix "("
+  suffix ")"
+  separator "|"
+  branch "%{$fg_bold[magenta]%}"
+  clean "%{$fg_bold[green]%}%{✔%G%}"
+  changed "%{$fg[blue]%}%{✚%G%}"
+  staged "%{$fg[red]%}%{●%G%}"
+  conflicts "%{$fg[red]%}%{✖%G%}"
+  ahead "%{↑%G%}"
+  behind "%{↓%G%}"
+  untracked "%{…%G%}"
+  show_changed_count 1
+  show_staged_count 1
+  show_conflict_count 1
+  show_ahead_count 1
+  show_behind_count 1
+  show_untracked_count 0
+)
 #-----------------------------------------------------------------------------
 for s in  ~/.shell-common \
           ~/.ghq/github.com/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh \
@@ -18,7 +40,7 @@ add-zsh-hook chpwd chpwd_update_git_vars
 add-zsh-hook preexec preexec_update_git_vars
 add-zsh-hook precmd precmd_update_git_vars
 
-declare -A GIT_STATUS
+typeset -g -A GIT_STATUS
 
 function preexec_update_git_vars() {
   unset __EXECUTED_GIT_COMMAND
@@ -43,23 +65,74 @@ function update_current_git_vars() {
   local _git_command="$1"
   [[ -z "$_git_command" ]] && _git_command="git"
 
-  local -a _GIT
+  typeset -A g
+  g=(staged 0 conflicts 0 changed 0 untracked 0 ignored 0 no_repository 0)
 
-  __haskell="$HOME/.ghq/github.com/olivierverdier/zsh-git-prompt/src/.bin/gitstatus"
+  while read -rA _status ; do
+    case "${_status[1]}" in
+      fatal*)
+        g[no_repository]=1
+        ;;
+      \#)
+        case "${_status[2]}" in
+          branch.oid)
+            g[oid]="${_status[3]}"
+            ;;
+          branch.head)
+            g[branch]="${_status[3]}"
+            ;;
+          branch.upstream)
+            g[upstream]="${_status[3]}"
+            ;;
+          branch.ab)
+            g[ahead]="${_status[3]}"
+            g[behind]="${_status[4]}"
+            ;;
+        esac
+        ;;
+      \?)
+        (( g[untracked]++ ))
+        ;;
+      \!)
+        (( g[ignored]++ ))
+        ;;
+      1)
+        case "${_status[2]}" in
+          .M)
+            (( g[changed]++ ))
+            ;;
+          A.|M.)
+            (( g[staged]++ ))
+            ;;
+        esac
+        ;;
+      2)
+        case "${_status[2]}" in
+          R.)
+            (( g[changed]++ ))
+            ;;
+        esac
+        ;;
+    esac
+  done < <($_git_command status --porcelain=2 --branch 2>&1)
 
-  [[ -x "$__haskell" ]] || return
+  GIT_STATUS[$_git_command]="$(declare -p g)"
+}
 
-  case "$_git_command" in
-    pubgit)
-      GIT_STATUS[$_git_command]=$(git --git-dir="$HOME/.git-pub-dotfiles" --work-tree="$HOME" status --porcelain --branch &> /dev/null | "${__haskell}")
-      ;;
-    prvgit)
-      GIT_STATUS[$_git_command]=$(git --git-dir="$HOME/.git-prv-dotfiles" --work-tree="$HOME" status --porcelain --branch &> /dev/null | "${__haskell}")
-      ;;
-    *)
-      GIT_STATUS[$_git_command]=$(git status --porcelain --branch &> /dev/null | "${__haskell}")
-      ;;
-  esac
+function print_git_theme_component() {
+  local _component="$1"
+  local _value="$2"
+
+  [[ -z "${git_theme[$_component]}" ]] && return
+
+  if (( _value != 0 )) ; then
+    echo -n "${git_theme[$_component]}"
+    if [[ "${git_theme[show_${_component}_count]}" -eq 1 ]] ; then
+      echo -n "$_value"
+    fi
+    echo -n "%{${reset_color}%}"
+  fi
+
 }
 
 function build_git_status() {
@@ -68,60 +141,38 @@ function build_git_status() {
 
   precmd_update_git_vars "$_git_command"
 
-  [[ -n "${GIT_STATUS[$_git_command]}" || "$_git_command" != "git" ]] || return
+  [[ -z "${GIT_STATUS[$_git_command]}" ]] && return
 
-  local -a _GIT=("${(@s: :)GIT_STATUS[$_git_command]}")
-  local GIT_BRANCH=$_GIT[1]
-  local GIT_AHEAD=$_GIT[2]
-  local GIT_BEHIND=$_GIT[3]
-  local GIT_STAGED=$_GIT[4]
-  local GIT_CONFLICTS=$_GIT[5]
-  local GIT_CHANGED=$_GIT[6]
-  local GIT_UNTRACKED=$_GIT[7]
+  eval "$GIT_STATUS[$_git_command]"
 
-  STATUS="$ZSH_THEME_GIT_PROMPT_PREFIX$ZSH_THEME_GIT_PROMPT_BRANCH${GIT_BRANCH}%{${reset_color}%}"
+  (( g[no_repository] == 1 )) && return
 
-  [[ "${GIT_BEHIND}" -ne "0" ]] && \
-    STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_BEHIND${GIT_BEHIND}%{${reset_color}%}"
+  echo -n "${git_theme[prefix]}"
+  echo -n "${git_theme[branch]}"
+  echo -n "${g[branch]}"
+  echo -n "%{${reset_color}%}"
 
-  [[ "${GIT_AHEAD}" -ne "0" ]] && \
-    STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_AHEAD${GIT_AHEAD}%{${reset_color}%}"
+  print_git_theme_component behind ${g[behind]}
+  print_git_theme_component ahead ${g[ahead]}
 
-  STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_SEPARATOR"
+  echo -n "${git_theme[separator]}"
+  echo -n "%{${reset_color}%}"
 
-  [[ "${GIT_STAGED}" -ne "0" ]] && \
-     STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_STAGED${GIT_STAGED}%{${reset_color}%}"
+  print_git_theme_component staged ${g[staged]}
+  print_git_theme_component conflicts ${g[conflicts]}
+  print_git_theme_component changed ${g[changed]}
+  print_git_theme_component untracked ${g[untracked]}
 
-  [[ "${GIT_CONFLICTS}" -ne "0" ]] && \
-    STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_CONFLICTS${GIT_CONFLICTS}%{${reset_color}%}"
+  if (( g[changed] == 0 && g[conflicts] == 0 && g[staged] == 0 && g[untracked] == 0 )) ; then
+    echo -n "${git_theme[clean]}"
+    echo -n "%{${reset_color}%}"
+  fi
 
-  [[ "${GIT_CHANGED}" -ne "0" ]] && \
-    STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_CHANGED${GIT_CHANGED}%{${reset_color}%}"
-
-  [[ "${GIT_UNTRACKED}" -ne "0" ]] && \
-    STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_UNTRACKED%{${reset_color}%}"
-
-  [[ "${GIT_CHANGED}" -eq "0" ]] && [[ "${GIT_CONFLICTS}" -eq "0" ]] && [[ "${GIT_STAGED}" -eq "0" ]] && [[ "${GIT_UNTRACKED}" -eq "0" ]] && \
-    STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_CLEAN"
-
-  STATUS="$STATUS%{${reset_color}%}$ZSH_THEME_GIT_PROMPT_SUFFIX"
-
-  echo "$STATUS"
+  echo -n "${git_theme[suffix]}"
+  echo -n "%{${reset_color}%}"
 }
 
 #-----------------------------------------------------------------------------
-# Prompt
-export ZSH_THEME_GIT_PROMPT_PREFIX="("
-export ZSH_THEME_GIT_PROMPT_SUFFIX=")"
-export ZSH_THEME_GIT_PROMPT_SEPARATOR="|"
-export ZSH_THEME_GIT_PROMPT_BRANCH="%{$fg_bold[magenta]%}"
-export ZSH_THEME_GIT_PROMPT_STAGED="%{$fg[red]%}%{●%G%}"
-export ZSH_THEME_GIT_PROMPT_CONFLICTS="%{$fg[red]%}%{✖%G%}"
-export ZSH_THEME_GIT_PROMPT_CHANGED="%{$fg[blue]%}%{✚%G%}"
-export ZSH_THEME_GIT_PROMPT_BEHIND="%{↓%G%}"
-export ZSH_THEME_GIT_PROMPT_AHEAD="%{↑%G%}"
-export ZSH_THEME_GIT_PROMPT_UNTRACKED="%{…%G%}"
-export ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg_bold[green]%}%{✔%G%}"
 export PROMPT=""
 export RPROMPT=""
 declare ASYNC_LEFT_PROC=0
@@ -170,7 +221,7 @@ function build_left_prompt() {
 }
 
 function build_right_prompt() {
-  if [[ "$PWD" == "$HOME" ]] ;then
+  if declare -f pubgit >&/dev/null  ;then
     echo -n "%F{8}PUB %f$(build_git_status pubgit)"
     echo -n " | "
     echo -n "%F{8}PRV %f$(build_git_status prvgit)"
@@ -179,15 +230,15 @@ function build_right_prompt() {
 
 # Patterned from github.com/mafredri/zsh-async
 function precmd() {
-  print -Pn "\e]0;\a"
+  # print -Pn "\e]0;\a"
 
   function async_left_prompt() {
-    printf "%s" "$(build_left_prompt)" > "$HOME/.z/left_prompt_$$"
+    printf "%s" "$(build_left_prompt)" > "$HOME/.zsh_left_prompt_$$"
     kill -s USR1 $$
   }
 
   function async_right_prompt() {
-    printf "%s" "$(build_right_prompt)" > "$HOME/.z/right_prompt_$$"
+    printf "%s" "$(build_right_prompt)" > "$HOME/.zsh_right_prompt_$$"
     kill -s USR2 $$
   }
 
@@ -206,14 +257,16 @@ function precmd() {
 }
 
 function TRAPUSR1() {
-  PROMPT="$(cat $HOME/.z/left_prompt_$$)"
+  PROMPT="$(cat $HOME/.zsh_left_prompt_$$)"
   ASYNC_LEFT_PROC=0
+  rm -f "$HOME/.zsh_left_prompt_$$"
   zle && zle reset-prompt
 }
 
 function TRAPUSR2() {
-  RPROMPT="$(cat $HOME/.z/right_prompt_$$)"
+  RPROMPT="$(cat $HOME/.zsh_right_prompt_$$)"
   ASYNC_RIGHT_PROC=0
+  rm -f "$HOME/.zsh_right_prompt_$$"
   zle && zle reset-prompt
 }
 #-----------------------------------------------------------------------------
