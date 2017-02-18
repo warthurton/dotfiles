@@ -99,10 +99,15 @@ httpd() {
   ruby -run -e httpd . -p "$port"
 }
 # Git ---------------------------------------------------------------------
-alias pubgit='git --git-dir="$HOME/.git-pub-dotfiles" --work-tree="$HOME"'
-alias prvgit='git --git-dir="$HOME/.git-prv-dotfiles" --work-tree="$HOME"'
+function pubgit() {
+  git --git-dir="$HOME/.git-pub-dotfiles" --work-tree="$HOME" $*
+}
+
+function prvgit() {
+  git --git-dir="$HOME/.git-prv-dotfiles" --work-tree="$HOME" $*
+}
+
 alias gst='git status'
-alias gcam='git commit --all --verbose --message'
 alias gco='git checkout'
 alias gps='git push'
 alias gpl='git pull'
