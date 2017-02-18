@@ -177,6 +177,7 @@ function build_right_prompt() {
   fi
 }
 
+# Patterned from github.com/mafredri/zsh-async
 function precmd() {
   print -Pn "\e]0;\a"
 
@@ -203,30 +204,6 @@ function precmd() {
   async_right_prompt &!
   ASYNC_RIGHT_PROC=$!
 }
-
-# function precmd() {
-#   print -Pn "\e]0;\a"
-#
-#   function async_prompt() {
-#     printf "%s" "$(build_left_prompt)" > "$HOME/.z/left_prompt_$$"
-#     printf "%s" "$(build_right_prompt)" > "$HOME/.z/right_prompt_$$"
-#     kill -s USR1 $$
-#   }
-#
-#   if [[ "${ASYNC_PROC}" != 0 ]]; then
-#     kill -s HUP $ASYNC_PROC >/dev/null 2>&1 || :
-#   fi
-#
-#   async_prompt &!
-#   ASYNC_PROC=$!
-# }
-#
-# function TRAPUSR1() {
-#   PROMPT="$(cat $HOME/.z/left_prompt_$$)"
-#   RPROMPT="$(cat $HOME/.z/right_prompt_$$)"
-#   ASYNC_PROC=0
-#   zle && zle reset-prompt
-# }
 
 function TRAPUSR1() {
   PROMPT="$(cat $HOME/.z/left_prompt_$$)"
