@@ -146,7 +146,8 @@ Plug 'fatih/vim-go',                   { 'for': 'go' }
 Plug 'tpope/vim-haml',                 { 'for': 'haml' }
 Plug 'ksauzz/haproxy.vim',             { 'for': 'haproxy' }
 Plug 'othree/html5.vim',               { 'for': 'html' }
-Plug 'tpope/vim-markdown',             { 'for': 'markdown' }
+Plug 'plasticboy/vim-markdown',        { 'for': 'markdown' }
+" Plug 'tpope/vim-markdown',             { 'for': 'markdown' }
 Plug 'mutewinter/nginx.vim',           { 'for': 'nginx' }
 Plug 'mitsuhiko/vim-python-combined',  { 'for': 'python' }
 Plug 'slim-template/vim-slim',         { 'for': 'slim' }
@@ -160,14 +161,16 @@ Plug 'othree/javascript-libraries-syntax.vim',     { 'for': 'javascript' }
 Plug 'mxw/vim-jsx' ,                               { 'for': 'javascript' }
 Plug 'othree/jspc.vim',                            { 'for': 'javascript' }
 
-Plug 'tpope/vim-bundler',              { 'for': 'ruby' }
-Plug 'tpope/vim-cucumber',             { 'for': 'ruby' }
-Plug 'tpope/vim-endwise',              { 'for': 'ruby' }
-Plug 'tpope/vim-rails',                { 'for': 'ruby' }
-Plug 'tpope/vim-rake',                 { 'for': 'ruby' }
-Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
-Plug 'vim-ruby/vim-ruby',              { 'for': 'ruby' }
-
+if executable('ruby')
+  Plug 'tpope/vim-bundler',              { 'for': 'ruby' }
+  Plug 'tpope/vim-cucumber',             { 'for': 'ruby' }
+  Plug 'tpope/vim-endwise',              { 'for': 'ruby' }
+  Plug 'tpope/vim-rails',                { 'for': 'ruby' }
+  Plug 'tpope/vim-rake',                 { 'for': 'ruby' }
+  Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
+  Plug 'vim-ruby/vim-ruby',              { 'for': 'ruby' }
+  Plug 'hwartig/vim-seeing-is-believing'
+endif
 
 if !empty($TMUX)
   Plug 'christoomey/vim-tmux-navigator', { 'on': [] }
@@ -320,6 +323,19 @@ let g:NERDTreeHijackNetrw = 1
 
 " rspec
 let g:rspec_command = "Dispatch rspec {spec}"
+
+
+" seeing_is_believing
+" Annotate every line
+" nmap <leader>b :%!seeing_is_believing --timeout 12 --line-length 500 --number-of-captures 300 --alignment-strategy chunk<CR>;
+" " Annotate marked lines
+" nmap <leader>n :%.!seeing_is_believing --timeout 12 --line-length 500 --number-of-captures 300 --alignment-strategy chunk --xmpfilter-style<CR>;
+" " Remove annotations
+" nmap <leader>c :%.!seeing_is_believing --clean<CR>;
+" " Mark the current line for annotation
+" nmap <leader>m A # => <Esc>
+" " Mark the highlighted lines for annotation
+" vmap <leader>m :norm A # => <Esc>
 
 
 " splitjoin.vim
