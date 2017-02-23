@@ -132,7 +132,6 @@ function print_git_theme_component() {
     fi
     echo -n "%{${reset_color}%}"
   fi
-
 }
 
 function build_git_status() {
@@ -172,21 +171,37 @@ function build_git_status() {
   echo -n "%{${reset_color}%}"
 }
 
-#-----------------------------------------------------------------------------
-export PROMPT=""
-export RPROMPT=""
-declare ASYNC_LEFT_PROC=0
-declare ASYNC_RIGHT_PROC=0
+# --------------------------------------------------------------------------
+function pretty_language_version() {
+  local _language="$1"
+  local _version
+
+  [[ -n "$_language" ]] && command -v $_language >&/dev/null || return
+
+  _version=$($_language --version)
+  _version="${_version/v/}"
+
+  case $_language in
+    node)
+      ;;
+    ruby)
+      _version="${_version/ruby /}"
+      _version="${_version/ *}"
+      ;;
+    elixir)
+      _version="${_version/Erlang*Elixir }"
+      ;;
+  esac
+
+  echo "${_language}-${_version}"
+}
 #-----------------------------------------------------------------------------
 function build_left_prompt() {
   echo -n "%f%b%k%u%s"
 
-  _export_pretty_language_versions
-
   for _language in ruby node elixir ; do
-    _language_env="${(U)_language}_VERSION"
-    [[ -n "${(P)_language_env}" ]] && \
-      echo -n "%F{6}${_language}-${(P)_language_env} "
+    local _v=$(pretty_language_version "$_language")
+    [[ -n "${_v}" ]] && echo -n "%F{6}${_v} "
   done
 
   echo -n "%f$(build_git_status) "
@@ -228,45 +243,43 @@ function build_right_prompt() {
   fi
 }
 
-# Patterned from github.com/mafredri/zsh-async
+#-----------------------------------------------------------------------------
+typeset -gi __PROMPT_PROC_LEFT=0
+typeset -gi __PROMPT_PROC_RIGHT=0
+typeset -g __PROMPT_FILE_LEFT="$HOME/.zsh_prompt_left_$$"
+typeset -g __PROMPT_FILE_RIGHT="$HOME/.zsh_prompt_right_$$"
+#-----------------------------------------------------------------------------
 function precmd() {
-  # print -Pn "\e]0;\a"
+  print -Pn "\e]0;\a"
 
-  function async_left_prompt() {
-    printf "%s" "$(build_left_prompt)" > "$HOME/.zsh_left_prompt_$$"
+  [[ "${__PROMPT_PROC_LEFT}" != 0 ]] && kill -s HUP $__PROMPT_PROC_LEFT >&/dev/null
+
+  () {
+    cp "$1" "$__PROMPT_FILE_LEFT"
     kill -s USR1 $$
-  }
+  } =(build_left_prompt) &!
+  __PROMPT_PROC_LEFT=$!
+ 
+  [[ "${__PROMPT_PROC_RIGHT}" != 0 ]] && kill -s HUP $__PROMPT_PROC_RIGHT >&/dev/null
 
-  function async_right_prompt() {
-    printf "%s" "$(build_right_prompt)" > "$HOME/.zsh_right_prompt_$$"
+  () {
+    cp "$1" "$__PROMPT_FILE_RIGHT"
     kill -s USR2 $$
-  }
-
-  if [[ "${ASYNC_LEFT_PROC}" != 0 ]]; then
-    kill -s HUP $ASYNC_LEFT_PROC >/dev/null 2>&1 || :
-  fi
-
-  if [[ "${ASYNC_RIGHT_PROC}" != 0 ]]; then
-    kill -s HUP $ASYNC_RIGHT_PROC >/dev/null 2>&1 || :
-  fi
-
-  async_left_prompt &!
-  ASYNC_LEFT_PROC=$!
-  async_right_prompt &!
-  ASYNC_RIGHT_PROC=$!
+  } =(build_right_prompt) &!
+  __PROMPT_PROC_RIGHT=$!
 }
 
 function TRAPUSR1() {
-  PROMPT="$(cat $HOME/.zsh_left_prompt_$$)"
-  ASYNC_LEFT_PROC=0
-  rm -f "$HOME/.zsh_left_prompt_$$"
+  PROMPT="$(<$__PROMPT_FILE_LEFT)"
+  rm -f "$__PROMPT_FILE_LEFT"
+  __PROMPT_PROC_LEFT=0
   zle && zle reset-prompt
 }
 
 function TRAPUSR2() {
-  RPROMPT="$(cat $HOME/.zsh_right_prompt_$$)"
-  ASYNC_RIGHT_PROC=0
-  rm -f "$HOME/.zsh_right_prompt_$$"
+  RPROMPT="$(<$__PROMPT_FILE_RIGHT)"
+  rm -f "$__PROMPT_FILE_RIGHT"
+  __PROMPT_PROC_RIGHT=0
   zle && zle reset-prompt
 }
 #-----------------------------------------------------------------------------

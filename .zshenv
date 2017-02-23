@@ -2,6 +2,8 @@
 export HISTFILE="$HOME/.zhistory"
 export SAVEHIST=10000000 # The maximum number of events to save in the history file.
 export WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
+export PROMPT="%f%b%k%u%s%n@%m %~ %(!.#.$)%f%b%k%u%s "
+export RPROMPT=""
 # --------------------------------------------------------------------------
 [[ -s "$HOME/.shell-path" ]] && source "$HOME/.shell-path"
 [[ -s "$HOME/.shell-env" ]] && source "$HOME/.shell-env"
