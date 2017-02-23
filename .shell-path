@@ -72,4 +72,9 @@ if [[ -n "${__goenv}" ]] ; then
 fi
 
 # --------------------------------------------------------------------------
+for dir in "$HOME"/.asdf/{bin,shims} ; do
+  _safe_add_to_path "$dir"
+done
+
+# --------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:
