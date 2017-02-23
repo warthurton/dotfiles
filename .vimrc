@@ -117,6 +117,7 @@ Plug 'chriskempson/base16-vim'
 Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'bling/vim-bufferline'
 Plug 'tpope/vim-dispatch'
+Plug 'Konfekt/FastFold'
 Plug 'junegunn/fzf', { 'dir': '~/.config/fzf', 'do': './install --no-update-rc --key-bindings --completion' }
 Plug 'junegunn/fzf.vim'
 Plug 'haya14busa/incsearch.vim'
@@ -147,7 +148,6 @@ Plug 'tpope/vim-haml',                 { 'for': 'haml' }
 Plug 'ksauzz/haproxy.vim',             { 'for': 'haproxy' }
 Plug 'othree/html5.vim',               { 'for': 'html' }
 Plug 'plasticboy/vim-markdown',        { 'for': 'markdown' }
-" Plug 'tpope/vim-markdown',             { 'for': 'markdown' }
 Plug 'mutewinter/nginx.vim',           { 'for': 'nginx' }
 Plug 'mitsuhiko/vim-python-combined',  { 'for': 'python' }
 Plug 'slim-template/vim-slim',         { 'for': 'slim' }
@@ -422,6 +422,8 @@ map <Leader>l :VroomRunLastTest<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has('autocmd')
+  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+
   augroup GitCommits
     autocmd!
     autocmd FileType gitcommit            nested setlocal nospell
