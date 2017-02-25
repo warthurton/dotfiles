@@ -32,15 +32,14 @@ zmodload zsh/complist
 zmodload zsh/datetime
 zmodload zsh/main
 zmodload zsh/parameter
+zmodload zsh/system
 zmodload zsh/terminfo
 zmodload zsh/zle
 zmodload zsh/zleparameter
 zmodload zsh/zutil
 
-autoload -Uz colors && colors
-autoload -Uz compinit && compinit
-autoload -Uz bashcompinit && bashcompinit
 autoload -Uz add-zsh-hook
+autoload -Uz colors && colors
 # --------------------------------------------------------------------------
 # Changing Directories
 setopt auto_cd                # Auto changes to a directory without typing cd.
