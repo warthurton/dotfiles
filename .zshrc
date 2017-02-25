@@ -3,6 +3,9 @@ alias -g M='|& $PAGER'
 bindkey -e
 bindkey -m 2>/dev/null
 
+autoload -Uz compinit && compinit
+autoload -Uz bashcompinit && bashcompinit
+
 typeset -g -A git_theme
 
 git_theme=(
@@ -170,43 +173,63 @@ function build_git_status() {
   echo -n "${git_theme[suffix]}"
   echo -n "%{${reset_color}%}"
 }
+#-----------------------------------------------------------------------------
+typeset -g -a __preferred_languages=(ruby node)
+typeset -g -A __language_versions
 
-# --------------------------------------------------------------------------
-function pretty_language_version() {
-  local _language="$1"
-  local _version
+function update_language_versions() {
+  local language
+  local version
 
-  [[ -n "$_language" ]] && command -v $_language >&/dev/null || return
+  if (( $+commands[asdf] )) ; then
 
-  _version=$($_language --version)
-  _version="${_version/v/}"
+    while read -r language ; do
+      read -r -A version < <(asdf current $language 2>|/dev/null)
+      [[ -n "${version[1]}" ]] && __language_versions[$language]="${version[1]}"
+    done < <(asdf plugin-list)
 
-  case $_language in
-    node)
-      ;;
-    ruby)
-      _version="${_version/ruby /}"
-      _version="${_version/ *}"
-      ;;
-    elixir)
-      _version="${_version/Erlang*Elixir }"
-      ;;
-  esac
+  else
 
-  echo "${_language}-${_version}"
+    for language in ${__preferred_languages[@]} ; do
+      (( $+commands[$language] )) || continue
+      read -r -A version < <($language --version 2>|/dev/null)
+      case $language in
+        ruby) [[ -n "${version[2]}" ]] && __language_versions[$language]="${version[2]}" ;;
+        *) [[ -n "${version[1]}" ]] && __language_versions[$language]="${version[1]}" ;;
+      esac
+    done
+
+  fi
+}
+#-----------------------------------------------------------------------------
+PERIOD=30
+
+function periodic() {
+  update_language_versions
 }
 #-----------------------------------------------------------------------------
 function build_left_prompt() {
+  local _leading_space=""
+
   echo -n "%f%b%k%u%s"
 
-  for _language in ruby node elixir ; do
-    local _v=$(pretty_language_version "$_language")
-    [[ -n "${_v}" ]] && echo -n "%F{6}${_v} "
+  for language in ${__preferred_languages[@]} ; do
+    if [[ -n "${__language_versions[$language]}" ]] ; then
+      echo -n "${_leading_space}%F{6}${language}-${__language_versions[$language]}"
+      _leading_space=" "
+    fi
   done
 
-  echo -n "%f$(build_git_status) "
+  if (( $+commands[git] )) ; then
+    local _git_prompt="$(build_git_status)"
 
-  echo -n '%F{7}%~\n'
+    if [[ -n "${_git_prompt}" ]] ; then
+      echo -n "${_leading_space}%f${_git_prompt}"
+      _leading_space=" "
+    fi
+  fi
+
+  echo -n "${_leading_space}%F{7}%~\n"
 
   # Time
   echo -n '%F{8}%D{%H:%M:%S} '
@@ -244,43 +267,41 @@ function build_right_prompt() {
 }
 
 #-----------------------------------------------------------------------------
-typeset -gi __PROMPT_PROC_LEFT=0
-typeset -gi __PROMPT_PROC_RIGHT=0
-typeset -g __PROMPT_FILE_LEFT="$HOME/.zsh_prompt_left_$$"
-typeset -g __PROMPT_FILE_RIGHT="$HOME/.zsh_prompt_right_$$"
+typeset -g -a _prompt_procs
+typeset -g _prompt_file_left="$HOME/.zsh_prompt_left_$$"
+typeset -g _prompt_file_right="$HOME/.zsh_prompt_right_$$"
 #-----------------------------------------------------------------------------
 function precmd() {
   print -Pn "\e]0;\a"
 
-  [[ "${__PROMPT_PROC_LEFT}" != 0 ]] && kill -s HUP $__PROMPT_PROC_LEFT >&/dev/null
+  if [[ "${#_prompt_procs[@]}" -gt 0 ]] ; then
+    kill -s HUP ${_prompt_procs[@]} >&/dev/null
+    _prompt_procs=()
+  fi
 
   () {
-    cp "$1" "$__PROMPT_FILE_LEFT"
+    cp "$1" "$_prompt_file_left"
     kill -s USR1 $$
   } =(build_left_prompt) &!
-  __PROMPT_PROC_LEFT=$!
- 
-  [[ "${__PROMPT_PROC_RIGHT}" != 0 ]] && kill -s HUP $__PROMPT_PROC_RIGHT >&/dev/null
+  _prompt_procs+=($!)
 
   () {
-    cp "$1" "$__PROMPT_FILE_RIGHT"
+    cp "$1" "$_prompt_file_right"
     kill -s USR2 $$
   } =(build_right_prompt) &!
-  __PROMPT_PROC_RIGHT=$!
+  _prompt_procs+=($!)
 }
 
 function TRAPUSR1() {
-  PROMPT="$(<$__PROMPT_FILE_LEFT)"
-  rm -f "$__PROMPT_FILE_LEFT"
-  __PROMPT_PROC_LEFT=0
-  zle && zle reset-prompt
+  PROMPT="$(<$_prompt_file_left)"
+  rm -f "$_prompt_file_left"
+  zle && zle reset-prompt >&/dev/null
 }
 
 function TRAPUSR2() {
-  RPROMPT="$(<$__PROMPT_FILE_RIGHT)"
-  rm -f "$__PROMPT_FILE_RIGHT"
-  __PROMPT_PROC_RIGHT=0
-  zle && zle reset-prompt
+  RPROMPT="$(<$_prompt_file_right)"
+  rm -f "$_prompt_file_right"
+  zle && zle reset-prompt >&/dev/null
 }
 #-----------------------------------------------------------------------------
 # vim: set syntax=sh ft=zsh sw=2 ts=2 expandtab:
