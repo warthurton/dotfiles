@@ -1,10 +1,13 @@
 #-----------------------------------------------------------------------------
+export PROMPT="%f%b%k%u%s%n@%m %~ %(!.#.$)%f%b%k%u%s "
+export RPROMPT=""
+
 alias -g M='|& $PAGER'
 bindkey -e
 bindkey -m 2>/dev/null
 
-autoload -Uz compinit && compinit
 autoload -Uz bashcompinit && bashcompinit
+autoload -Uz compinit && compinit -C
 
 typeset -g -A git_theme
 

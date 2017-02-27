@@ -68,6 +68,8 @@ ps_owners() {
 }
 
 am_i_someone_else() {
+  [[ -n "${BASH_VERSINFO[0]}" && "${BASH_VERSINFO[0]}" -lt 4 ]] && return 1
+
   local -a _owners
   local -A _counts
 
@@ -157,9 +159,14 @@ ssl_pin_sha256() {
   openssl dgst -sha256 -binary "$_tmp" | openssl enc -base64
   rm "$_tmp"
 }
-
 #-----------------------------------------------------------------------------
-for script in "$HOME/.shell-prv" "$HOME/.base16_theme" ; do
+for script in "$HOME/.shell-prv" ; do
+  [[ -s "$script" ]] && source "$script"
+done
+#-----------------------------------------------------------------------------
+[[ -z "$PS1" ]] && return
+#-----------------------------------------------------------------------------
+for script in "$HOME/.base16_theme" ; do
   [[ -s "$script" ]] && source "$script"
 done
 # --------------------------------------------------------------------------
