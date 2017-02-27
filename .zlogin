@@ -22,7 +22,7 @@
 } &!
 
 {
-  find "$HOME" -type f -maxdepth 1 -name '.zsh_prompt_*' -delete
+  find "$HOME" -maxdepth 1 -type f -name '.zsh_prompt_*' -delete
 } &!
 
 # vim: set syntax=zsh ft=sh sw=2 ts=2 expandtab:
