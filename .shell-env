@@ -79,48 +79,6 @@ if [[ -n "$SSH_AUTH_SOCK" && ! -S "$SSH_AUTH_SOCK" ]] ; then
 fi
 
 # --------------------------------------------------------------------------
-_pretty_language_version() {
-  local _language="$1"
-  local _version
-
-  [[ -n "$_language" ]] && command -v $_language >&/dev/null || return
-
-  _version=$($_language --version)
-  _version="${_version/v/}"
-
-  case $_language in
-    node)
-      ;;
-    ruby)
-      _version="${_version/ruby /}"
-      _version="${_version/ *}"
-      ;;
-    elixir)
-      _version="${_version/Erlang*Elixir }"
-      ;;
-  esac
-
-  echo "$_version"
-}
-# --------------------------------------------------------------------------
-_export_pretty_language_versions() {
-  local _version
-  local _language_export
-
-  for _language in ruby node elixir ; do
-    _version=$(_pretty_language_version "$_language")
-    if [[ -n "$ZSH_VERSION" ]] ; then
-      _language_export="${(U)_language}_VERSION=\"${_version}\""
-    else
-      _language_export="${_language^^}_VERSION=\"${_version}\""
-    fi
-    eval "export $_language_export"
-  done
-}
-
-_export_pretty_language_versions
-
-# --------------------------------------------------------------------------
 [[ -z "$PS1" ]] && return
 # --------------------------------------------------------------------------
 if [[ -s "$HOME/.config/base16-shell/profile_helper.sh" ]] ; then
