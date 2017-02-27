@@ -4,15 +4,31 @@ export SAVEHIST=10000000 # The maximum number of events to save in the history f
 export WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
 export PROMPT="%f%b%k%u%s%n@%m %~ %(!.#.$)%f%b%k%u%s "
 export RPROMPT=""
-# --------------------------------------------------------------------------
-[[ -s "$HOME/.shell-path" ]] && source "$HOME/.shell-path"
-[[ -s "$HOME/.shell-env" ]] && source "$HOME/.shell-env"
+#-----------------------------------------------------------------------------
+typeset -F SECONDS
+typeset -g _debug_times=0
 
+function simple_timer() {
+  local _what="$1"
+  local _start="$2"
+  print -f "%d %2.3f %s\n" $$ $(( SECONDS - _start )) "$_what" >> ~/simple_timer
+}
+#-----------------------------------------------------------------------------
+for s in ~/.shell-path ~/.shell-env ; do
+  if [[ -f "$s" ]] ; then
+    __time_start=$SECONDS
+    source "$s"
+    [[ $_debug_times ]] && simple_timer "source $s" $__time_start
+  fi
+done
+#-----------------------------------------------------------------------------
 fpath=($HOME/.ghq/github.com/zsh-users/zsh-completions/src $fpath)
 
 _oh_my_plugins="$HOME/.ghq/github.com/robbyrussell/oh-my-zsh/plugins"
 
 if [[ -d "${_oh_my_plugins}" ]] ; then
+  __time_start=$SECONDS
+
   while read -r _zsh_completion_file ; do
     _file="$(basename "$_zsh_completion_file")"
     _cmd="${_file##_}"
@@ -21,11 +37,15 @@ if [[ -d "${_oh_my_plugins}" ]] ; then
       fpath=(${_dir} $fpath)
     fi
   done < <(find "${_oh_my_plugins}" -type f -name '_*')
+
+  [[ $_debug_times ]] && simple_timer "add oh-my-zsh completions" $__time_start
 fi
 
 typeset -gU fpath path
 
-# --------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+__time_start=$SECONDS
+
 zmodload zsh/compctl
 zmodload zsh/complete
 zmodload zsh/complist
@@ -38,9 +58,15 @@ zmodload zsh/zle
 zmodload zsh/zleparameter
 zmodload zsh/zutil
 
-autoload -Uz add-zsh-hook
+[[ $_debug_times ]] && simple_timer "zmodload" $__time_start
+
+__time_start=$SECONDS
+
 autoload -Uz colors && colors
-# --------------------------------------------------------------------------
+
+[[ $_debug_times ]] && simple_timer "colors" $__time_start
+
+#-----------------------------------------------------------------------------
 # Changing Directories
 setopt auto_cd                # Auto changes to a directory without typing cd.
 setopt cdable_vars            # Change directory to a path stored in a variable.

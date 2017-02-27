@@ -27,6 +27,7 @@ git_theme=(
   show_behind_count 1
   show_untracked_count 0
 )
+
 #-----------------------------------------------------------------------------
 for s in  ~/.shell-common \
           ~/.ghq/github.com/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh \
@@ -36,9 +37,14 @@ for s in  ~/.shell-common \
           ~/.ghq/github.com/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
           ~/.fzf.zsh
 do
-  [[ -f "$s" ]] && source "$s"
+  if [[ -f "$s" ]] ; then
+    __time_start=$SECONDS
+    source "$s"
+    [[ $_debug_times ]] && simple_timer "source $s" $__time_start
+  fi
 done
 #-----------------------------------------------------------------------------
+autoload -Uz add-zsh-hook
 add-zsh-hook chpwd chpwd_update_git_vars
 add-zsh-hook preexec preexec_update_git_vars
 add-zsh-hook precmd precmd_update_git_vars
@@ -66,6 +72,7 @@ function chpwd_update_git_vars() {
 
 function update_current_git_vars() {
   local _git_command="$1"
+  local _start=$SECONDS
   [[ -z "$_git_command" ]] && _git_command="git"
 
   typeset -A g
@@ -120,6 +127,8 @@ function update_current_git_vars() {
   done < <($_git_command status --porcelain=2 --branch 2>&1)
 
   GIT_STATUS[$_git_command]="$(declare -p g)"
+
+  [[ $_debug_times ]] && simple_timer "update_current_git_vars $_git_command" $_start
 }
 
 function print_git_theme_component() {
@@ -139,6 +148,7 @@ function print_git_theme_component() {
 
 function build_git_status() {
   local _git_command="$1"
+  local _start=$SECONDS
   [[ -z "$_git_command" ]] && _git_command="git"
 
   precmd_update_git_vars "$_git_command"
@@ -172,44 +182,46 @@ function build_git_status() {
 
   echo -n "${git_theme[suffix]}"
   echo -n "%{${reset_color}%}"
+
+  [[ $_debug_times ]] && simple_timer "build_git_status $_git_command" $_start
 }
 #-----------------------------------------------------------------------------
-typeset -g -a __preferred_languages=(ruby node)
 typeset -g -A __language_versions
 
 function update_language_versions() {
+  local -a languages=($*)
   local language
   local version
+  local _start=$SECONDS
 
-  if (( $+commands[asdf] )) ; then
+  for language in ${languages[@]} ; do
+    (( $+commands[$language] )) || continue
 
-    while read -r language ; do
+    if (( $+commands[asdf] )) ; then
       read -r -A version < <(asdf current $language 2>|/dev/null)
       [[ -n "${version[1]}" ]] && __language_versions[$language]="${version[1]}"
-    done < <(asdf plugin-list)
-
-  else
-
-    for language in ${__preferred_languages[@]} ; do
-      (( $+commands[$language] )) || continue
+    else
       read -r -A version < <($language --version 2>|/dev/null)
       case $language in
         ruby) [[ -n "${version[2]}" ]] && __language_versions[$language]="${version[2]}" ;;
         *) [[ -n "${version[1]}" ]] && __language_versions[$language]="${version[1]}" ;;
       esac
-    done
+    fi
+  done
 
-  fi
+  [[ $_debug_times ]] && simple_timer "update_language_versions" $_start
 }
 #-----------------------------------------------------------------------------
+typeset -g -a __preferred_languages=(ruby node)
 PERIOD=30
 
 function periodic() {
-  update_language_versions
+  update_language_versions ${__preferred_languages[@]}
 }
 #-----------------------------------------------------------------------------
 function build_left_prompt() {
   local _leading_space=""
+  local _start=$SECONDS
 
   echo -n "%f%b%k%u%s"
 
@@ -222,7 +234,6 @@ function build_left_prompt() {
 
   if (( $+commands[git] )) ; then
     local _git_prompt="$(build_git_status)"
-
     if [[ -n "${_git_prompt}" ]] ; then
       echo -n "${_leading_space}%f${_git_prompt}"
       _leading_space=" "
@@ -256,26 +267,31 @@ function build_left_prompt() {
   echo -n ' %(?.%F{7}.%F{15})%? %(!.#.$) '
 
   echo "%f%b%k%u%s"
+  [[ $_debug_times ]] && simple_timer "build_left_prompt" $_start
 }
 
 function build_right_prompt() {
-  if declare -f pubgit >&/dev/null  ;then
-    echo -n "%F{8}PUB %f$(build_git_status pubgit)"
-    echo -n " | "
-    echo -n "%F{8}PRV %f$(build_git_status prvgit)"
-  fi
-}
+  local _start=$SECONDS
 
+  (( $+commands[git] )) && declare -f pubgit >&/dev/null || return
+  echo -n "%F{8}PUB %f$(build_git_status pubgit)"
+  echo -n " | "
+  echo -n "%F{8}PRV %f$(build_git_status prvgit)"
+
+  [[ $_debug_times ]] && simple_timer "build_right_prompt" $_start
+}
 #-----------------------------------------------------------------------------
 typeset -g -a _prompt_procs
 typeset -g _prompt_file_left="$HOME/.zsh_prompt_left_$$"
 typeset -g _prompt_file_right="$HOME/.zsh_prompt_right_$$"
 #-----------------------------------------------------------------------------
 function precmd() {
+  local _start=$SECONDS
+
   print -Pn "\e]0;\a"
 
   if [[ "${#_prompt_procs[@]}" -gt 0 ]] ; then
-    kill -s HUP ${_prompt_procs[@]} >&/dev/null
+    kill -s HUP ${_prompt_procs[@]} >&/dev/null &!
     _prompt_procs=()
   fi
 
@@ -290,6 +306,8 @@ function precmd() {
     kill -s USR2 $$
   } =(build_right_prompt) &!
   _prompt_procs+=($!)
+
+  [[ $_debug_times ]] && simple_timer "precmd" $_start
 }
 
 function TRAPUSR1() {
