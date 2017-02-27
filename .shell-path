@@ -16,13 +16,13 @@ for dir in \
   /{usr,opt}/local/heroku/bin \
   /Applications/VMware\ Fusion.app/Contents/Library \
   /Applications/Postgres.app/Contents/Versions/latest/bin \
-  $HOME/.cargo/bin \
+  $HOME/.asdf/{bin,shims} \
   $HOME/bin
 do
   _safe_add_to_path "$dir"
 done
 
-# --------------------------------------------------------------------------
+# # --------------------------------------------------------------------------
 # Languages with *env version manangers
 
 for _version_manager in rbenv nodenv exenv goenv ; do
@@ -70,11 +70,6 @@ if [[ -n "${__goenv}" ]] ; then
     goenv $*
   }
 fi
-
-# --------------------------------------------------------------------------
-for dir in "$HOME"/.asdf/{bin,shims} ; do
-  _safe_add_to_path "$dir"
-done
 
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:
