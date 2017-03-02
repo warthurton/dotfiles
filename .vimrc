@@ -127,13 +127,17 @@ Plug 'chrisbra/NrrwRgn'
 Plug 'tpope/vim-rbenv'
 Plug 'tpope/vim-speeddating'
 Plug 'AndrewRadev/splitjoin.vim'
-Plug 'scrooloose/syntastic'
+" Plug 'scrooloose/syntastic'
+Plug 'vim-scripts/SyntaxRange'
 Plug 'godlygeek/tabular',              { 'on': 'Tabularize' }
 Plug 'majutsushi/tagbar'
 Plug 'tomtom/tcomment_vim'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-vinegar'
 Plug 'skalnik/vim-vroom'
+
+Plug 'w0rp/ale'
+
 
 " Filetypes
 Plug 'kchmck/vim-coffee-script',       { 'for': 'coffee' }
@@ -169,7 +173,7 @@ if executable('ruby')
   Plug 'tpope/vim-rake',                 { 'for': 'ruby' }
   Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
   Plug 'vim-ruby/vim-ruby',              { 'for': 'ruby' }
-  Plug 'hwartig/vim-seeing-is-believing'
+  " Plug 'hwartig/vim-seeing-is-believing'
 endif
 
 if !empty($TMUX)
@@ -229,6 +233,12 @@ let g:airline#extensions#tabline#show_buffers      = 1
 let g:airline#extensions#tabline#show_tabs         = 1
 let g:airline_section_b                            = '%{getcwd()}'
 let g:airline_theme                                = 'tomorrow'
+
+
+" ale
+let g:ale_sign_column_always = 1
+let g:ale_sign_error = "E"
+let g:ale_sign_warning = "W"
 
 
 " better-javascript-completion
