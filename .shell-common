@@ -6,11 +6,21 @@ if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
   alias l="ls -lO"
   alias p="ps -Af"
   alias update_brew="brew update --all && brew upgrade && brew prune && brew cleanup && brew outdated"
-  alias rebuild_launch_services="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user"
   alias start="simple_launchctl load"
   alias stop="simple_launchctl unload"
-  simple_launchctl() { find ~/Library/LaunchAgents -name '*.plist' -name '*'"$2"'*' -ok launchctl "$1" -w {} \; ; }
-  [[ -x "/Applications/LibreOffice.app/Contents/MacOS/soffice" ]] && alias soffice="/Applications/LibreOffice.app/Contents/MacOS/soffice"
+
+  function simple_launchctl() { 
+    find ~/Library/LaunchAgents -name '*.plist' -name '*'"$2"'*' -ok launchctl "$1" -w {} \;
+  }
+
+  function flushdns() {
+    dscacheutil -flushcache
+    sudo killall -HUP mDNSResponder
+  }
+  function rebuild_launch_services {
+    /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
+  }
+
 # Linux ---------------------------------------------------------------------
 elif [[ "${OSTYPE:0:5}" = "linux" ]] ; then
   alias ls="/bin/ls --color=auto -F"
@@ -40,6 +50,7 @@ alias live_ip='dig +short myip.opendns.com @resolver1.opendns.com || curl -f4L h
 alias to_csv='soffice --convert-to csv --headless'
 # alias predate="xargs -I{} bash -c \"printf '%(%F %T)T ' -1 ; echo '{}'\""
 # ---------------------------------------------------------------------------
+
 predate() {
   while read -r line ; do
     printf '%(%F %T)T %s\n' -1 "$line"
@@ -55,8 +66,11 @@ downloaded_in() {
 }
 
 ps_owners() {
+  [[ -n "${BASH_VERSINFO[0]}" && "${BASH_VERSINFO[0]}" -lt 4 ]] && return 1
+
   local _pid="${1:-$$}"
   local _what_to_print="$2"
+
   [[ -z "$_what_to_print" ]] && _what_to_print="user"
   read -r _user _ppid _command < <(ps -o user,ppid,command -p "$_pid" | grep -v PPID)
   case "$_what_to_print" in
@@ -90,23 +104,27 @@ am_i_someone_else() {
   fi
 }
 
-# MySQL ---------------------------------------------------------------------
-alias mydump="mysqldump --allow-keywords --add-locks --hex-blob --max_allowed_packet=1G --lock-tables=false --lock-all-tables=false --quick --quote-names --complete-insert=false --extended-insert=false"
 # Ruby ---------------------------------------------------------------------
 alias be="bundle exec"
 
 httpd() {
   port="${1:-8000}"
+
   command -v open >/dev/null 2>/dev/null && (sleep 1 && open "http://127.0.0.1:$port" &)
-  ruby -run -e httpd . -p "$port"
+
+  if command -v ruby >/dev/null 2>/dev/null ; then
+    ruby -run -e httpd . -p "$port"
+  elif command -v python  >/dev/null 2>/dev/null ; then
+    python -m SimpleHTTPServer "$port"
+  fi
 }
 # Git ---------------------------------------------------------------------
 function pubgit() {
-  git --git-dir="$HOME/.git-pub-dotfiles" --work-tree="$HOME" $*
+  git --git-dir="$HOME/.git-pub-dotfiles" --work-tree="$HOME" "$@"
 }
 
 function prvgit() {
-  git --git-dir="$HOME/.git-prv-dotfiles" --work-tree="$HOME" $*
+  git --git-dir="$HOME/.git-prv-dotfiles" --work-tree="$HOME" "$@"
 }
 
 alias gst='git status'
@@ -114,13 +132,13 @@ alias gco='git checkout'
 alias gps='git push'
 alias gpl='git pull'
 
-confsync() {
-  cd ~
-  for host in "$@" ; do
-    pubgit ls-files | rsync -iaxR --files-from=- . "${host//":"/}:"
-    prvgit ls-files | rsync -iaxR --files-from=- . "${host//":"/}:"
-  done
-}
+# confsync() {
+#   cd ~
+#   for host in "$@" ; do
+#     pubgit ls-files | rsync -iaxR --files-from=- . "${host//":"/}:"
+#     prvgit ls-files | rsync -iaxR --files-from=- . "${host//":"/}:"
+#   done
+# }
 
 # openssl ---------------------------------------------------------------------
 newssl() {
@@ -161,13 +179,13 @@ ssl_pin_sha256() {
 }
 #-----------------------------------------------------------------------------
 for script in "$HOME/.shell-prv" ; do
-  [[ -s "$script" ]] && source "$script"
+  [ -s "$script" ] && source "$script"
 done
 #-----------------------------------------------------------------------------
 [[ -z "$PS1" ]] && return
 #-----------------------------------------------------------------------------
 for script in "$HOME/.base16_theme" ; do
-  [[ -s "$script" ]] && source "$script"
+  [ -s "$script" ] && source "$script"
 done
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:
