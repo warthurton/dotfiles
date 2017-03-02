@@ -5,7 +5,8 @@ Pry.config.color = true
 Pry.color = true
 
 _pry_things = {
-  :preferred_gems => %w(bond pry-byebug pry-clipboard pry-doc pry-docmore pry-coolline pry-editline pry-git pry-highlight pry-stack_explorer pry-vterm_aliases),
+  # :preferred_gems => %w(pry-byebug pry-doc pry-coolline pry-git pry-highlight pry-stack_explorer),
+  :preferred_gems => %w(pry-byebug pry-doc),
   :missing_gems => []
 }
 
