@@ -17,6 +17,7 @@ for dir in \
   /Applications/VMware\ Fusion.app/Contents/Library \
   /Applications/Postgres.app/Contents/Versions/latest/bin \
   $HOME/.asdf/{bin,shims} \
+  $HOME/.go/bin \
   $HOME/bin
 do
   _safe_add_to_path "$dir"
@@ -29,17 +30,10 @@ for _version_manager in rbenv nodenv exenv goenv ; do
   _safe_add_to_path "$HOME/.${_version_manager}/bin"
   _safe_add_to_path "$HOME/.${_version_manager}/shims"
 
-  if declare -f "${_version_manager}" >& /dev/null ; then
-    continue
-  fi
+  hash "${_version_manager}" 2> /dev/null || continue
+  declare -f "${_version_manager}" 2> /dev/null && continue
 
-  _cmd=$(which "${_version_manager}")
-
-  if [[ -z "$_cmd" ]] ; then
-    continue
-  fi
-
-  eval "export __${_version_manager}=${_cmd}"
+  eval "export __${_version_manager}=$(command -v ${_version_manager} 2>/dev/null)"
 done
 
 if [[ -n "${__rbenv}" ]] ; then

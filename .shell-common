@@ -9,7 +9,7 @@ if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
   alias start="simple_launchctl load"
   alias stop="simple_launchctl unload"
 
-  function simple_launchctl() { 
+  function simple_launchctl() {
     find ~/Library/LaunchAgents -name '*.plist' -name '*'"$2"'*' -ok launchctl "$1" -w {} \;
   }
 
