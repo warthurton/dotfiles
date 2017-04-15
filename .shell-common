@@ -49,7 +49,11 @@ alias la="ls -A"
 alias live_ip='dig +short myip.opendns.com @resolver1.opendns.com || curl -f4L http://ifconfig.me'
 alias to_csv='soffice --convert-to csv --headless'
 # alias predate="xargs -I{} bash -c \"printf '%(%F %T)T ' -1 ; echo '{}'\""
+alias v=vim
 # ---------------------------------------------------------------------------
+cassette_to_json() {
+  ruby -rjson -ryaml -e "puts JSON.parse(YAML.load(File.read '$1')['http_interactions'].first['response']['body']['string']).to_json" | jq '.' > "${1/yml/json}"
+}
 
 predate() {
   while read -r line ; do
@@ -127,6 +131,7 @@ function prvgit() {
   git --git-dir="$HOME/.git-prv-dotfiles" --work-tree="$HOME" "$@"
 }
 
+alias g=git
 alias gst='git status'
 alias gco='git checkout'
 alias gps='git push'

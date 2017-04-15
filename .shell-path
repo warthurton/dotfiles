@@ -6,9 +6,7 @@ _safe_add_to_path() {
   [[ -d "$_dir" ]] && PATH="${_dir}:$PATH"
   export PATH
 }
-
 # --------------------------------------------------------------------------
-
 for dir in \
   /{bin,sbin} \
   /{usr,opt}/{bin,sbin} \
@@ -16,54 +14,12 @@ for dir in \
   /{usr,opt}/local/heroku/bin \
   /Applications/VMware\ Fusion.app/Contents/Library \
   /Applications/Postgres.app/Contents/Versions/latest/bin \
-  $HOME/.asdf/{bin,shims} \
   $HOME/.go/bin \
+  $HOME/.cargo/bin \
+  $HOME/.asdf/{bin,shims} \
   $HOME/bin
 do
   _safe_add_to_path "$dir"
 done
-
-# # --------------------------------------------------------------------------
-# Languages with *env version manangers
-
-for _version_manager in rbenv nodenv exenv goenv ; do
-  _safe_add_to_path "$HOME/.${_version_manager}/bin"
-  _safe_add_to_path "$HOME/.${_version_manager}/shims"
-
-  hash "${_version_manager}" 2> /dev/null || continue
-  declare -f "${_version_manager}" 2> /dev/null && continue
-
-  eval "export __${_version_manager}=$(command -v ${_version_manager} 2>/dev/null)"
-done
-
-if [[ -n "${__rbenv}" ]] ; then
-  rbenv() {
-    eval "unset -f rbenv ; $(${__rbenv} init ${ZSH_VERSION:+zsh} - )"
-    rbenv $*
-  }
-fi
-
-if [[ -n "${__nodenv}" ]] ; then
-  nodenv() {
-    eval "unset -f nodenv ; $(${__nodenv} init ${ZSH_VERSION:+zsh} - )"
-    _safe_add_to_path "$(dirname \"$(nodenv which npm)\")"
-    nodenv $*
-  }
-fi
-
-if [[ -n "${__exenv}" ]] ; then
-  exenv() {
-    eval "unset -f exenv ; $(${__exenv} init ${ZSH_VERSION:+zsh} - )"
-    exenv $*
-  }
-fi
-
-if [[ -n "${__goenv}" ]] ; then
-  goenv() {
-    eval "unset -f goenv ; $(${__goenv} init ${ZSH_VERSION:+zsh} - )"
-    goenv $*
-  }
-fi
-
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:
