@@ -4,7 +4,7 @@ Pry.editor = 'vim'
 Pry.config.color = true
 Pry.color = true
 
-%w[pry-byebug pry-doc did_you_mean did_you_mean/experimental looksee].map { |gem| require gem rescue nil }
+# %w[pry-byebug pry-doc did_you_mean did_you_mean/experimental looksee].map { |gem| require gem rescue nil }
 
 if defined?(PryByebug)
   Pry.commands.alias_command 'c', 'continue'

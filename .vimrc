@@ -1,19 +1,19 @@
 
 function! SafeDirectory(dir)
-  let expanded = expand(a:dir)
-  if !isdirectory(expanded)
-    call mkdir(expanded)
+  let l:expanded = expand(a:dir)
+  if !isdirectory(l:expanded)
+    call mkdir(l:expanded, 'p', 0700)
   endif
-  return expanded
+  return l:expanded
 endfunction
 
 if has('nvim')
-  let g:vimhome = '~/.config/nvim'
+  let g:vimhome = SafeDirectory('~/.config/nvim')
   set shada='100,<1000,s1000,:1000
   set clipboard+=unnamedplus
 else
-  let g:vimhome = '~/.vim'
-  set viminfo='100,<1000,s1000,:1000,n~/.vim/viminfo
+  let g:vimhome = SafeDirectory('~/.config/vim')
+  set viminfo='100,<1000,s1000,:1000,n~/.config/vim/viminfo
 
   if has('clipboard')
     set guioptions+=aA
@@ -28,13 +28,13 @@ let &undodir      = SafeDirectory(g:vimhome . '/undo')
 let g:autoloadhome = SafeDirectory(g:vimhome . '/autoload')
 let g:cachedir     = SafeDirectory(g:vimhome . '/cache')
 
-let g:mapleader = ","
+let g:mapleader = ','
 set autoindent
 set background=dark
 set backspace=indent,eol,start
 set binary
 set cursorline
-set noex
+set noexrc
 set noerrorbells
 set encoding=utf-8
 set expandtab
@@ -58,7 +58,6 @@ set matchtime=5
 set modeline
 set modelines=5
 set mouse+=a
-set nocompatible
 set number
 set numberwidth=6
 set ruler
@@ -100,34 +99,35 @@ if has('termguicolors')
   set termguicolors
 endif
 
-if !empty($TMUX) " vim bug w/ tmux
-  set t_8f=[38;2;%lu;%lu;%lum
-  set t_8b=[48;2;%lu;%lu;%lum
-endif
-
 if empty(glob(g:autoloadhome . '/plug.vim'))
-  execute "silent !curl -sflo " . g:autoloadhome . "/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
-  autocmd VimEnter * PlugInstall | source $MYVIMRC
+  execute 'silent !curl -sflo ' . g:autoloadhome . '/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  augroup InstallPlug
+    autocmd VimEnter * PlugInstall | source $MYVIMRC
+  augroup END
 endif
 
 call plug#begin(SafeDirectory(g:vimhome . '/plugged'))
 
 " Utils
+Plug 'albfan/ag.vim'
+Plug 'w0rp/ale'
 Plug 'chriskempson/base16-vim'
 Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'bling/vim-bufferline'
 Plug 'tpope/vim-dispatch'
 Plug 'Konfekt/FastFold'
+Plug 'embear/vim-foldsearch'
+Plug 'tpope/vim-fugitive'
 Plug 'junegunn/fzf', { 'dir': '~/.config/fzf', 'do': './install --no-update-rc --key-bindings --completion' }
 Plug 'junegunn/fzf.vim'
-Plug 'haya14busa/incsearch.vim'
+Plug 'airblade/vim-gitgutter'
 Plug 'scrooloose/nerdtree',            { 'on': 'NERDTreeToggle' }
 Plug 'terryma/vim-multiple-cursors'
-Plug 'chrisbra/NrrwRgn'
-Plug 'tpope/vim-rbenv'
+" Plug 'chrisbra/NrrwRgn'
+" Plug 'chrisbra/SaveSigns.vim'
+Plug 'mhinz/vim-signify'
 Plug 'tpope/vim-speeddating'
 Plug 'AndrewRadev/splitjoin.vim'
-" Plug 'scrooloose/syntastic'
 Plug 'vim-scripts/SyntaxRange'
 Plug 'godlygeek/tabular',              { 'on': 'Tabularize' }
 Plug 'majutsushi/tagbar'
@@ -135,64 +135,49 @@ Plug 'tomtom/tcomment_vim'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-vinegar'
 Plug 'skalnik/vim-vroom'
-
-Plug 'w0rp/ale'
-
+Plug 'christoomey/vim-tmux-navigator', { 'on': [] }
+Plug 'jgdavey/vim-turbux',             { 'on': [] }
+Plug 'benmills/vimux',                 { 'on': [] }
 
 " Filetypes
-Plug 'kchmck/vim-coffee-script',       { 'for': 'coffee' }
-Plug 'rhysd/vim-crystal',              { 'for': 'crystal' }
-Plug 'JulesWang/css.vim',              { 'for': [ 'css', 'sass', 'scss' ] }
-Plug 'chrisbra/csv.vim',               { 'for': 'csv' }
-Plug 'elixir-lang/vim-elixir',         { 'for': 'elixir' }
-Plug 'spiegela/vimix',                 { 'for': 'elixir' }
-Plug 'elmcast/elm-vim',                { 'for': 'elm' }
-Plug 'fatih/vim-go',                   { 'for': 'go' }
-Plug 'tpope/vim-haml',                 { 'for': 'haml' }
-Plug 'ksauzz/haproxy.vim',             { 'for': 'haproxy' }
-Plug 'othree/html5.vim',               { 'for': 'html' }
-Plug 'plasticboy/vim-markdown',        { 'for': 'markdown' }
-Plug 'mutewinter/nginx.vim',           { 'for': 'nginx' }
-Plug 'mitsuhiko/vim-python-combined',  { 'for': 'python' }
-Plug 'slim-template/vim-slim',         { 'for': 'slim' }
-Plug 'kurayama/systemd-vim-syntax',    { 'for': 'systemd' }
-Plug 'sheerun/vim-yardoc',             { 'for': 'yard' }
-Plug 'tmux-plugins/vim-tmux',          { 'for': 'tmux' }
-
+Plug 'kchmck/vim-coffee-script',                   { 'for': 'coffee' }
+Plug 'rhysd/vim-crystal',                          { 'for': 'crystal' }
+Plug 'JulesWang/css.vim',                          { 'for': [ 'css', 'sass', 'scss' ] }
+Plug 'chrisbra/csv.vim',                           { 'for': 'csv' }
+Plug 'elixir-lang/vim-elixir',                     { 'for': 'elixir' }
+Plug 'spiegela/vimix',                             { 'for': 'elixir' }
+Plug 'elmcast/elm-vim',                            { 'for': 'elm' }
+Plug 'fatih/vim-go',                               { 'for': 'go' }
+Plug 'tpope/vim-haml',                             { 'for': 'haml' }
+Plug 'ksauzz/haproxy.vim',                         { 'for': 'haproxy' }
+Plug 'othree/html5.vim',                           { 'for': 'html' }
 Plug '1995eaton/vim-better-javascript-completion', { 'for': 'javascript' }
 Plug 'othree/yajs.vim',                            { 'for': 'javascript' }
 Plug 'othree/javascript-libraries-syntax.vim',     { 'for': 'javascript' }
 Plug 'mxw/vim-jsx' ,                               { 'for': 'javascript' }
 Plug 'othree/jspc.vim',                            { 'for': 'javascript' }
+Plug 'plasticboy/vim-markdown',                    { 'for': 'markdown' }
+Plug 'mutewinter/nginx.vim',                       { 'for': 'nginx' }
+Plug 'mitsuhiko/vim-python-combined',              { 'for': 'python' }
+Plug 'tpope/vim-bundler',                          { 'for': 'ruby' }
+Plug 'tpope/vim-cucumber',                         { 'for': 'ruby' }
+Plug 'tpope/vim-endwise',                          { 'for': 'ruby' }
+Plug 'tpope/vim-rails',                            { 'for': 'ruby' }
+Plug 'tpope/vim-rake',                             { 'for': 'ruby' }
+Plug 'thoughtbot/vim-rspec',                       { 'for': 'ruby' }
+Plug 'vim-ruby/vim-ruby',                          { 'for': 'ruby' }
+Plug 'hwartig/vim-seeing-is-believing',            { 'for': 'ruby' }
+Plug 'slim-template/vim-slim',                     { 'for': 'slim' }
+Plug 'kurayama/systemd-vim-syntax',                { 'for': 'systemd' }
+Plug 'sheerun/vim-yardoc',                         { 'for': 'yard' }
+Plug 'tmux-plugins/vim-tmux',                      { 'for': 'tmux' }
 
-if executable('ruby')
-  Plug 'tpope/vim-bundler',              { 'for': 'ruby' }
-  Plug 'tpope/vim-cucumber',             { 'for': 'ruby' }
-  Plug 'tpope/vim-endwise',              { 'for': 'ruby' }
-  Plug 'tpope/vim-rails',                { 'for': 'ruby' }
-  Plug 'tpope/vim-rake',                 { 'for': 'ruby' }
-  Plug 'thoughtbot/vim-rspec',           { 'for': 'ruby' }
-  Plug 'vim-ruby/vim-ruby',              { 'for': 'ruby' }
-  " Plug 'hwartig/vim-seeing-is-believing'
-endif
-
-if !empty($TMUX)
-  Plug 'christoomey/vim-tmux-navigator', { 'on': [] }
-  Plug 'jgdavey/vim-turbux',             { 'on': [] }
-  Plug 'benmills/vimux',                 { 'on': [] }
-endif
-
-if executable('git')
-  Plug 'tpope/vim-fugitive'
-  Plug 'airblade/vim-gitgutter'
-endif
-
-if version >= 702
+if v:version >= 702
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
 endif
 
-if version >= 704
+if v:version >= 704
   Plug 'xolox/vim-easytags'
   Plug 'xolox/vim-misc'
   Plug 'xolox/vim-shell'
@@ -200,10 +185,10 @@ endif
 
 if has('nvim')
   Plug 'Shougo/deoplete.nvim'
-elseif version >= 704 && has('lua')
+elseif v:version >= 704 && has('lua')
   Plug 'Shougo/neocomplete.vim'
   let g:use_neocomplete = 1
-elseif version >= 704 && has('python')
+elseif v:version >= 704 && has('python')
   Plug 'Valloric/YouCompleteMe', { 'do': './install.py --all' }
 endif
 
@@ -217,13 +202,13 @@ let g:airline_detect_modified                      = 1
 let g:airline_detect_paste                         = 1
 let g:airline_inactive_collapse                    = 1
 let g:airline_powerline_fonts                      = 1
-let g:airline_left_sep                             = ''
-let g:airline_right_sep                            = ''
+" let g:airline_left_sep                             = ''
+" let g:airline_right_sep                            = ''
 let g:airline#extensions#branch#format             = 1
 let g:airline#extensions#bufferline#enabled        = 1
 let g:airline#extensions#ctrlspace#enabled         = 1
 let g:airline#extensions#nrrwrgn#enabled           = 1
-let g:airline#extensions#syntastic#enabled         = 1
+let g:airline#extensions#syntastic#enabled         = 0
 let g:airline#extensions#tabline#enabled           = 1
 let g:airline#extensions#tagbar#enabled            = 1
 let g:airline#extensions#tmuxline#enabled          = 1
@@ -237,8 +222,8 @@ let g:airline_theme                                = 'tomorrow'
 
 " ale
 let g:ale_sign_column_always = 1
-let g:ale_sign_error = "E"
-let g:ale_sign_warning = "W"
+let g:ale_sign_error = 'E'
+let g:ale_sign_warning = 'W'
 
 
 " better-javascript-completion
@@ -268,9 +253,14 @@ let g:easytags_file = g:cachedir . '/easytags'
 " fzf
 command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --glob "!_build/*" --glob "!deps/*" --glob "!.DS_Store" --glob "!public/*" --glob "!log/*" --glob "!tmp/*" --glob "!vendor/*" --color "always" '.shellescape(<q-args>), 1, <bang>0)
 map <C-p> :Files<cr>
-" map <C-g> :Find
-map <C-/> :Lines<cr>
-"
+
+let g:fzf_action = {
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-x': 'split',
+  \ 'ctrl-v': 'vsplit' }
+let g:fzf_layout = { 'down': '~50%' }
+let g:fzf_tags_command = 'ctags -R'
+
 
 " gitgutter
 highlight clear SignColumn
@@ -278,12 +268,6 @@ let g:gitgutter_eager     = 0
 let g:gitgutter_enabled   = 1
 let g:gitgutter_max_signs = 10000
 let g:gitgutter_realtime  = 0
-
-
-" incsearch
-map <leader>/ <Plug>(incsearch-forward)
-map <leader>? <Plug>(incsearch-backward)
-map g/ <Plug>(incsearch-stay)
 
 
 " javascript-libraries-syntax
@@ -332,7 +316,7 @@ let g:NERDTreeHijackNetrw = 1
 
 
 " rspec
-let g:rspec_command = "Dispatch rspec {spec}"
+let g:rspec_command = 'Dispatch rspec {spec}'
 
 
 " seeing_is_believing
@@ -351,20 +335,6 @@ let g:rspec_command = "Dispatch rspec {spec}"
 " splitjoin.vim
 nmap <leader>sj :SplitjoinJoin<cr>
 nmap <leader>ss :SplitjoinSplit<cr>
-
-
-" syntastic
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_jump                = 3
-let g:syntastic_auto_loc_list            = 1
-let g:syntastic_check_on_open            = 0
-let g:syntastic_check_on_wq              = 0
-let g:syntastic_enable_signs             = 1
-let g:syntastic_loc_list_height          = 5
-let g:syntastic_sh_checkers              = ['shellcheck', 'sh']
-let g:syntastic_ruby_checkers            = ['rubocop', 'mri']
-let g:syntastic_ruby_rubocop_args        = '--display-cop-names --config "$HOME/.rubocop.yml"'
-let g:syntastic_ignore_files             = ['\m^/usr/include/', '\m\c\.h$', '\m-min\.js$']
 
 
 " tabular
@@ -394,15 +364,8 @@ let g:tcomment_types = { 'java' : '// %s' }
 let g:tcomment_types = { 'tmux' : '# %s' }
 
 
-" tmux-navigator
-if !empty($TMUX)
-  let g:tmux_navigator_no_mappings = 1
-  nnoremap <silent> <A-h> :TmuxNavigateLeft<cr>
-  nnoremap <silent> <A-j> :TmuxNavigateDown<cr>
-  nnoremap <silent> <A-k> :TmuxNavigateUp<cr>
-  nnoremap <silent> <A-l> :TmuxNavigateRight<cr>
-  nnoremap <silent> <A-\> :TmuxNavigatePrevious<cr>
-endif
+" tmux_naviator
+let g:tmux_navigator_no_mappings = 1
 
 
 " undotree
@@ -412,7 +375,6 @@ vmap <leader>u :UndotreeToggle<CR>
 
 " vroom
 let g:vroom_cucumber_path = '__run=cucumber ; bundle show spinach >& /dev/null && __run=spinach ; bundle exec $__run'
-
 let g:vroom_use_bundle_exec = 1
 let g:vroom_use_binstubs = 0
 let g:vroom_ignore_color_flag = 1
@@ -431,21 +393,35 @@ map <Leader>l :VroomRunLastTest<CR>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-if has('autocmd')
-  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+augroup RememberLastPosition
+  autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+augroup END
 
-  augroup GitCommits
+augroup GitCommits
+  autocmd!
+  autocmd FileType gitcommit            nested setlocal nospell
+  autocmd VimEnter .git/PULLREQ_EDITMSG nested setlocal filetype=markdown
+augroup END
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Just for TMUX
+
+set t_8f=[38;2;%lu;%lu;%lum
+set t_8b=[48;2;%lu;%lu;%lum
+
+if !empty($TMUX)
+
+  augroup RunningTmux
     autocmd!
-    autocmd FileType gitcommit            nested setlocal nospell
-    autocmd VimEnter .git/PULLREQ_EDITMSG nested setlocal filetype=markdown
+    autocmd VimEnter * call plug#load('vim-tmux-navigator', 'vim-turbux', 'vimux')
   augroup END
 
-  if !empty($TMUX)
-    augroup RunningTmux
-      autocmd!
-      autocmd VimEnter * call plug#load('vim-tmux-navigator', 'vim-turbux', 'vimux')
-    augroup END
-  endif
+  nnoremap <silent> <A-h> :TmuxNavigateLeft<cr>
+  nnoremap <silent> <A-j> :TmuxNavigateDown<cr>
+  nnoremap <silent> <A-k> :TmuxNavigateUp<cr>
+  nnoremap <silent> <A-l> :TmuxNavigateRight<cr>
+  nnoremap <silent> <A-\> :TmuxNavigatePrevious<cr>
+
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -489,24 +465,32 @@ cmap %% <C-R>=expand('%:h').'/'<cr>
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
+function ShutUp()
+  :ALEToggle
+  set nonumber
+  sign unplace *
+endfunction
+
+nmap <silent> <leader>z :call ShutUp()<CR>
+
 syntax on
 filetype plugin indent on
 
-if filereadable(expand("~/.vimrc_background"))
+if !empty($BASE16_THEME)
   let g:base16colorspace = 256
-  source ~/.vimrc_background
+  colorscheme $BASE16_THEME
   highlight LineNr ctermfg=236 ctermbg=234
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-if has("gui_running")
+if has('gui_running')
   set guifont=Sauce\ Code\ Powerline:h15
   set guioptions-=m  "remove menu bar
   set guioptions-=T  "remove toolbar
   set guioptions-=L  "remove toolbar
   set guioptions-=r  "remove toolbar
-  set anti
+  set antialias
   set cursorline
   set mousehide
 endif
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+

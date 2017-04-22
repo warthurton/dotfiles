@@ -2,8 +2,6 @@
 typeset -g HISTFILE="$HOME/.zhistory"
 typeset -g SAVEHIST=10000000
 typeset -g WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
-typeset -g _debug_times
-typeset -F SECONDS
 skip_global_compinit=1
 #-----------------------------------------------------------------------------
 zmodload zsh/compctl \
@@ -51,7 +49,7 @@ setopt auto_cd \
        hist_no_store \
        hist_reduce_blanks \
        hist_verify \
-       noinc_append_history \
+       inc_append_history \
        noshare_history \
        clobber \
        nocorrect \
@@ -73,6 +71,9 @@ setopt auto_cd \
        emacs
 
 #-----------------------------------------------------------------------------
+typeset -g _debug_times
+typeset -F SECONDS
+
 function debug_timer() {
   [[ -z "$_debug_times" ]] && return
   local _what="$1"
@@ -81,11 +82,7 @@ function debug_timer() {
 }
 #-----------------------------------------------------------------------------
 for s in ~/.shell-path ~/.shell-env ; do
-  if [[ -f "$s" ]] ; then
-    __start=$SECONDS
-    source "$s"
-    debug_timer "source $s" $__start
-  fi
+  [[ -f "$s" ]] && source "$s"
 done
 #-----------------------------------------------------------------------------
 # vim: set syntax=sh ft=zsh sw=2 ts=2 expandtab:

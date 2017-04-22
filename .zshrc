@@ -5,33 +5,21 @@ for s in  ~/.shell-common \
           ~/.ghq/github.com/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
           ~/.fzf.zsh
 do
-  __start=$SECONDS
   [[ -f "$s" ]] && source "$s"
-  debug_timer "source $s" $__start
 done
 #-----------------------------------------------------------------------------
-_my_completions="$HOME/.config/zsh/site-functions"
-_oh_my_plugins="$HOME/.ghq/github.com/robbyrussell/oh-my-zsh/plugins"
-
-if [[ ! -d "$_my_completions" && -d "$_oh_my_plugins" ]] ; then
-  mkdir -p "$_my_completions"
-  find "${_oh_my_plugins}" -type f -name '_*' -exec ln -s {} "$_my_completions" \;
-fi
-
-fpath=($HOME/.ghq/github.com/zsh-users/zsh-completions/src $_my_completions $fpath)
+fpath=($HOME/.ghq/github.com/zsh-users/zsh-completions/src "$HOME/.config/zsh/site-functions" $fpath)
 typeset -gU fpath path
 #-----------------------------------------------------------------------------
 # export PROMPT="%f%b%k%u%s%n@%m %~ %(!.#.$)%f%b%k%u%s "
-# export RPROMPT=""
 export PROMPT="\$(build_left_prompt)"
-export RPROMPT="\$(build_right_prompt)"
+export RPROMPT=""
 
 alias -g M='|& $PAGER'
 bindkey -e
 bindkey -m 2>/dev/null
 
-autoload -Uz bashcompinit compinit colors
-bashcompinit
+autoload -Uz compinit colors add-zsh-hook
 compinit -C
 colors
 #-----------------------------------------------------------------------------
@@ -45,6 +33,7 @@ if (( $+commands[git] )) ; then
     changed "%{$fg[blue]%}%{✚%G%}"
     staged "%{$fg[red]%}%{●%G%}"
     conflicts "%{$fg[red]%}%{✖%G%}"
+    oid "%{$fg[gray]%}"
     ahead "%{↑%G%}"
     behind "%{↓%G%}"
     untracked "%{…%G%}"
@@ -64,6 +53,7 @@ if (( $+commands[git] )) ; then
   __git_theme[ahead]="%{$reset_color%}${__git_theme[ahead]}"
   __git_theme[behind]="%{$reset_color%}${__git_theme[behind]}"
   __git_theme[untracked]="%{$reset_color%}${__git_theme[untracked]}"
+  __git_theme[oid]="%{$reset_color%}${__git_theme[oid]}"
 
   typeset -g -A __language_versions
   typeset -g -A __local_language_versions
@@ -88,7 +78,6 @@ if (( $+commands[git] )) ; then
   #----------
   function _zsh_git_prompt__update_vars() {
     local _git_command="${1:=git}"
-    local _start=$SECONDS
 
     typeset -A g=(staged 0 conflicts 0 changed 0 untracked 0 ignored 0 no_repository 0 clean 0)
 
@@ -100,7 +89,7 @@ if (( $+commands[git] )) ; then
         \#)
           case "${_status[2]}" in
             branch.oid)
-              g[oid]="${_status[3]}"
+              g[oid]="${_status[3]:0:8}"
               ;;
             branch.head)
               g[branch]="${_status[3]}"
@@ -145,8 +134,6 @@ if (( $+commands[git] )) ; then
     fi
 
     __git_status[$_git_command]="$(typeset -p g)"
-
-    debug_timer "_zsh_git_prompt__update_vars $_git_command" $_start
   }
   #----------
   function build_git_status() {
@@ -170,7 +157,7 @@ if (( $+commands[git] )) ; then
       echo -n "$value"
     }
 
-    for element in prefix branch behind ahead separator staged conflicts changed untracked clean suffix ; do
+    for element in prefix branch behind ahead separator oid separator staged conflicts changed untracked clean suffix ; do
       __print $element
     done
 
@@ -217,9 +204,17 @@ fi
 #-----------------------------------------------------------------------------
 function build_left_prompt() {
   local _leading_space=""
-  local _start=$SECONDS
 
   echo -n "%f%b%k%u%s"
+
+  if [[ "$PWD" == "$HOME" ]] ; then
+    if typeset -f build_git_status pubgit prvgit >&/dev/null ; then
+      echo -n "%F{8}PUB:%f$(build_git_status pubgit)"
+      echo -n " "
+      echo -n "%F{8}PRV:%f$(build_git_status prvgit)"
+      _leading_space=" "
+    fi
+  fi
 
   if [[ -n "$__preferred_languages" ]] ; then
     for language in ${(k)__preferred_languages[@]} ; do
@@ -265,59 +260,6 @@ function build_left_prompt() {
   echo -n ' %(?.%F{7}.%F{15})%? %(!.#.$) '
 
   echo "%f%b%k%u%s"
-  debug_timer "build_left_prompt" $_start
 }
-
-function build_right_prompt() {
-  # local _start=$SECONDS
-
-  (( $+commands[git] )) && typeset -f pubgit >&/dev/null || return
-  echo -n "%F{8}PUB %f$(build_git_status pubgit)"
-  echo -n " | "
-  echo -n "%F{8}PRV %f$(build_git_status prvgit)"
-
-  # debug_timer "build_right_prompt" $_start
-}
-#-----------------------------------------------------------------------------
-# typeset -g -a _prompt_procs
-# typeset -g _prompt_file_left="$HOME/.zsh_prompt_left_$$"
-# typeset -g _prompt_file_right="$HOME/.zsh_prompt_right_$$"
-#-----------------------------------------------------------------------------
-# function precmd() {
-  # local _start=$SECONDS
-
-  # print -Pn "\e]0;\a"
-
-  # if [[ "${#_prompt_procs[@]}" -gt 0 ]] ; then
-  #   kill -s HUP ${_prompt_procs[@]} >&/dev/null &!
-  #   _prompt_procs=()
-  # fi
-
-  # () {
-  #   cp "$1" "$_prompt_file_left"
-  #   kill -s USR1 $$
-  # } =(build_left_prompt) &!
-  # _prompt_procs+=($!)
-
-  # () {
-  #   cp "$1" "$_prompt_file_right"
-  #   kill -s USR2 $$
-  # } =(build_right_prompt) &!
-  # _prompt_procs+=($!)
-
-  # debug_timer "precmd" $_start
-# }
-
-# function TRAPUSR1() {
-#   [[ -s "$_prompt_file_left" ]] && PROMPT="$(<$_prompt_file_left)"
-#   rm -f "$_prompt_file_left"
-#   zle && zle reset-prompt >&/dev/null
-# }
-
-# function TRAPUSR2() {
-#   [[ -s "$_prompt_file_right" ]] && RPROMPT="$(<$_prompt_file_right)"
-#   rm -f "$_prompt_file_right"
-#   zle && zle reset-prompt >&/dev/null
-# }
 #-----------------------------------------------------------------------------
 # vim: set syntax=sh ft=zsh sw=2 ts=2 expandtab:
