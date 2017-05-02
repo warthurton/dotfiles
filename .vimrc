@@ -12,8 +12,8 @@ if has('nvim')
   set shada='100,<1000,s1000,:1000
   set clipboard+=unnamedplus
 else
-  let g:vimhome = SafeDirectory('~/.config/vim')
-  set viminfo='100,<1000,s1000,:1000,n~/.config/vim/viminfo
+  let g:vimhome = SafeDirectory('~/.vim')
+  set viminfo='100,<1000,s1000,:1000,n~/.vim/viminfo
 
   if has('clipboard')
     set guioptions+=aA
@@ -185,9 +185,9 @@ endif
 
 if has('nvim')
   Plug 'Shougo/deoplete.nvim'
-elseif v:version >= 704 && has('lua')
-  Plug 'Shougo/neocomplete.vim'
-  let g:use_neocomplete = 1
+" elseif v:version >= 704 && has('lua')
+"   Plug 'Shougo/neocomplete.vim'
+"   let g:use_neocomplete = 1
 elseif v:version >= 704 && has('python')
   Plug 'Valloric/YouCompleteMe', { 'do': './install.py --all' }
 endif
@@ -251,7 +251,20 @@ let g:easytags_file = g:cachedir . '/easytags'
 
 
 " fzf
-command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --glob "!_build/*" --glob "!deps/*" --glob "!.DS_Store" --glob "!public/*" --glob "!log/*" --glob "!tmp/*" --glob "!vendor/*" --color "always" '.shellescape(<q-args>), 1, <bang>0)
+if executable('ng')
+  command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --glob "!_build/*" --glob "!deps/*" --glob "!.DS_Store" --glob "!public/*" --glob "!log/*" --glob "!tmp/*" --glob "!vendor/*" --color "always" '.shellescape(<q-args>), 1, <bang>0)
+elseif executable('ag')
+  command! -bang -nargs=* Ag
+    \ call fzf#vim#ag(<q-args>,
+    \                 <bang>0 ? fzf#vim#with_preview('up:60%')
+    \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
+    \                 <bang>0)
+endif
+
+" Likewise, Files command with preview window
+command! -bang -nargs=? -complete=dir Files
+  \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
+
 map <C-p> :Files<cr>
 
 let g:fzf_action = {
@@ -450,6 +463,7 @@ nmap <M-b> b
 
 nmap <leader>[ gt
 nmap <leader>] gT
+nmap <leader>` :tabnew<CR>
 nmap d[ [m
 nmap d] ]m
 nmap c[ [[
