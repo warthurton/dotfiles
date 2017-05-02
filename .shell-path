@@ -12,8 +12,6 @@ for dir in \
   /{usr,opt}/{bin,sbin} \
   /{usr,opt,Apps}/{local,X11,opt}/{bin,sbin} \
   /{usr,opt}/local/heroku/bin \
-  /Applications/VMware\ Fusion.app/Contents/Library \
-  /Applications/Postgres.app/Contents/Versions/latest/bin \
   $HOME/.go/bin \
   $HOME/.cargo/bin \
   $HOME/.asdf/{bin,shims} \
