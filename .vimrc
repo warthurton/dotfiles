@@ -1,3 +1,5 @@
+set encoding=utf-8
+scriptencoding
 
 function! SafeDirectory(dir)
   let l:expanded = expand(a:dir)
@@ -13,7 +15,6 @@ if has('nvim')
   set clipboard+=unnamedplus
 else
   let g:vimhome = SafeDirectory('~/.vim')
-  set viminfo='100,<1000,s1000,:1000,n~/.vim/viminfo
 
   if has('clipboard')
     set guioptions+=aA
@@ -28,7 +29,7 @@ let &undodir      = SafeDirectory(g:vimhome . '/undo')
 let g:autoloadhome = SafeDirectory(g:vimhome . '/autoload')
 let g:cachedir     = SafeDirectory(g:vimhome . '/cache')
 
-let g:mapleader = ','
+let g:mapleader = ' '
 set autoindent
 set background=dark
 set backspace=indent,eol,start
@@ -36,7 +37,6 @@ set binary
 set cursorline
 set noexrc
 set noerrorbells
-set encoding=utf-8
 set expandtab
 set exrc
 set nofoldenable
@@ -47,7 +47,7 @@ set hlsearch
 set ignorecase
 set incsearch
 set laststatus=2
-set lazyredraw
+set nolazyredraw
 set list
 set listchars=""          " reset the listchars
 set listchars+=tab:\ \    " a tab should display as "  ", trailing whitespace as "."
@@ -56,19 +56,21 @@ set listchars+=extends:>
 set listchars+=precedes:<
 set matchtime=5
 set modeline
-set modelines=5
+set modelines=8
 set mouse+=a
 set number
 set numberwidth=6
+set preserveindent
+set report=0
 set ruler
-set scrolloff=3
+set scrolloff=10
 set secure
 set shiftwidth=2
-set shortmess=firxI
-set showcmd
+" set shortmess=firxI
+set noshowcmd
 set showmatch
 set noshowmode
-set showtabline=2
+set showtabline=1
 set smartcase
 set smartindent
 set smarttab
@@ -77,6 +79,7 @@ set splitbelow
 set splitright
 set tabstop=2
 set noterse
+set viminfo='100,<1000,s1000,:1000
 set visualbell
 set t_vb=
 set t_Co=256
@@ -90,19 +93,23 @@ set wildmode=longest,list
 set writebackup
 
 if has('persistent_undo')
-  set undolevels=1000
-  set undoreload=10000
+  set undolevels=10000
+  set undoreload=100000
   set undofile
 endif
 
-if has('termguicolors')
-  set termguicolors
-endif
+let g:vimplug_exists=expand(g:autoloadhome . '/plug.vim')
 
-if empty(glob(g:autoloadhome . '/plug.vim'))
+if !filereadable(g:vimplug_exists)
+  if !executable('curl')
+    echoerr 'You have to install curl or first install vim-plug yourself!'
+    execute 'q!'
+  endif
+  echo 'Installing Vim-Plug...'
   execute 'silent !curl -sflo ' . g:autoloadhome . '/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+
   augroup InstallPlug
-    autocmd VimEnter * PlugInstall | source $MYVIMRC
+    autocmd VimEnter * PlugInstall
   augroup END
 endif
 
@@ -113,21 +120,25 @@ Plug 'albfan/ag.vim'
 Plug 'w0rp/ale'
 Plug 'chriskempson/base16-vim'
 Plug 'ConradIrwin/vim-bracketed-paste'
-Plug 'bling/vim-bufferline'
 Plug 'tpope/vim-dispatch'
+Plug 'easymotion/vim-easymotion'
+Plug 'mattn/emmet-vim'
 Plug 'Konfekt/FastFold'
 Plug 'embear/vim-foldsearch'
 Plug 'tpope/vim-fugitive'
 Plug 'junegunn/fzf', { 'dir': '~/.config/fzf', 'do': './install --no-update-rc --key-bindings --completion' }
 Plug 'junegunn/fzf.vim'
 Plug 'airblade/vim-gitgutter'
-Plug 'scrooloose/nerdtree',            { 'on': 'NERDTreeToggle' }
+Plug 'jreybert/vimagit'
+Plug 'scrooloose/nerdtree'
+Plug 'jistr/vim-nerdtree-tabs'
 Plug 'terryma/vim-multiple-cursors'
-" Plug 'chrisbra/NrrwRgn'
-" Plug 'chrisbra/SaveSigns.vim'
+Plug 'chrisbra/NrrwRgn'
+Plug 'chrisbra/SaveSigns.vim'
 Plug 'mhinz/vim-signify'
 Plug 'tpope/vim-speeddating'
 Plug 'AndrewRadev/splitjoin.vim'
+Plug 'tpope/vim-surround'
 Plug 'vim-scripts/SyntaxRange'
 Plug 'godlygeek/tabular',              { 'on': 'Tabularize' }
 Plug 'majutsushi/tagbar'
@@ -135,9 +146,9 @@ Plug 'tomtom/tcomment_vim'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-vinegar'
 Plug 'skalnik/vim-vroom'
-Plug 'christoomey/vim-tmux-navigator', { 'on': [] }
-Plug 'jgdavey/vim-turbux',             { 'on': [] }
-Plug 'benmills/vimux',                 { 'on': [] }
+Plug 'christoomey/vim-tmux-navigator'
+Plug 'jgdavey/vim-turbux'
+Plug 'benmills/vimux'
 
 " Filetypes
 Plug 'kchmck/vim-coffee-script',                   { 'for': 'coffee' }
@@ -158,6 +169,7 @@ Plug 'mxw/vim-jsx' ,                               { 'for': 'javascript' }
 Plug 'othree/jspc.vim',                            { 'for': 'javascript' }
 Plug 'plasticboy/vim-markdown',                    { 'for': 'markdown' }
 Plug 'mutewinter/nginx.vim',                       { 'for': 'nginx' }
+Plug 'jceb/vim-orgmode',                           { 'for': 'org' }
 Plug 'mitsuhiko/vim-python-combined',              { 'for': 'python' }
 Plug 'tpope/vim-bundler',                          { 'for': 'ruby' }
 Plug 'tpope/vim-cucumber',                         { 'for': 'ruby' }
@@ -167,7 +179,6 @@ Plug 'tpope/vim-rake',                             { 'for': 'ruby' }
 Plug 'thoughtbot/vim-rspec',                       { 'for': 'ruby' }
 Plug 'vim-ruby/vim-ruby',                          { 'for': 'ruby' }
 Plug 'hwartig/vim-seeing-is-believing',            { 'for': 'ruby' }
-Plug 'slim-template/vim-slim',                     { 'for': 'slim' }
 Plug 'kurayama/systemd-vim-syntax',                { 'for': 'systemd' }
 Plug 'sheerun/vim-yardoc',                         { 'for': 'yard' }
 Plug 'tmux-plugins/vim-tmux',                      { 'for': 'tmux' }
@@ -175,6 +186,7 @@ Plug 'tmux-plugins/vim-tmux',                      { 'for': 'tmux' }
 if v:version >= 702
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
+  Plug 'ryanoasis/vim-devicons'
 endif
 
 if v:version >= 704
@@ -184,46 +196,69 @@ if v:version >= 704
 endif
 
 if has('nvim')
-  Plug 'Shougo/deoplete.nvim'
-" elseif v:version >= 704 && has('lua')
-"   Plug 'Shougo/neocomplete.vim'
-"   let g:use_neocomplete = 1
+  Plug 'roxma/nvim-completion-manager'
+  Plug 'roxma/nvim-cm-tern', {'do': 'npm install'}
+elseif v:version >= 800
+  Plug 'maralla/completor.vim', { 'do': 'make js' }
 elseif v:version >= 704 && has('python')
-  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --all' }
+  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --system-libclang --clang-completer --racer-completer --tern-completer' }
 endif
 
 call plug#end()
-runtime macros/matchit.vim
+runtime! macros/matchit.vim
+
 
 " airline
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+let g:airline_symbols.crypt                        = '🔒'
+let g:airline_symbols.maxlinenr                    = '☰'
+let g:airline_symbols.spell                        = 'Ꞩ'
+let g:airline_symbols.notexists                    = '∄'
+let g:airline_symbols.whitespace                   = 'Ξ'
+let g:airline#extensions#branch#enabled            = 1
+let g:airline#extensions#bufferline#enabled        = 1
+let g:airline#extensions#csv#enabled               = 1
+let g:airline#extensions#hunks#enabled             = 1
+let g:airline#extensions#tabline#enabled           = 1
+let g:airline#extensions#tagbar#enabled            = 1
+let g:airline#extensions#vimagit#enabled           = 1
+let g:airline#extensions#nrrwrgn#enabled           = 1
+let g:airline#extensions#yc#enabled                = 1
 let g:airline_detect_crypt                         = 1
-let g:airline_detect_iminsert                      = 0
+let g:airline_detect_iminsert                      = 1
 let g:airline_detect_modified                      = 1
 let g:airline_detect_paste                         = 1
 let g:airline_inactive_collapse                    = 1
 let g:airline_powerline_fonts                      = 1
-" let g:airline_left_sep                             = ''
-" let g:airline_right_sep                            = ''
-let g:airline#extensions#branch#format             = 1
-let g:airline#extensions#bufferline#enabled        = 1
-let g:airline#extensions#ctrlspace#enabled         = 1
-let g:airline#extensions#nrrwrgn#enabled           = 1
-let g:airline#extensions#syntastic#enabled         = 0
-let g:airline#extensions#tabline#enabled           = 1
-let g:airline#extensions#tagbar#enabled            = 1
-let g:airline#extensions#tmuxline#enabled          = 1
-let g:airline#extensions#tabline#show_close_button = 0
-let g:airline#extensions#tabline#buffer_idx_mode   = 1
-let g:airline#extensions#tabline#show_buffers      = 1
-let g:airline#extensions#tabline#show_tabs         = 1
-let g:airline_section_b                            = '%{getcwd()}'
 let g:airline_theme                                = 'tomorrow'
+let g:airline#extensions#tabline#show_close_button = 0
+let g:airline#extensions#tabline#show_buffers      = 0
+let g:airline#extensions#tabline#show_splits       = 0
+let g:airline#extensions#tabline#show_tabs         = 1
+let g:airline#extensions#tabline#show_tab_nr       = 1
+let g:airline#extensions#tabline#show_tab_type     = 0
+let g:airline#extensions#tabline#tab_nr_type       = 1
+let g:airline#extensions#tabline#formatter         = 'unique_tail_improved'
+nmap <leader>1 <Plug>AirlineSelectTab1
+nmap <leader>2 <Plug>AirlineSelectTab2
+nmap <leader>3 <Plug>AirlineSelectTab3
+nmap <leader>4 <Plug>AirlineSelectTab4
+nmap <leader>5 <Plug>AirlineSelectTab5
+nmap <leader>6 <Plug>AirlineSelectTab6
+nmap <leader>7 <Plug>AirlineSelectTab7
+nmap <leader>8 <Plug>AirlineSelectTab8
+nmap <leader>9 <Plug>AirlineSelectTab9
+nmap <leader>- <Plug>AirlineSelectPrevTab
+nmap <leader>+ <Plug>AirlineSelectNextTab
 
 
 " ale
 let g:ale_sign_column_always = 1
 let g:ale_sign_error = 'E'
 let g:ale_sign_warning = 'W'
+let g:ale_emit_conflict_warnings = 0
 
 
 " better-javascript-completion
@@ -242,12 +277,20 @@ let g:bufferline_show_bufnr          = 1
 let g:bufferline_solo_highlight      = 1
 
 
-" deoplete
-let g:deoplete#enable_at_startup = 1
-
-
 " easytags
-let g:easytags_file = g:cachedir . '/easytags'
+let g:easytags_always_enabled = 1
+let g:easytags_async = 1
+let g:easytags_dynamic_files = 1
+let g:easytags_suppress_report = 1
+let g:easytags_languages = {
+  \   'ruby': {
+  \     'cmd': 'ripper-tags',
+  \       'args': [],
+  \       'fileoutput_opt': '-f',
+  \       'stdout_opt': '-f-',
+  \       'recurse_flag': '-R'
+  \   }
+  \}
 
 
 " fzf
@@ -280,69 +323,37 @@ highlight clear SignColumn
 let g:gitgutter_eager     = 0
 let g:gitgutter_enabled   = 1
 let g:gitgutter_max_signs = 10000
-let g:gitgutter_realtime  = 0
+let g:gitgutter_realtime  = -1
 
 
 " javascript-libraries-syntax
 let g:used_javascript_libs = 'jquery,react,flux,requirejs,jasmine,chai,d3'
 
 
-" neocomplete.vim
-let g:neocomplete#data_directory                    = SafeDirectory(g:cachedir . '/neocomplete')
-let g:neocomplete#auto_completion_start_length      = 2
-let g:neocomplete#disable_auto_complete             = 0
-let g:neocomplete#enable_at_startup                 = 1
-let g:neocomplete#enable_auto_close_preview         = 1
-let g:neocomplete#enable_auto_select                = 0
-let g:neocomplete#enable_insert_char_pre            = 1
-let g:neocomplete#enable_omni_fallback              = 0
-let g:neocomplete#enable_smart_case                 = 1
-let g:neocomplete#force_omni_input_patterns         = {}
-let g:neocomplete#force_omni_input_patterns.ruby    = '[^. *\t]\.\w*\|\h\w*::\w*|\s*#'
-let g:neocomplete#force_overwrite_completefunc      = 1
-let g:neocomplete#keyword_patterns                  = {}
-let g:neocomplete#keyword_patterns._                = '\h\w*'
-let g:neocomplete#lock_buffer_name_pattern          = '\*ku\*'
-let g:neocomplete#manual_completion_start_length    = 0
-let g:neocomplete#min_keyword_length                = 3
-let g:neocomplete#same_filetypes                    = {}
-let g:neocomplete#same_filetypes._                  = '_'
-let g:neocomplete#same_filetypes.gitconfig          = '_'
-let g:neocomplete#sources#omni#input_patterns       = {}
-let g:neocomplete#sources#syntax#min_keyword_length = 4
-
-if exists('g:use_neocomplete')
-  inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
-  inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-  inoremap <expr><BS>  neocomplete#smart_close_popup()."\<C-h>"
-  inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-  function! s:my_cr_function()
-    return pumvisible() ? neocomplete#close_popup() : "\<CR>"
-  endfunction
-endif
-
-
 " nerdtree
-nmap <leader>n :NERDTreeToggle<CR>
-vmap <leader>n :NERDTreeToggle<CR>
-let g:NERDTreeHijackNetrw = 1
+nmap <leader>n <plug>NERDTreeTabsToggle<CR>
+vmap <leader>n <plug>NERDTreeTabsToggle<CR>
 
 
 " rspec
 let g:rspec_command = 'Dispatch rspec {spec}'
 
 
+" ruby
+let g:ruby_fold = 1
+
+
 " seeing_is_believing
 " Annotate every line
-" nmap <leader>b :%!seeing_is_believing --timeout 12 --line-length 500 --number-of-captures 300 --alignment-strategy chunk<CR>;
-" " Annotate marked lines
-" nmap <leader>n :%.!seeing_is_believing --timeout 12 --line-length 500 --number-of-captures 300 --alignment-strategy chunk --xmpfilter-style<CR>;
-" " Remove annotations
-" nmap <leader>c :%.!seeing_is_believing --clean<CR>;
-" " Mark the current line for annotation
-" nmap <leader>m A # => <Esc>
-" " Mark the highlighted lines for annotation
-" vmap <leader>m :norm A # => <Esc>
+nmap <leader>b :%!seeing_is_believing --timeout 12 --line-length 500 --number-of-captures 300 --alignment-strategy chunk<CR>;
+" Annotate marked lines
+nmap <leader>n :%.!seeing_is_believing --timeout 12 --line-length 500 --number-of-captures 300 --alignment-strategy chunk --xmpfilter-style<CR>;
+" Remove annotations
+nmap <leader>c :%.!seeing_is_believing --clean<CR>;
+" Mark the current line for annotation
+nmap <leader>m A # => <Esc>
+" Mark the highlighted lines for annotation
+vmap <leader>m :norm A # => <Esc>
 
 
 " splitjoin.vim
@@ -405,6 +416,18 @@ map <Leader>l :VroomRunLastTest<CR>
 " map <Leader>a :call RunAllSpecs()<CR>
 
 
+" Ruby refactory
+nnoremap <leader>rap  :RAddParameter<cr>
+nnoremap <leader>rcpc :RConvertPostConditional<cr>
+nnoremap <leader>rel  :RExtractLet<cr>
+vnoremap <leader>rec  :RExtractConstant<cr>
+vnoremap <leader>relv :RExtractLocalVariable<cr>
+nnoremap <leader>rit  :RInlineTemp<cr>
+vnoremap <leader>rrlv :RRenameLocalVariable<cr>
+vnoremap <leader>rriv :RRenameInstanceVariable<cr>
+vnoremap <leader>rem  :RExtractMethod<cr>
+
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 augroup RememberLastPosition
   autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
@@ -418,24 +441,14 @@ augroup END
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Just for TMUX
+let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
-set t_8f=[38;2;%lu;%lu;%lum
-set t_8b=[48;2;%lu;%lu;%lum
-
-if !empty($TMUX)
-
-  augroup RunningTmux
-    autocmd!
-    autocmd VimEnter * call plug#load('vim-tmux-navigator', 'vim-turbux', 'vimux')
-  augroup END
-
-  nnoremap <silent> <A-h> :TmuxNavigateLeft<cr>
-  nnoremap <silent> <A-j> :TmuxNavigateDown<cr>
-  nnoremap <silent> <A-k> :TmuxNavigateUp<cr>
-  nnoremap <silent> <A-l> :TmuxNavigateRight<cr>
-  nnoremap <silent> <A-\> :TmuxNavigatePrevious<cr>
-
-endif
+nnoremap <silent> <A-h> :TmuxNavigateLeft<cr>
+nnoremap <silent> <A-j> :TmuxNavigateDown<cr>
+nnoremap <silent> <A-k> :TmuxNavigateUp<cr>
+nnoremap <silent> <A-l> :TmuxNavigateRight<cr>
+nnoremap <silent> <A-\> :TmuxNavigatePrevious<cr>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " i just don't hate myself enough
@@ -447,7 +460,6 @@ endif
 " inoremap <down> <nop>
 " inoremap <left> <nop>
 " inoremap <right> <nop>
-nmap Q <nop>
 
 imap jk <Esc>
 nmap jk <Esc>
@@ -461,9 +473,14 @@ nnoremap <C-l> <C-w>l
 nmap <M-f> e
 nmap <M-b> b
 
-nmap <leader>[ gt
-nmap <leader>] gT
-nmap <leader>` :tabnew<CR>
+noremap <Tab> gT
+noremap <S-Tab> gt
+noremap <leader>[ gt
+noremap <leader>] gT
+noremap <leader>` :tabnew<CR>
+noremap <leader><Tab>  :+tabmove<CR>
+noremap <leader><S-Tab> :-tabmove<CR>
+
 nmap d[ [m
 nmap d] ]m
 nmap c[ [[
@@ -496,9 +513,13 @@ if !empty($BASE16_THEME)
   highlight LineNr ctermfg=236 ctermbg=234
 endif
 
+if has('termguicolors') && !&termguicolors
+  set termguicolors
+endif
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has('gui_running')
-  set guifont=Sauce\ Code\ Powerline:h15
+  set guifont=Sauce\ Code\ Pro\ Nerd\ Font\ Complete:h15
   set guioptions-=m  "remove menu bar
   set guioptions-=T  "remove toolbar
   set guioptions-=L  "remove toolbar
