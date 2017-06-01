@@ -50,6 +50,7 @@ alias live_ip='dig +short myip.opendns.com @resolver1.opendns.com || curl -f4L h
 alias to_csv='soffice --convert-to csv --headless'
 # alias predate="xargs -I{} bash -c \"printf '%(%F %T)T ' -1 ; echo '{}'\""
 alias v=vim
+alias dc=docker-compose
 # ---------------------------------------------------------------------------
 cassette_to_json() {
   ruby -rjson -ryaml -e "puts JSON.parse(YAML.load(File.read '$1')['http_interactions'].first['response']['body']['string']).to_json" | jq '.' > "${1/yml/json}"

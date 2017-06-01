@@ -1,8 +1,9 @@
 #-----------------------------------------------------------------------------
+# ~/.ghq/github.com/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
 for s in  ~/.shell-common \
           ~/.ghq/github.com/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh \
           ~/.ghq/github.com/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh \
-          ~/.ghq/github.com/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+          ~/.ghq/github.com/zdharma/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh \
           ~/.fzf.zsh
 do
   [[ -f "$s" ]] && source "$s"
