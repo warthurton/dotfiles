@@ -178,7 +178,6 @@ Plug 'tpope/vim-rails',                            { 'for': 'ruby' }
 Plug 'tpope/vim-rake',                             { 'for': 'ruby' }
 Plug 'thoughtbot/vim-rspec',                       { 'for': 'ruby' }
 Plug 'vim-ruby/vim-ruby',                          { 'for': 'ruby' }
-Plug 'hwartig/vim-seeing-is-believing',            { 'for': 'ruby' }
 Plug 'kurayama/systemd-vim-syntax',                { 'for': 'systemd' }
 Plug 'sheerun/vim-yardoc',                         { 'for': 'yard' }
 Plug 'tmux-plugins/vim-tmux',                      { 'for': 'tmux' }
@@ -217,6 +216,7 @@ let g:airline_symbols.maxlinenr                    = '☰'
 let g:airline_symbols.spell                        = 'Ꞩ'
 let g:airline_symbols.notexists                    = '∄'
 let g:airline_symbols.whitespace                   = 'Ξ'
+let g:airline#extensions#ale#enabled               = 1
 let g:airline#extensions#branch#enabled            = 1
 let g:airline#extensions#bufferline#enabled        = 1
 let g:airline#extensions#csv#enabled               = 1
@@ -255,10 +255,13 @@ nmap <leader>+ <Plug>AirlineSelectNextTab
 
 
 " ale
+let g:ale_change_sign_column_color = 1
+let g:ale_lint_delay = 50
+let g:ale_lint_on_insert_leave = 1
 let g:ale_sign_column_always = 1
 let g:ale_sign_error = 'E'
 let g:ale_sign_warning = 'W'
-let g:ale_emit_conflict_warnings = 0
+let g:ale_emit_conflict_warnings = 1
 
 
 " better-javascript-completion
@@ -343,19 +346,6 @@ let g:rspec_command = 'Dispatch rspec {spec}'
 let g:ruby_fold = 1
 
 
-" seeing_is_believing
-" Annotate every line
-nmap <leader>b :%!seeing_is_believing --timeout 12 --line-length 500 --number-of-captures 300 --alignment-strategy chunk<CR>;
-" Annotate marked lines
-nmap <leader>n :%.!seeing_is_believing --timeout 12 --line-length 500 --number-of-captures 300 --alignment-strategy chunk --xmpfilter-style<CR>;
-" Remove annotations
-nmap <leader>c :%.!seeing_is_believing --clean<CR>;
-" Mark the current line for annotation
-nmap <leader>m A # => <Esc>
-" Mark the highlighted lines for annotation
-vmap <leader>m :norm A # => <Esc>
-
-
 " splitjoin.vim
 nmap <leader>sj :SplitjoinJoin<cr>
 nmap <leader>ss :SplitjoinSplit<cr>
@@ -406,8 +396,8 @@ let g:vroom_use_dispatch = 1
 
 if has('nvim')
   let g:vroom_use_terminal = 1
-elseif !empty($TMUX)
-  let g:vroom_use_vimux = 1
+" elseif !empty($TMUX)
+"   let g:vroom_use_vimux = 1
 endif
 
 map <Leader>t :VroomRunTestFile<cr>
@@ -444,11 +434,11 @@ augroup END
 let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
-nnoremap <silent> <A-h> :TmuxNavigateLeft<cr>
-nnoremap <silent> <A-j> :TmuxNavigateDown<cr>
-nnoremap <silent> <A-k> :TmuxNavigateUp<cr>
-nnoremap <silent> <A-l> :TmuxNavigateRight<cr>
-nnoremap <silent> <A-\> :TmuxNavigatePrevious<cr>
+" nnoremap <silent> <A-h> :TmuxNavigateLeft<cr>
+" nnoremap <silent> <A-j> :TmuxNavigateDown<cr>
+" nnoremap <silent> <A-k> :TmuxNavigateUp<cr>
+" nnoremap <silent> <A-l> :TmuxNavigateRight<cr>
+" nnoremap <silent> <A-\> :TmuxNavigatePrevious<cr>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " i just don't hate myself enough
@@ -460,6 +450,10 @@ nnoremap <silent> <A-\> :TmuxNavigatePrevious<cr>
 " inoremap <down> <nop>
 " inoremap <left> <nop>
 " inoremap <right> <nop>
+
+if has('nvim')
+  tnoremap <C-w> <C-\><C-N><C-w>
+endif
 
 imap jk <Esc>
 nmap jk <Esc>
