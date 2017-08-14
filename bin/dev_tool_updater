@@ -1,0 +1,196 @@
+#!/usr/bin/env bash
+
+set -e
+
+declare -a _taps=('neovim/neovim' 'railwaycat/emacsmacport' 'tonchis/goodies' 'ValeLint/vale')
+
+declare -a _brews=(arping bash bash-completion bundler-completion catimg checkbashisms cmake coreutils cscope csv-fix ctags curl direnv docker-clean docker-completion docker-compose-completion emojify exercism fdupes ffmpeg figlet gem-completion ghq gibo gist git git-extras git-hooks git-lfs gnu-sed gnu-tar gnu-time graphicsmagick graphviz hadolint heroku heroku-toolbelt html2text htop-osx imagemagick jq lame leiningen less lua luajit macvim miniupnpc mmv mobile-shell moreutils msgpack mtr neovim netcat nethack nmap no-more-secrets open-completion openssh openssl osxutils p7zip phantomjs pidof pv python python3 qpdf rails-completion rake-completion recode redis rmlint rsync ruby ruby-build ruby-completion sdl sdl2 sdl_net sdl_sound shellcheck socat spring-completion sqlite ssh-copy-id tcping the_silver_searcher tidy-html5 tmate tmux tofrodos uni2ascii vale vim webp wget x264 x265 xvid xz youtube-dl zlib zsh)
+
+declare -a _gems=(brakeman foodcritic haml_lint mdl slim_lint sqlint pry-byebug pry-doc did_you_mean did_you_mean looksee irbtools irbtools-more wirb gem-ctags gem-browse ripper-tags neovim travis cucumber_lint fastlane cocoapods)
+
+declare -a _pips=(ansible-lint proselint vim-vint yamllint flootty doge neovim)
+
+declare -a _npms=(npm yarn ternjs vimlint mermaid tiny-care-terminal git-standup neovim-client react-devtools)
+
+declare -a _cargos=(ripgrep xsv)
+
+#-----------------------------------------------------------------------------
+update_vim_plugs() {
+  command -v vim >& /dev/null || return
+  [[ -s ~/.vim/autoload/plug.vim ]] || return
+
+  vim --not-a-term -c 'PlugUpgrade | :qa'
+  vim --not-a-term -c 'PlugUpdate | :qa'
+}
+#-----------------------------------------------------------------------------
+update_neovim_plugs() {
+  command -v nvim >& /dev/null || return
+  [[ -s ~/.config/nvim/autoload/plug.vim ]] || return
+
+  nvim --headless -c 'PlugUpgrade | :qa'
+  nvim --headless -c 'PlugUpdate | :qa'
+  # nvim --headless -c 'UpdateRemotePlugins | :qa'
+}
+#-----------------------------------------------------------------------------
+update_asdf() {
+  command -v asdf >& /dev/null || return
+
+  asdf plugin-update --all
+}
+#-----------------------------------------------------------------------------
+update_ghq() {
+  command -v ghq >& /dev/null || return
+
+  ghq list | sed -e 's/github.com\///' | while read -r gh ; do
+    ghq get -u "$gh"
+  done
+}
+#-----------------------------------------------------------------------------
+update_brew() {
+  command -v brew >& /dev/null || return
+
+  for _tap in ${_taps[@]} ; do
+    brew tap | grep -qi "$_tap" || brew tap "$_tap"
+  done
+
+  brew update --all
+  brew prune
+  brew cleanup -s
+}
+#-----------------------------------------------------------------------------
+update_brewed() {
+  command -v brew >& /dev/null || return
+
+  brew upgrade
+
+  for _brew in ${_brews[@]} ; do
+    brew list --versions "$_brew" >&/dev/null || brew install "$_brew"
+  done
+}
+#-----------------------------------------------------------------------------
+update_ruby_gems() {
+  command -v gem >& /dev/null || return
+
+  for _gem in ${_gems[@]} ; do
+    gem list "$_gem" | grep -q '.' || gem install "$_gem"
+  done
+
+  gem update ${_gems[@]}
+}
+#-----------------------------------------------------------------------------
+update_pips() {
+  for cmd in pip2 pip3 ; do
+    command -v $cmd >& /dev/null || continue
+
+    for _pip in ${_pips[@]} ; do
+      $cmd show "$_pip" >&/dev/null || $cmd install "$_pip"
+    done
+
+    $cmd install --upgrade ${_pips[@]} >&/dev/null
+  done
+}
+#-----------------------------------------------------------------------------
+update_nodejs_libs() {
+  command -v npm >& /dev/null || return
+
+  local _globals=$(npm list --global --depth=0)
+
+  for _npm in ${_npms[@]} ; do
+    echo "$_globals" | grep -q " ${_npm}@" || npm install -g "$_npm"
+  done
+
+  npm update --global
+}
+#-----------------------------------------------------------------------------
+update_rust_cargos() {
+  command -v cargo >& /dev/null || return
+
+  for _cargo in ${_cargos[@]} ; do
+    cargo install --list | grep -q "^${_cargo}" || cargo install "$_cargo"
+  done
+}
+#-----------------------------------------------------------------------------
+update_atom() {
+  command -v apm >& /dev/null || return
+
+  apm update --confirm=false --verbose=false
+}
+#-----------------------------------------------------------------------------
+usage() {
+  cat <<USAGE
+Usage: ${0##*/} <command> [options] [command specific options]
+  OPTIONS:
+  -h, --help            This.
+
+  COMMANDS:
+    whoami              Prints info for your \$DNSIMPLE_ACCOUNT_TOKEN.
+
+USAGE
+  cleanup 1
+}
+
+#-----------------------------------------------------------------------------
+# Main program
+
+[[ $# -eq 0 ]] && usage
+
+declare _command
+_command="$1" ; shift
+
+case "$_command" in
+  vims)
+    update_vim_plugs
+    update_neovim_plugs
+    ;;
+  vim)
+    update_vim_plugs
+    ;;
+  neovim)
+    update_neovim_plugs
+    ;;
+  atom)
+    update_atom
+    ;;
+  asdf)
+    update_asdf
+    ;;
+  ghq)
+    update_ghq
+    ;;
+  brews)
+    update_brew
+    update_brewed
+    ;;
+  brew)
+    update_brew
+    ;;
+  brewed)
+    update_brewed
+    ;;
+  gems)
+    update_ruby_gems
+    ;;
+  npms)
+    update_nodejs_libs
+    ;;
+  pips)
+    update_pips
+    ;;
+  cargos)
+    update_rust_cargos
+    ;;
+  all)
+    update_vim_plugs
+    update_neovim_plugs
+    update_atom
+    update_asdf
+    update_ghq
+    update_brew
+    update_brewed
+    update_ruby_gems
+    update_nodejs_libs
+    update_pips
+    update_rust_cargos
+    ;;
+  *) usage ;;
+esac
