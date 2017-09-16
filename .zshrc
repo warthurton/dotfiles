@@ -1,5 +1,4 @@
 #-----------------------------------------------------------------------------
-# ~/.ghq/github.com/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
 for s in  ~/.shell-common \
           ~/.ghq/github.com/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh \
           ~/.ghq/github.com/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh \
@@ -8,6 +7,7 @@ for s in  ~/.shell-common \
 do
   [[ -f "$s" ]] && source "$s"
 done
+
 #-----------------------------------------------------------------------------
 fpath=($HOME/.ghq/github.com/zsh-users/zsh-completions/src "$HOME/.config/zsh/site-functions" $fpath)
 typeset -gU fpath path
@@ -192,13 +192,9 @@ if (( $+commands[asdf] )) ; then
   }
   #----------
   function _zsh_languages_prompt__chpwd_hook() {
-    if [[ -s "$PWD/.ruby-version" ]] ; then
-      __language_versions[ruby]="$(<$PWD/.ruby-version)"
-    elif [[ -s "$PWD/.node-version" ]] ; then
-      __language_versions[nodejs]="$(<$PWD/.node-version)"
-    elif [[ -s "$PWD/.tool-versions" ]] ; then
-      __language_versions=(${=${(f)"$(<.tool-versions)"}})
-    fi
+    [[ -s '.ruby-version' ]] && __language_versions[ruby]="$(<.ruby-version)"
+    [[ -s '.node-version' ]] && __language_versions[nodejs]="$(<.node-version)"
+    [[ -s '.tool-versions' ]] && __language_versions=(${=${(f)"$(<.tool-versions)"}})
   }
   #----------
 fi
@@ -208,22 +204,23 @@ function build_left_prompt() {
 
   echo -n "%f%b%k%u%s"
 
-  if [[ "$PWD" == "$HOME" ]] ; then
-    if typeset -f build_git_status pubgit prvgit >&/dev/null ; then
-      echo -n "%F{8}PUB:%f$(build_git_status pubgit)"
-      echo -n " "
-      echo -n "%F{8}PRV:%f$(build_git_status prvgit)"
-      _leading_space=" "
-    fi
-  fi
-
   if [[ -n "$__preferred_languages" ]] ; then
     for language in ${(k)__preferred_languages[@]} ; do
-      if [[ -n "${__language_versions[$language]}" ]] ; then
+      local language_cmd="${__preferred_languages[$language]}"
+      if [[ -n "${__language_versions[$language]}" && $+commands[$language_cmd}] ]] ; then
         echo -n "${_leading_space}%F{6}${language}-${__language_versions[$language]}"
         _leading_space=" "
       fi
     done
+  fi
+
+  if [[ "$PWD" == "$HOME" ]] ; then
+    if typeset -f build_git_status pubgit prvgit >&/dev/null ; then
+      echo -n "${_leading_space}%F{8}PUB:%f$(build_git_status pubgit)"
+      echo -n " "
+      echo -n "%F{8}PRV:%f$(build_git_status prvgit)"
+      _leading_space=" "
+    fi
   fi
 
   if typeset -f build_git_status >&/dev/null ; then
@@ -262,5 +259,9 @@ function build_left_prompt() {
 
   echo "%f%b%k%u%s"
 }
+#-----------------------------------------------------------------------------
+if (( $+commands[direnv] )) ; then
+  eval "$(direnv hook zsh)"
+fi
 #-----------------------------------------------------------------------------
 # vim: set syntax=sh ft=zsh sw=2 ts=2 expandtab:

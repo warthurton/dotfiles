@@ -16,7 +16,8 @@
   edit-branch-commits = !git rebase -i `git outgoing master | tail -1 | xargs git log --format="%P" -1`
   email-domains = !git log --format="%aE" | awk -F'@' '{print $2}'
   emails = !git log --format="%aE"
-  fa = fetch --all
+  f = fetch
+  fa = fetch --all --tags --prune
   ff = merge --ff-only
   gn = goodness
   gnc = goodness --cached

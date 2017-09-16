@@ -1,6 +1,6 @@
 #-----------------------------------------------------------------------------
-typeset -g HISTFILE="$HOME/.zhistory"
-typeset -g SAVEHIST=10000000
+typeset -g HISTFILE="$HOME/.shell-history"
+typeset -g SAVEHIST=99999999999
 typeset -g WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
 skip_global_compinit=1
 #-----------------------------------------------------------------------------
@@ -15,61 +15,64 @@ zmodload zsh/compctl \
          zsh/zleparameter \
          zsh/zutil
 
-if [[ "$ZSH_VERSION[1]" -gt 4 ]] ; then
-  zmodload zsh/system
-  setopt inc_append_history_time
-fi
 #-----------------------------------------------------------------------------
-setopt auto_cd \
-       cdable_vars \
-       always_to_end \
-       auto_list \
-       auto_menu \
-       auto_param_slash \
-       complete_in_word \
-       hash_list_all \
-       list_ambiguous \
-       nolist_beep \
-       list_packed \
-       list_types \
-       nomenu_complete \
-       brace_ccl \
-       case_glob \
-       extended_glob \
-       path_dirs \
-       append_history \
-       bang_hist \
-       extended_history \
-       hist_allow_clobber \
-       hist_expire_dups_first \
-       hist_fcntl_lock \
-       nohist_find_no_dups \
-       nohist_ignore_all_dups \
-       hist_ignore_space \
-       hist_no_store \
-       hist_reduce_blanks \
-       hist_verify \
-       inc_append_history \
-       noshare_history \
-       clobber \
-       nocorrect \
-       nocorrect_all \
-       noflow_control \
-       interactive_comments \
-       nomail_warning \
-       noauto_resume \
-       nobg_nice \
-       check_jobs \
-       nohup \
-       long_list_jobs \
-       nonotify \
-       prompt_subst \
-       multios \
-       posix_builtins \
-       nobeep \
-       combining_chars \
-       emacs
+setopt \
+  always_to_end \
+  auto_cd \
+  auto_list \
+  auto_menu \
+  auto_param_slash \
+  brace_ccl \
+  case_glob \
+  cdable_vars \
+  check_jobs \
+  clobber \
+  combining_chars \
+  complete_in_word \
+  emacs \
+  extended_glob \
+  hash_list_all \
+  interactive_comments \
+  list_ambiguous \
+  list_packed \
+  list_types \
+  long_list_jobs \
+  multios \
+  path_dirs \
+  posix_builtins \
+  prompt_subst
 
+unsetopt \
+  auto_resume \
+  beep \
+  bg_nice \
+  correct \
+  correct_all \
+  flow_control \
+  hup \
+  list_beep \
+  mail_warning \
+  menu_complete \
+  notify
+
+# History
+setopt \
+  append_history \
+  bang_hist \
+  hist_allow_clobber \
+  hist_fcntl_lock \
+  hist_ignore_dups \
+  hist_ignore_space \
+  hist_no_store \
+  hist_reduce_blanks \
+  hist_verify \
+  inc_append_history \
+  share_history
+
+unsetopt \
+  extended_history \
+  hist_find_no_dups \
+  hist_ignore_all_dups
 #-----------------------------------------------------------------------------
 typeset -g _debug_times
 typeset -F SECONDS

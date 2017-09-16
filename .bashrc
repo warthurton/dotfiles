@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # --------------------------------------------------------------------------
 export HISTCONTROL=ignoreboth
-export HISTFILE="$HOME/.bash_history"
-export HISTFILESIZE=10000000
+export HISTFILE="$HOME/.shell-history"
+export HISTFILESIZE=999999999
 export INPUTRC="$HOME/.bash_inputrc"
-# export PS1='\t \u@\h \w \$ '
+export PS1='\t \u@\h \w \$ '
 
 set -o emacs -o monitor -o notify
-shopt -qs checkwinsize cmdhist expand_aliases histappend hostcomplete interactive_comments nocaseglob nocasematch no_empty_cmd_completion progcomp promptvars sourcepath
+shopt -qs checkwinsize cmdhist expand_aliases histappend hostcomplete histverify interactive_comments nocaseglob nocasematch no_empty_cmd_completion progcomp promptvars sourcepath
 shopt -qu mailwarn
 
 if [[ "$BASH_VERSINFO" -gt "3" ]] ; then
@@ -15,10 +15,14 @@ if [[ "$BASH_VERSINFO" -gt "3" ]] ; then
 fi
 
 # --------------------------------------------------------------------------
-for s in "$HOME/.shell-path"  "$HOME/.shell-env" "$HOME/.shell-common" "$HOME/.fzf.bash" ; do
+for s in "$HOME/.shell-path" "$HOME/.shell-env" "$HOME/.shell-common" "$HOME/.fzf.bash"  ; do
   [[ -s "$s" ]] && source "$s"
 done
-
+# --------------------------------------------------------------------------
+if command -v direnv >/dev/null 2>/dev/null ; then
+  eval "$(direnv hook bash)"
+fi
+# --------------------------------------------------------------------------
 [[ -z "$PS1" ]] && return
 # --------------------------------------------------------------------------
 _completion_loader() {
@@ -84,7 +88,7 @@ _ps1_id_color() {
   return 0
 }
 _ps1_id() {
-  if am_i_someone_else ; then
+  if command -v am_i_someone_else >&/dev/null && am_i_someone_else; then
     echo -n "__${USER}__"
   else
     echo -n "$USER"
@@ -119,4 +123,5 @@ if command -v git >/dev/null 2>/dev/null ; then
   }
 fi
 
+# --------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:

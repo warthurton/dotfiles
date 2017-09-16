@@ -1,6 +1,7 @@
 # --------------------------------------------------------------------------
 umask 022
 
+# export LC_COLLATE=C
 export BROWSER=open
 export EDITOR=vim
 export VISUAL=vim
@@ -8,7 +9,7 @@ export PAGER=less
 export LESS="iRQXF"
 export HISTSIZE=100000
 export MAILCHECK=0
-export SHELLCHECK_OPTS="--shell=bash --exclude=SC2001,SC1090,SC2164"
+export SHELLCHECK_OPTS="--shell=bash --exclude=SC2001,SC1090,SC2164,SC2068"
 export GOPATH="$HOME/.go"
 
 if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
@@ -21,7 +22,17 @@ if [[ -n "$TMUX" ]] ; then
   echo $TMUX | grep -q tmate && alias tmux=tmate
 fi
 
-command -v ag >/dev/null 2>/dev/null && export FZF_DEFAULT_COMMAND='ag -l -g ""'
+if command -v rg >&/dev/null ; then
+ export RIPGREP_DEFAULT_GLOB='--glob "!.git/*" --glob "!_build/*" --glob "!deps/*" --glob "!.DS_Store" --glob "!log/*" --glob "!tmp/*" --glob "!vendor/*" --glob "!.keep"'
+ export FZF_DEFAULT_COMMAND="rg --files --no-ignore --hidden --follow ${RIPGREP_DEFAULT_GLOB}"
+elif command -v ag >&/dev/null ; then
+  export FZF_DEFAULT_COMMAND='ag --files-with-matches --filename-pattern ""'
+else
+  export FZF_DEFAULT_COMMAND=''
+fi
+
+export FZF_DEFAULT_OPTS="--inline-info --preview-window=right"
+
 # --------------------------------------------------------------------------
 # Synology NAS
 
@@ -79,6 +90,7 @@ fi
 
 # --------------------------------------------------------------------------
 [[ -z "$PS1" ]] && return
+[[ "${XPC_SERVICE_NAME:0:13}" == "com.jetbrains" ]] && return  # RubyyMine etc...
 # --------------------------------------------------------------------------
 if [[ -s "$HOME/.config/base16-shell/profile_helper.sh" ]] ; then
   export BASE16_SHELL="$HOME/.config/base16-shell"

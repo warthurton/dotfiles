@@ -30,11 +30,11 @@ elif [[ "${OSTYPE:0:5}" = "linux" ]] ; then
   alias ubuntu_add_key='sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80'
 fi
 # ---------------------------------------------------------------------------
-if [[ -d "/usr/syno" ]] ; then
-  if [[ "$(which ps)" == "/usr/bin/ps" ]] ; then
-    alias p="ps w"
-  fi
-fi
+# if [[ -d "/usr/syno" ]] ; then
+#   if [[ "$(which ps)" == "/usr/bin/ps" ]] ; then
+#     alias p="ps w"
+#   fi
+# fi
 # ---------------------------------------------------------------------------
 if command -v ag >/dev/null 2>/dev/null ; then
   alias ag="ag --pager=less --color-match='1;36'"
@@ -72,6 +72,7 @@ downloaded_in() {
 
 ps_owners() {
   [[ -n "${BASH_VERSINFO[0]}" && "${BASH_VERSINFO[0]}" -lt 4 ]] && return 1
+  [[ -n "${BASH_VERSINFO[1]}" && "${BASH_VERSINFO[1]}" -lt 4 ]] && return 1
 
   local _pid="${1:-$$}"
   local _what_to_print="$2"
@@ -88,6 +89,7 @@ ps_owners() {
 
 am_i_someone_else() {
   [[ -n "${BASH_VERSINFO[0]}" && "${BASH_VERSINFO[0]}" -lt 4 ]] && return 1
+  [[ -n "${BASH_VERSINFO[1]}" && "${BASH_VERSINFO[1]}" -lt 4 ]] && return 1
 
   local -a _owners
   local -A _counts
@@ -111,6 +113,8 @@ am_i_someone_else() {
 
 # Ruby ---------------------------------------------------------------------
 alias be="bundle exec"
+alias ber='bundle exec rspec'
+alias berd='bundle exec rspec -f d'
 
 httpd() {
   port="${1:-8000}"
@@ -189,6 +193,7 @@ for script in "$HOME/.shell-prv" ; do
 done
 #-----------------------------------------------------------------------------
 [[ -z "$PS1" ]] && return
+[[ "${XPC_SERVICE_NAME:0:13}" == "com.jetbrains" ]] && return  # RubyyMine etc...
 #-----------------------------------------------------------------------------
 for script in "$HOME/.base16_theme" ; do
   [ -s "$script" ] && source "$script"
