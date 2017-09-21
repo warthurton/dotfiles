@@ -7,7 +7,6 @@ for s in  ~/.shell-common \
 do
   [[ -f "$s" ]] && source "$s"
 done
-
 #-----------------------------------------------------------------------------
 fpath=($HOME/.ghq/github.com/zsh-users/zsh-completions/src "$HOME/.config/zsh/site-functions" $fpath)
 typeset -gU fpath path
@@ -24,206 +23,191 @@ autoload -Uz compinit colors add-zsh-hook
 compinit -C
 colors
 #-----------------------------------------------------------------------------
-if (( $+commands[git] )) ; then
-  typeset -g -A __git_theme=(
-    prefix "("
-    suffix ")"
-    separator "|"
-    branch "%{$fg_bold[magenta]%}"
-    clean "%{$fg_bold[green]%}%{✔%G%}"
-    changed "%{$fg[blue]%}%{✚%G%}"
-    staged "%{$fg[red]%}%{●%G%}"
-    conflicts "%{$fg[red]%}%{✖%G%}"
-    oid "%{$fg[gray]%}"
-    ahead "%{↑%G%}"
-    behind "%{↓%G%}"
-    untracked "%{…%G%}"
-    show_changed_count 1
-    show_staged_count 1
-    show_conflict_count 1
-    show_ahead_count 1
-    show_behind_count 1
-    show_untracked_count 0
-  )
-  #----------
-  __git_theme[branch]="%{$reset_color%}${__git_theme[branch]}"
-  __git_theme[clean]="%{$reset_color%}${__git_theme[clean]}"
-  __git_theme[changed]="%{$reset_color%}${__git_theme[changed]}"
-  __git_theme[staged]="%{$reset_color%}${__git_theme[staged]}"
-  __git_theme[conflicts]="%{$reset_color%}${__git_theme[conflicts]}"
-  __git_theme[ahead]="%{$reset_color%}${__git_theme[ahead]}"
-  __git_theme[behind]="%{$reset_color%}${__git_theme[behind]}"
-  __git_theme[untracked]="%{$reset_color%}${__git_theme[untracked]}"
-  __git_theme[oid]="%{$reset_color%}${__git_theme[oid]}"
+typeset -g -A __preferred_languages=(
+  ruby .ruby-version
+  nodejs .node-version
+)
+typeset -g -A __language_versions
 
-  typeset -g -A __language_versions
-  typeset -g -A __local_language_versions
-  typeset -g -A __git_status
-  #----------
-  add-zsh-hook chpwd _zsh_git_prompt__chpwd_hook
-  add-zsh-hook preexec _zsh_git_prompt__preexec_hook
-  add-zsh-hook precmd _zsh_git_prompt__precmd_hook
-  #----------
-  function _zsh_git_prompt__preexec_hook() {
-    unset __EXECUTED_GIT_COMMAND
-    [[ "$2" =~ ^(git|hub|gh|stg) ]] && typeset -g __EXECUTED_GIT_COMMAND=1
+typeset -g -A __git_theme=(
+  prefix "("
+  suffix ")"
+  separator "|"
+  branch "%{$reset_color%}%{$fg_bold[magenta]%}"
+  clean "%{$reset_color%}%{$fg_bold[green]%}%{✔%G%}"
+  changed "%{$reset_color%}%{$fg[blue]%}%{✚%G%}"
+  staged "%{$reset_color%}%{$fg[red]%}%{●%G%}"
+  conflicts "%{$reset_color%}%{$fg[red]%}%{✖%G%}"
+  oid "%{$reset_color%}%{$fg[gray]%}"
+  ahead "%{$reset_color%}%{↑%G%}"
+  behind "%{$reset_color%}%{↓%G%}"
+  untracked "%{$reset_color%}%{…%G%}"
+  show_changed_count 1
+  show_staged_count 1
+  show_conflict_count 1
+  show_ahead_count 1
+  show_behind_count 1
+  show_untracked_count 0
+)
+typeset -g -A __git_status
+#-----------------------------------------------------------------------------
+function build_git_status() {
+  (( $+commands[git] )) || return
+  local _git_command="${1:=git}"
+  [[ -z "${__git_status[$_git_command]}" ]] && return
+  eval "$__git_status[$_git_command]"
+
+  (( g[no_repository] == 1 )) && return
+
+  function __print() {
+    local theme="${__git_theme[$1]}"
+    local show="${__git_theme[show_${1}_count]}"
+    local value="${g[$1]}"
+
+    [[ -z "$theme" ]] && return
+    [[ "${show:=1}" == "1" ]] || return
+    [[ "$value" == "0" ]] && return
+    echo -n "$theme"
+
+    [[ -z "$value" || "$value" == "yes_but_no_value_to_show" ]] && return
+    echo -n "$value"
   }
-  #----------
-  function _zsh_git_prompt__precmd_hook() {
-    [[ -n "$__EXECUTED_GIT_COMMAND" ]] && _zsh_git_prompt__update_vars "${1:=git}"
-  }
-  #----------
-  function _zsh_git_prompt__chpwd_hook() {
-    _zsh_git_prompt__update_vars "${1:=git}"
-  }
-  #----------
-  function _zsh_git_prompt__update_vars() {
-    local _git_command="${1:=git}"
 
-    typeset -A g=(staged 0 conflicts 0 changed 0 untracked 0 ignored 0 no_repository 0 clean 0)
+  for element in prefix branch behind ahead separator oid separator staged conflicts changed untracked clean suffix ; do
+    __print $element
+  done
 
-    while read -rA _status ; do
-      case "${_status[1]}" in
-        fatal*)
-          g[no_repository]=1
-          ;;
-        \#)
-          case "${_status[2]}" in
-            branch.oid)
-              g[oid]="${_status[3]:0:8}"
-              ;;
-            branch.head)
-              g[branch]="${_status[3]}"
-              ;;
-            branch.upstream)
-              g[upstream]="${_status[3]}"
-              ;;
-            branch.ab)
-              g[ahead]=$((${_status[3]}))
-              g[behind]=$((${_status[4]}))
-              ;;
-          esac
-          ;;
-        \?)
-          (( g[untracked]++ ))
-          ;;
-        \!)
-          (( g[ignored]++ ))
-          ;;
-        1)
-          case "${_status[2]}" in
-            .M)
-              (( g[changed]++ ))
-              ;;
-            A.|M.)
-              (( g[staged]++ ))
-              ;;
-          esac
-          ;;
-        2)
-          case "${_status[2]}" in
-            R.)
-              (( g[changed]++ ))
-              ;;
-          esac
-          ;;
-      esac
-    done < <($_git_command status --porcelain=2 --branch 2>&1)
+  echo -n "%{${reset_color}%}"
+}
+#-----------------------------------------------------------------------------
+function _prompt__update_git() {
+  (( $+commands[git] )) || return
+  local _git_command="${1:=git}"
 
-    if (( g[changed] == 0 && g[conflicts] == 0 && g[staged] == 0 && g[untracked] == 0 )) ; then
-      g[clean]="yes_but_no_value_to_show"
+  typeset -A g=(staged 0 conflicts 0 changed 0 untracked 0 ignored 0 no_repository 0 clean 0)
+
+  while read -rA _status ; do
+    case "${_status[1]}" in
+      fatal*)
+        g[no_repository]=1
+        ;;
+      \#)
+        case "${_status[2]}" in
+          branch.oid)
+            g[oid]="${_status[3]:0:8}"
+            ;;
+          branch.head)
+            g[branch]="${_status[3]}"
+            ;;
+          branch.upstream)
+            g[upstream]="${_status[3]}"
+            ;;
+          branch.ab)
+            g[ahead]=$((${_status[3]}))
+            g[behind]=$((${_status[4]}))
+            ;;
+        esac
+        ;;
+      \?)
+        (( g[untracked]++ ))
+        ;;
+      \!)
+        (( g[ignored]++ ))
+        ;;
+      1)
+        case "${_status[2]}" in
+          .M)
+            (( g[changed]++ ))
+            ;;
+          A.|M.)
+            (( g[staged]++ ))
+            ;;
+        esac
+        ;;
+      2)
+        case "${_status[2]}" in
+          R.)
+            (( g[changed]++ ))
+            ;;
+        esac
+        ;;
+    esac
+  done < <($_git_command status --porcelain=2 --branch 2>&1)
+
+  if (( g[changed] == 0 && g[conflicts] == 0 && g[staged] == 0 && g[untracked] == 0 )) ; then
+    g[clean]="yes_but_no_value_to_show"
+  fi
+
+  __git_status[$_git_command]="$(typeset -p g)"
+}
+#-----------------------------------------------------------------------------
+function _prompt__update_language() {
+  local plugin="$1"
+  [[ -z "$plugin" ]] && return
+  local version_file="$2"
+  [[ -z "$version_file" ]] && return
+
+  local version_env_var="ASDF_${(U)plugin}_VERSION"
+  local version=${(P)version_env_var}
+
+  if [[ -n "$version" ]] ; then
+    __language_versions[$plugin]="$version"
+    return
+  fi
+
+  local search_path="$PWD"
+
+  while [[ "$search_path" != "/" ]] ; do
+    local _version_file="${search_path}/${version_file}"
+
+    if [[ -s "${_version_file}" ]] ; then
+      __language_versions[$plugin]="$(<$_version_file)"
+      return
     fi
 
-    __git_status[$_git_command]="$(typeset -p g)"
-  }
-  #----------
-  function build_git_status() {
-    local _git_command="${1:=git}"
-    [[ "$_git_command" != "git" ]] && _zsh_git_prompt__update_vars "$_git_command"
-    [[ -z "${__git_status[$_git_command]}" ]] && return
-    eval "$__git_status[$_git_command]"
-    (( g[no_repository] == 1 )) && return
+    if [[ -s '.tool-versions' ]] ; then
+      __language_versions=(${=${(f)"$(<.tool-versions)"}})
+      return
+    fi
 
-    function __print() {
-      local theme="${__git_theme[$1]}"
-      local show="${__git_theme[show_${1}_count]}"
-      local value="${g[$1]}"
-
-      [[ -z "$theme" ]] && return
-      [[ "${show:=1}" == "1" ]] || return
-      [[ "$value" == "0" ]] && return
-      echo -n "$theme"
-
-      [[ -z "$value" || "$value" == "yes_but_no_value_to_show" ]] && return
-      echo -n "$value"
-    }
-
-    for element in prefix branch behind ahead separator oid separator staged conflicts changed untracked clean suffix ; do
-      __print $element
-    done
-
-    echo -n "%{${reset_color}%}"
-  }
-  #----------
-fi
+    search_path=$(dirname "$search_path")
+  done
+}
 #-----------------------------------------------------------------------------
-if (( $+commands[asdf] )) ; then
-  typeset -g -A __preferred_languages=(
-    ruby ruby
-    nodejs node
-  )
-  #----------
-  add-zsh-hook preexec _zsh_languages_prompt__preexec_hook
-  add-zsh-hook chpwd _zsh_languages_prompt__chpwd_hook
-  #----------
-  function _zsh_languages_prompt__update_version() {
-    local language="$1"
-    read -r -A version < <(asdf current $language 2>|/dev/null)
-    [[ -z "${version[1]}" || "${version[1]}" == "No" ]] && return
-    __language_versions[$language]="${version[1]}"
-  }
-  #----------
-  function _zsh_languages_prompt__preexec_hook() {
-    local pre_cmd="${2/ */}"
-    for language in ${(k)__preferred_languages[@]} ; do
-      local language_cmd="${__preferred_languages[$language]}"
-      [[ -n "$pre_cmd" && -n "$language_cmd" && "$pre_cmd" == "$language_cmd" ]] && _zsh_languages_prompt__update_version "$language"
-    done
-  }
-  #----------
-  function _zsh_languages_prompt__chpwd_hook() {
-    [[ -s '.ruby-version' ]] && __language_versions[ruby]="$(<.ruby-version)"
-    [[ -s '.node-version' ]] && __language_versions[nodejs]="$(<.node-version)"
-    [[ -s '.tool-versions' ]] && __language_versions=(${=${(f)"$(<.tool-versions)"}})
-  }
-  #----------
-fi
+function _prompt__update_languages() {
+  (( $+commands[asdf] )) || return
+
+  for plugin in ${(k)__preferred_languages[@]} ; do
+    _prompt__update_language "$plugin" "${__preferred_languages[$plugin]}"
+  done
+}
 #-----------------------------------------------------------------------------
 function build_left_prompt() {
   local _leading_space=""
 
+  _prompt__update_languages
+
   echo -n "%f%b%k%u%s"
 
-  if [[ -n "$__preferred_languages" ]] ; then
-    for language in ${(k)__preferred_languages[@]} ; do
-      local language_cmd="${__preferred_languages[$language]}"
-      if [[ -n "${__language_versions[$language]}" && $+commands[$language_cmd}] ]] ; then
-        echo -n "${_leading_space}%F{6}${language}-${__language_versions[$language]}"
-        _leading_space=" "
-      fi
-    done
-  fi
+  for plugin in ${(k)__preferred_languages[@]} ; do
+    local version="${__language_versions[$plugin]}"
 
-  if [[ "$PWD" == "$HOME" ]] ; then
-    if typeset -f build_git_status pubgit prvgit >&/dev/null ; then
-      echo -n "${_leading_space}%F{8}PUB:%f$(build_git_status pubgit)"
-      echo -n " "
-      echo -n "%F{8}PRV:%f$(build_git_status prvgit)"
+    if [[ -n "$version" ]] ; then
+      echo -n "${_leading_space}%F{6}${plugin}-${version}"
       _leading_space=" "
     fi
-  fi
+  done
 
-  if typeset -f build_git_status >&/dev/null ; then
+  if [[ "$PWD" == "$HOME" ]] && typeset -f pubgit prvgit >&/dev/null ; then
+    _prompt__update_git pubgit .git-pub-dotfiles
+    _prompt__update_git prvgit .git-prv-dotfiles
+
+    echo -n "${_leading_space}%F{8}PUB:%f$(build_git_status pubgit)"
+    echo -n " "
+    echo -n "%F{8}PRV:%f$(build_git_status prvgit)"
+    _leading_space=" "
+  else
+    _prompt__update_git git .git
     local _git_prompt="$(build_git_status)"
     if [[ -n "${_git_prompt}" ]] ; then
       echo -n "${_leading_space}%f${_git_prompt}"
