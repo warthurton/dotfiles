@@ -26,6 +26,7 @@ colors
 typeset -g -A __preferred_languages=(
   ruby .ruby-version
   nodejs .node-version
+  elixir .elixir-version
 )
 typeset -g -A __language_versions
 
@@ -246,6 +247,10 @@ function build_left_prompt() {
 #-----------------------------------------------------------------------------
 if (( $+commands[direnv] )) ; then
   eval "$(direnv hook zsh)"
+fi
+#-----------------------------------------------------------------------------
+if (( $+commands[fasd] )) ; then
+  eval "$(fasd --init auto)"
 fi
 #-----------------------------------------------------------------------------
 # vim: set syntax=sh ft=zsh sw=2 ts=2 expandtab:
