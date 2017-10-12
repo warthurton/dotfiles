@@ -10,7 +10,7 @@ declare -a _gems=(brakeman foodcritic haml_lint mdl slim_lint sqlint pry-byebug 
 
 declare -a _pips=(ansible-lint proselint vim-vint yamllint flootty doge neovim)
 
-declare -a _npms=(yarn ternjs neovim-client react-devtools prettier prettier-eslint-cli eslint eslint-plugin-prettier eslint-plugin-react eslint-plugin-jasmine eslint-plugin-jest babel-eslint jasmine jest-cli stylelint)
+declare -a _npms=(babel-eslint eslint eslint-config-prettier eslint-config-standard eslint-plugin-flowtype eslint-plugin-import eslint-plugin-jasmine eslint-plugin-jest eslint-plugin-node eslint-plugin-prettier eslint-plugin-promise eslint-plugin-react eslint-plugin-standard jasmine jest-cli neovim-client prettier prettier-eslint-cli react-devtools stylelint ternjs yarn)
 
 declare -a _cargos=(ripgrep xsv)
 
@@ -21,7 +21,7 @@ update_vim_plugs() {
 
   vim --not-a-term -c 'PlugUpgrade | :qa'
   vim --not-a-term -c 'PlugUpdate | :qa'
-  echo y | vim --not-a-term -c 'PlugClean | :qa'
+  echo y | vim --not-a-term -c 'PlugClean | :qa' || echo
 }
 #-----------------------------------------------------------------------------
 update_neovim_plugs() {
@@ -31,7 +31,7 @@ update_neovim_plugs() {
   nvim --headless -c 'PlugUpgrade | :qa'
   nvim --headless -c 'PlugUpdate | :qa'
   echo y | nvim -c 'PlugClean | :qa'
-  echo | nvim --headless -c 'UpdateRemotePlugins' -c ':qa'
+  echo | nvim --headless -c 'UpdateRemotePlugins' -c ':qa' || echo
 }
 #-----------------------------------------------------------------------------
 update_asdf() {

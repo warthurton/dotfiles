@@ -87,6 +87,8 @@ Plug 'w0rp/ale'
 " Plug 'skalnik/vim-vroom'
 " Plug 'vim-scripts/Specky'
 
+Plug 'Chiel92/vim-autoformat'
+
 " Filetypes
 Plug 'kchmck/vim-coffee-script',                   { 'for': 'coffee' }
 Plug 'rhysd/vim-crystal',                          { 'for': 'crystal' }
@@ -98,11 +100,6 @@ Plug 'elmcast/elm-vim',                            { 'for': 'elm' }
 Plug 'fatih/vim-go',                               { 'for': 'go' }
 Plug 'ksauzz/haproxy.vim',                         { 'for': 'haproxy' }
 Plug 'othree/html5.vim',                           { 'for': 'html' }
-Plug '1995eaton/vim-better-javascript-completion', { 'for': 'javascript' }
-Plug 'othree/yajs.vim',                            { 'for': 'javascript' }
-Plug 'othree/javascript-libraries-syntax.vim',     { 'for': 'javascript' }
-Plug 'mxw/vim-jsx' ,                               { 'for': 'javascript' }
-Plug 'othree/jspc.vim',                            { 'for': 'javascript' }
 Plug 'plasticboy/vim-markdown',                    { 'for': 'markdown' }
 Plug 'mutewinter/nginx.vim',                       { 'for': 'nginx' }
 Plug 'jceb/vim-orgmode',                           { 'for': 'org' }
@@ -111,6 +108,16 @@ Plug 'slim-template/vim-slim',                     { 'for': 'slim' }
 Plug 'kurayama/systemd-vim-syntax',                { 'for': 'systemd' }
 Plug 'sheerun/vim-yardoc',                         { 'for': 'yard' }
 Plug 'tmux-plugins/vim-tmux',                      { 'for': 'tmux' }
+
+" javascript
+Plug 'othree/yajs.vim'
+Plug 'othree/es.next.syntax.vim'
+Plug 'othree/javascript-libraries-syntax.vim'
+Plug 'mxw/vim-jsx'
+Plug '1995eaton/vim-better-javascript-completion'
+Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
+Plug 'othree/jspc.vim'
+Plug 'moll/vim-node'
 
 if v:version >= 702
   Plug 'vim-airline/vim-airline'
@@ -364,9 +371,11 @@ let g:gitgutter_realtime  = -1
 
 
 " gutentags
-if executable('ripper-tags')
-  let g:gutentags_ctags_executable_ruby = 'ripper-tags'
-endif
+" if executable('ripper-tags')
+"   let g:gutentags_ctags_executable_ruby = 'ripper-tags --ignore-unsupported-options'
+" endif
+let g:gutentags_cache_dir = g:cachedir
+let g:gutentags_ctags_exclude = ['node_modules']
 
 
 " javascript-libraries-syntax
