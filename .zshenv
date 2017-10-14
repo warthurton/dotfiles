@@ -3,6 +3,7 @@ typeset -g HISTFILE="$HOME/.shell-history"
 typeset -g SAVEHIST=99999999999
 typeset -g WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
 skip_global_compinit=1
+typeset -g PROMPT="%f%b%k%u%s%n@%m %~ %(!.#.$)%f%b%k%u%s "
 #-----------------------------------------------------------------------------
 zmodload zsh/compctl \
          zsh/complete \

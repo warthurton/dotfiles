@@ -1,17 +1,12 @@
 #-----------------------------------------------------------------------------
 for s in  ~/.shell-common \
           ~/.ghq/github.com/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh \
-          ~/.ghq/github.com/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh \
           ~/.ghq/github.com/zdharma/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh \
           ~/.fzf.zsh
 do
   [[ -f "$s" ]] && source "$s"
 done
 #-----------------------------------------------------------------------------
-fpath=($HOME/.ghq/github.com/zsh-users/zsh-completions/src "$HOME/.config/zsh/site-functions" $fpath)
-typeset -gU fpath path
-#-----------------------------------------------------------------------------
-# export PROMPT="%f%b%k%u%s%n@%m %~ %(!.#.$)%f%b%k%u%s "
 export PROMPT="\$(build_left_prompt)"
 export RPROMPT=""
 
@@ -19,7 +14,7 @@ alias -g M='|& $PAGER'
 bindkey -e
 bindkey -m 2>/dev/null
 
-autoload -Uz compinit colors add-zsh-hook
+autoload -Uz compinit colors
 compinit -C
 colors
 #-----------------------------------------------------------------------------

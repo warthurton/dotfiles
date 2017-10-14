@@ -43,24 +43,39 @@ fi
 # --------------------------------------------------------------------------
 # gpg-agent, only for linux, on OS X use gpgtools instead
 
-if [[ "${OSTYPE:0:5}" = "linux" ]] && command -v gpg >/dev/null 2>/dev/null ; then
+__setup-gpg-agent() {
+  command -v gpg >/dev/null 2>/dev/null || return
+
   if [[ -n "$ZSH_VERSION" && -n "$TTY" ]] ; then
     export GPG_TTY="$TTY"
   else
     export GPG_TTY=$(tty)
   fi
 
-  if command -v gpg-agent >/dev/null 2>/dev/null ; then
-    __gav=$(gpg-agent --version | head -1 | cut -f 3 -d ' ')
-    if [[ "${__gav:0:3}" != "2.1"  ]] ; then
-      __gai="$HOME/.gnupg/gpg-agent-info"
-      [[ -z "$GPG_AGENT_INFO" ]] && [[ -f "$__gai" ]] && source "$__gai"
-      [[ -n "$GPG_AGENT_INFO" && -S $(echo "$GPG_AGENT_INFO" | cut -f 1 -d :) ]] || unset GPG_AGENT_INFO
-      [[ -z "$GPG_AGENT_INFO" ]] && eval "$(gpg-agent --daemon --write-env-file "$__gai")"
-      [[ -n "$GPG_AGENT_INFO" ]] && [[ -S $(echo "$GPG_AGENT_INFO" | cut -f 1 -d :) ]] && export GPG_AGENT_INFO
-    fi
+  command -v gpg-agent >/dev/null 2>/dev/null || return
+
+  __gav=$(gpg-agent --version | head -1 | cut -f 3 -d ' ')
+  __gai="$HOME/.gnupg/gpg-agent-info"
+
+  # [[ "${__gav:0:3}" != "2.1"  ]] && return
+  # if [[ "${__gav:0:3}" == "2.2.1"  ]] ; then
+  #   [[ -z "$GPG_AGENT_INFO" ]] && eval "$(gpg-agent --daemon)"
+  # fi
+
+  [[ -z "$GPG_AGENT_INFO" ]] && [[ -f "$__gai" ]] && source "$__gai"
+  [[ -n "$GPG_AGENT_INFO" && -S $(echo "$GPG_AGENT_INFO" | cut -f 1 -d :) ]] || unset GPG_AGENT_INFO
+
+  if [[ "${__gav:0:3}" != "2.2.1"  ]] ; then
+    [[ -z "$GPG_AGENT_INFO" ]] && eval "$(gpg-agent --daemon)"
+  else
+    [[ -z "$GPG_AGENT_INFO" ]] && eval "$(gpg-agent --daemon --write-env-file "$__gai")"
   fi
-fi
+
+  [[ -n "$GPG_AGENT_INFO" ]] && [[ -S $(echo "$GPG_AGENT_INFO" | cut -f 1 -d :) ]] && export GPG_AGENT_INFO
+}
+
+[[ "${OSTYPE:0:5}" = "linux" ]] && __setup-gpg-agent
+  
 
 # --------------------------------------------------------------------------
 # ssh-agent, only for OS X

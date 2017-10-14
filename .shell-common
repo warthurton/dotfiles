@@ -5,7 +5,6 @@ if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
   alias ls="/bin/ls -FG"
   alias l="ls -lO"
   alias p="ps -Af"
-  alias update_brew="brew update --all && brew upgrade && brew prune && brew cleanup && brew outdated"
   alias start="simple_launchctl load"
   alias stop="simple_launchctl unload"
 
