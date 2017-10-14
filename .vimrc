@@ -82,6 +82,7 @@ Plug 'Shougo/vimshell'
 Plug 'tomtom/tcomment_vim'
 Plug 'vim-ruby/vim-ruby'
 Plug 'w0rp/ale'
+Plug 'ruby-formatter/rufo-vim'
 
 " Plug 'mattn/emmet-vim'
 " Plug 'skalnik/vim-vroom'
@@ -425,6 +426,12 @@ let g:ruby_spellcheck_strings = 1
 let g:rubycomplete_buffer_loading = 1
 let g:rubycomplete_rails = 1
 let g:rubycomplete_load_gemfile = 1
+
+
+" rufo
+let g:rufo_auto_formatting = 1
+
+
 
 " " Specky
 " let g:speckyBannerKey        = '<leader>sb'

@@ -6,7 +6,7 @@ declare -a _taps=('neovim/neovim')
 
 declare -a _brews=(arping bash bash-completion bundler-completion catimg checkbashisms cmake coreutils cscope csv-fix ctags curl direnv docker-clean docker-completion docker-compose-completion emojify exercism fdupes ffmpeg figlet gem-completion ghq gibo gist git git-extras git-hooks git-lfs gnu-sed gnu-tar gnu-time graphicsmagick graphviz hadolint heroku heroku-toolbelt html2text htop-osx imagemagick jq lame leiningen less lua luajit macvim miniupnpc mmv mobile-shell moreutils msgpack mtr neovim netcat nethack nmap no-more-secrets open-completion openssh openssl osxutils p7zip phantomjs pidof pv python python3 qpdf rails-completion rake-completion recode redis rmlint rsync ruby ruby-build ruby-completion sdl sdl2 sdl_net sdl_sound shellcheck socat spring-completion sqlite ssh-copy-id tcping the_silver_searcher tidy-html5 tmate tmux tofrodos uni2ascii vim webp wget x264 x265 xvid xz youtube-dl zlib zsh)
 
-declare -a _gems=(brakeman foodcritic haml_lint mdl slim_lint sqlint pry-byebug pry-doc did_you_mean did_you_mean looksee irbtools irbtools-more wirb gem-ctags gem-browse ripper-tags neovim travis cucumber_lint cocoapods)
+declare -a _gems=(brakeman foodcritic haml_lint mdl slim_lint sqlint pry-byebug pry-doc did_you_mean did_you_mean looksee irbtools irbtools-more wirb gem-ctags gem-browse ripper-tags neovim travis cucumber_lint cocoapods rufo)
 
 declare -a _pips=(ansible-lint proselint vim-vint yamllint flootty doge neovim)
 
