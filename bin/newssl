@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+_newssl() {
+  local h="$1"
+  [[ -z $h ]] && return
+  local key="${h}.key"
+  local req="${h}.req"
+  local crt="${h}.crt"
+  local pem="${h}.pem"
+  cat <<-REQ > "${req}"
+      [req]
+      distinguished_name = dn
+      x509_extensions    = exts
+      prompt             = no
+      [dn]
+      C                  = US
+      ST                 = New York
+      L                  = Rochester
+      OU                 = ${h}
+      CN                 = ${h}
+      [exts]
+      subjectAltName     = @alts
+      [alts]
+      DNS.1              = ${h}
+REQ
+
+  openssl genrsa -out "${key}" 4096 >&/dev/null
+  openssl req -new -x509 -days 3650 -utf8 -sha512 -key "${key}" -out "${crt}" -reqexts exts -batch -config "${req}"
+  cat "${crt}" "${key}" > "${pem}" && rm "${key}" "${crt}" "${req}"
+}
+
+_newssl "$1"

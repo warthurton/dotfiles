@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # --------------------------------------------------------------------------
 export HISTCONTROL=ignoreboth
 export HISTFILE="$HOME/.shell-history"
@@ -10,7 +9,7 @@ set -o emacs -o monitor -o notify
 shopt -qs checkwinsize cmdhist expand_aliases histappend hostcomplete histverify interactive_comments nocaseglob nocasematch no_empty_cmd_completion progcomp promptvars sourcepath
 shopt -qu mailwarn
 
-if [[ "$BASH_VERSINFO" -gt "3" ]] ; then
+if [[ "${BASH_VERSINFO[0]}" -gt "3" ]] ; then
   shopt -qs autocd checkjobs
 fi
 

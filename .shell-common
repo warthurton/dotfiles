@@ -1,5 +1,8 @@
 # Aliases & Functions for Interactive shells -------------------------------
 
+#-----------------------------------------------------------------------------
+[[ -s "$HOME/.shell-prv" ]] && source "$HOME/.shell-prv"
+
 # OS X ---------------------------------------------------------------------
 if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
   alias ls="/bin/ls -FG"
@@ -25,19 +28,12 @@ elif [[ "${OSTYPE:0:5}" = "linux" ]] ; then
   alias ls="/bin/ls --color=auto -F"
   alias l="ls -l"
   alias p="ps auxOU"
-  alias agu="sudo apt-get update -qq; sudo aptitude safe-upgrade"
   alias ubuntu_add_key='sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80'
 fi
 # ---------------------------------------------------------------------------
-# if [[ -d "/usr/syno" ]] ; then
-#   if [[ "$(which ps)" == "/usr/bin/ps" ]] ; then
-#     alias p="ps w"
-#   fi
-# fi
-# ---------------------------------------------------------------------------
 if command -v ag >/dev/null 2>/dev/null ; then
   alias ag="ag --pager=less --color-match='1;36'"
-  alias ag_next='g $(git diff --name-only master..HEAD . | sed -e "s/^/ --ignore=/")'
+  alias ag_next='git $(git diff --name-only master..HEAD . | sed -e "s/^/ --ignore=/")'
 fi
 # ---------------------------------------------------------------------------
 alias list_to_regex="sed -e 's/[^0-9]//g' | tr '\n' '|' | sed -e 's/^/(/' -e 's/\|$/)/'"
@@ -47,7 +43,6 @@ alias ll="l -A"
 alias la="ls -A"
 alias live_ip='dig +short myip.opendns.com @resolver1.opendns.com || curl -f4L http://ifconfig.me'
 alias to_csv='soffice --convert-to csv --headless'
-# alias predate="xargs -I{} bash -c \"printf '%(%F %T)T ' -1 ; echo '{}'\""
 alias v=vim
 alias dc=docker-compose
 # ---------------------------------------------------------------------------
@@ -94,7 +89,6 @@ am_i_someone_else() {
   local -A _counts
 
   while read -r _owner ; do
-
     if [[ -z "${_counts[$_owner]}" ]] ; then
       _owners+=($_owner)
       _counts[$_owner]=1
@@ -112,19 +106,12 @@ am_i_someone_else() {
 
 # Ruby ---------------------------------------------------------------------
 alias be="bundle exec"
-alias ber='bundle exec rspec'
-alias berd='bundle exec rspec -f d'
 
 httpd() {
   port="${1:-8000}"
 
   command -v open >/dev/null 2>/dev/null && (sleep 1 && open "http://127.0.0.1:$port" &)
-
-  if command -v ruby >/dev/null 2>/dev/null ; then
-    ruby -run -e httpd . -p "$port"
-  elif command -v python  >/dev/null 2>/dev/null ; then
-    python -m SimpleHTTPServer "$port"
-  fi
+  python -m SimpleHTTPServer "$port"
 }
 # Git ---------------------------------------------------------------------
 function pubgit() {
@@ -141,61 +128,10 @@ alias gco='git checkout'
 alias gps='git push'
 alias gpl='git pull'
 
-# confsync() {
-#   cd ~
-#   for host in "$@" ; do
-#     pubgit ls-files | rsync -iaxR --files-from=- . "${host//":"/}:"
-#     prvgit ls-files | rsync -iaxR --files-from=- . "${host//":"/}:"
-#   done
-# }
-
-# openssl ---------------------------------------------------------------------
-newssl() {
-  local h="$1"
-  [[ -z $h ]] && return
-  local key="${h}.key"
-  local req="${h}.req"
-  local crt="${h}.crt"
-  local pem="${h}.pem"
-  cat <<-REQ > "${req}"
-      [req]
-      distinguished_name = dn
-      x509_extensions    = exts
-      prompt             = no
-      [dn]
-      C                  = US
-      ST                 = New York
-      L                  = Rochester
-      OU                 = ${h}
-      CN                 = ${h}
-      [exts]
-      subjectAltName     = @alts
-      [alts]
-      DNS.1              = ${h}
-REQ
-
-  openssl genrsa -out "${key}" 4096 >&/dev/null
-  openssl req -new -x509 -days 3650 -utf8 -sha512 -key "${key}" -out "${crt}" -reqexts exts -batch -config "${req}"
-  cat "${crt}" "${key}" > "${pem}" && rm "${key}" "${crt}" "${req}"
-}
-
-ssl_pin_sha256() {
-  local _cert="$1"
-  local _tmp="${HOME}/.$$.key"
-  openssl x509 -noout -in "${_cert}" -pubkey | openssl asn1parse -noout -inform pem -out "$_tmp"
-  openssl dgst -sha256 -binary "$_tmp" | openssl enc -base64
-  rm "$_tmp"
-}
-#-----------------------------------------------------------------------------
-for script in "$HOME/.shell-prv" ; do
-  [ -s "$script" ] && source "$script"
-done
 #-----------------------------------------------------------------------------
 [[ -z "$PS1" ]] && return
 [[ "${XPC_SERVICE_NAME:0:13}" == "com.jetbrains" ]] && return  # RubyyMine etc...
 #-----------------------------------------------------------------------------
-for script in "$HOME/.base16_theme" ; do
-  [ -s "$script" ] && source "$script"
-done
+[[ -s "$HOME/.base16_theme" ]] && source "$HOME/.base16_theme"
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:

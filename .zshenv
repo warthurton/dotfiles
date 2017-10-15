@@ -90,4 +90,4 @@ for s in ~/.shell-path ~/.shell-env ; do
   [[ -f "$s" ]] && source "$s"
 done
 #-----------------------------------------------------------------------------
-# vim: set syntax=sh ft=zsh sw=2 ts=2 expandtab:
+# vim: set syntax=zsh ft=zsh sw=2 ts=2 expandtab:

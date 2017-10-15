@@ -1,7 +1,6 @@
 # --------------------------------------------------------------------------
 umask 022
 
-# export LC_COLLATE=C
 export BROWSER=open
 export EDITOR=vim
 export VISUAL=vim
@@ -9,7 +8,7 @@ export PAGER=less
 export LESS="iRQXF"
 export HISTSIZE=100000
 export MAILCHECK=0
-export SHELLCHECK_OPTS="--shell=bash --exclude=SC2001,SC1090,SC2164,SC2068"
+export SHELLCHECK_OPTS="--shell=bash --exclude=SC2001,SC1090,SC2164,SC2068,SC2181"
 export GOPATH="$HOME/.go"
 
 if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
@@ -19,7 +18,7 @@ elif [[ "${OSTYPE:0:5}" = "linux" ]] ; then
 fi
 
 if [[ -n "$TMUX" ]] ; then
-  echo $TMUX | grep -q tmate && alias tmux=tmate
+  echo "$TMUX" | grep -q tmate && alias tmux=tmate
 fi
 
 if command -v rg >&/dev/null ; then
@@ -43,65 +42,7 @@ fi
 # --------------------------------------------------------------------------
 # gpg-agent, only for linux, on OS X use gpgtools instead
 
-__setup-gpg-agent() {
-  command -v gpg >/dev/null 2>/dev/null || return
-
-  if [[ -n "$ZSH_VERSION" && -n "$TTY" ]] ; then
-    export GPG_TTY="$TTY"
-  else
-    export GPG_TTY=$(tty)
-  fi
-
-  command -v gpg-agent >/dev/null 2>/dev/null || return
-
-  __gav=$(gpg-agent --version | head -1 | cut -f 3 -d ' ')
-  __gai="$HOME/.gnupg/gpg-agent-info"
-
-  # [[ "${__gav:0:3}" != "2.1"  ]] && return
-  # if [[ "${__gav:0:3}" == "2.2.1"  ]] ; then
-  #   [[ -z "$GPG_AGENT_INFO" ]] && eval "$(gpg-agent --daemon)"
-  # fi
-
-  [[ -z "$GPG_AGENT_INFO" ]] && [[ -f "$__gai" ]] && source "$__gai"
-  [[ -n "$GPG_AGENT_INFO" && -S $(echo "$GPG_AGENT_INFO" | cut -f 1 -d :) ]] || unset GPG_AGENT_INFO
-
-  if [[ "${__gav:0:3}" != "2.2.1"  ]] ; then
-    [[ -z "$GPG_AGENT_INFO" ]] && eval "$(gpg-agent --daemon)"
-  else
-    [[ -z "$GPG_AGENT_INFO" ]] && eval "$(gpg-agent --daemon --write-env-file "$__gai")"
-  fi
-
-  [[ -n "$GPG_AGENT_INFO" ]] && [[ -S $(echo "$GPG_AGENT_INFO" | cut -f 1 -d :) ]] && export GPG_AGENT_INFO
-}
-
-[[ "${OSTYPE:0:5}" = "linux" ]] && __setup-gpg-agent
-  
-
-# --------------------------------------------------------------------------
-# ssh-agent, only for OS X
-
-if [[ -z "$_SSH_MAJOR_VER" && -z "$_SSH_MINOR_VER" ]] ; then
-  if command -v ssh >/dev/null 2>/dev/null ; then
-    declare -i _SSH_MAJOR_VER
-    declare -i _SSH_MINOR_VER
-    read -r _SSH_MAJOR_VER _SSH_MINOR_VER < <(ssh -V 2>&1 | sed -e 's/^[a-zA-Z]*_\([1-9][0-9]*\)\.\([0-9][0-9]*\).*$/\1 \2/')
-    export _SSH_MAJOR_VER _SSH_MINOR_VER
-  fi
-fi
-
-if [[ "${OSTYPE:0:6}" = "darwin" && -n "$_SSH_MAJOR_VER" && -n "$_SSH_MINOR_VER" && -n "$SSH_AUTH_SOCK" && -S "$SSH_AUTH_SOCK" ]] ; then
-  if (( (_SSH_MAJOR_VER = 6 && _SSH_MINOR_VER >= 6) || _SSH_MAJOR_VER >= 7 )) ; then
-    ssh-add -m -M >&/dev/null
-  elif (( _SSH_MAJOR_VER = 6 && _SSH_MINOR_VER < 6 )) ; then
-    ssh-add -A -K >&/dev/null
-  fi
-fi
-
-if [[ -n "$SSH_AUTH_SOCK" && ! -S "$SSH_AUTH_SOCK" ]] ; then
-  SSH_AUTH_SOCK=$(find /tmp -maxdepth 2 -type s -path '/tmp/ssh-*' 2>/dev/null | head -1)
-  [[ -z "$SSH_AUTH_SOCK" || ! -S "$SSH_AUTH_SOCK" ]] && unset SSH_AUTH_SOCK
-  export SSH_AUTH_SOCK
-fi
+[[ "${OSTYPE:0:5}" = "linux" ]] && command -v gpgconf >/dev/null 2>/dev/null && gpgconf --launch gpg-agent
 
 # --------------------------------------------------------------------------
 [[ -z "$PS1" ]] && return

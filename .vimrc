@@ -234,7 +234,7 @@ else
 endif
 
 let g:mapleader = ','
-
+let g:is_bash = 1
 
 " airline
 if !exists('g:airline_symbols')
