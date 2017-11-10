@@ -11,13 +11,6 @@ export MAILCHECK=0
 export SHELLCHECK_OPTS="--shell=bash --exclude=SC2001,SC1090,SC2164,SC2068,SC2155"
 export GOPATH="$HOME/.go"
 
-declare -xa DTU_BREW_TAPS=(neovim/neovim)
-declare -xa DTU_BREWS=(arping asciiquarium bash bash-completion bundler-completion catimg checkbashisms cmake coreutils cscope csv-fix ctags curl direnv docker-clean docker-completion docker-compose-completion emojify exercism fasd fdupes ffmpeg figlet gem-completion ghq gibo gist git git-extras git-hooks git-lfs gnu-sed gnu-tar gnu-time graphicsmagick graphviz hadolint heroku html2text htop imagemagick jq lame leiningen less lua luajit macvim miniupnpc mmv mosh moreutils msgpack mtr neovim netcat nethack nmap no-more-secrets open-completion openssh openssl osxutils p7zip phantomjs pidof pv python python3 qpdf rails-completion rake-completion recode redis rmlint rsync ruby ruby-build ruby-completion sdl sdl2 sdl_net sdl_sound shellcheck socat spring-completion sqlite ssh-copy-id tcping the_silver_searcher tidy-html5 tmate tmux tofrodos uni2ascii vim webp wget x264 x265 xvid xz youtube-dl zlib zsh)
-declare -xa DTU_GEMS=(brakeman foodcritic haml_lint mdl slim_lint sqlint pry-byebug pry-doc did_you_mean did_you_mean looksee irbtools irbtools-more wirb gem-ctags gem-browse ripper-tags neovim travis cucumber_lint cocoapods)
-declare -xa DTU_PIPS=(ansible-lint proselint vim-vint yamllint doge neovim)
-declare -xa DTU_NPMS=(babel-eslint eslint eslint-config-prettier eslint-config-standard eslint-plugin-flowtype eslint-plugin-import eslint-plugin-jasmine eslint-plugin-jest eslint-plugin-node eslint-plugin-prettier eslint-plugin-promise eslint-plugin-react eslint-plugin-standard jasmine jest-cli neovim-client prettier prettier-eslint-cli react-devtools stylelint ternjs yarn)
-declare -xa DTU_CARGOS=(parallel racer ripgrep svgbob_cli xsv)
-
 if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
   export LSCOLORS="Gxfxcxdxbxegedabagacad"
 elif [[ "${OSTYPE:0:5}" = "linux" ]] ; then
