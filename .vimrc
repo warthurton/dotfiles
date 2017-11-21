@@ -429,7 +429,7 @@ let g:rubycomplete_load_gemfile = 1
 
 
 " rufo
-let g:rufo_auto_formatting = 1
+let g:rufo_auto_formatting = 0
 
 
 
