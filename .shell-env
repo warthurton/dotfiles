@@ -42,7 +42,7 @@ fi
 # --------------------------------------------------------------------------
 # gpg-agent, only for linux, on OS X use gpgtools instead
 
-[[ "${OSTYPE:0:5}" = "linux" ]] && command -v gpgconf >/dev/null 2>/dev/null && gpgconf --launch gpg-agent
+# [[ "${OSTYPE:0:5}" = "linux" ]] && command -v gpgconf >/dev/null 2>/dev/null && gpgconf --launch gpg-agent
 
 # --------------------------------------------------------------------------
 [[ -z "$PS1" ]] && return

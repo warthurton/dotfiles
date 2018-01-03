@@ -82,6 +82,7 @@ ps_owners() {
 }
 
 am_i_someone_else() {
+  ps aux | grep -q '^root' || return 1
   [[ -n "${BASH_VERSINFO[0]}" && "${BASH_VERSINFO[0]}" -lt 4 ]] && return 1
   [[ -n "${BASH_VERSINFO[1]}" && "${BASH_VERSINFO[1]}" -lt 4 ]] && return 1
 
@@ -114,13 +115,18 @@ httpd() {
   python -m SimpleHTTPServer "$port"
 }
 # Git ---------------------------------------------------------------------
-function pubgit() {
-  git --git-dir="$HOME/.git-pub-dotfiles" --work-tree="$HOME" "$@"
-}
 
-function prvgit() {
-  git --git-dir="$HOME/.git-prv-dotfiles" --work-tree="$HOME" "$@"
-}
+if [[ -d "$HOME/.git-pub-dotfiles" ]] ; then
+  function pubgit() {
+    git --git-dir="$HOME/.git-pub-dotfiles" --work-tree="$HOME" "$@"
+  }
+fi
+
+if [[ -d "$HOME/.git-prv-dotfiles" ]] ; then
+  function prvgit() {
+    git --git-dir="$HOME/.git-prv-dotfiles" --work-tree="$HOME" "$@"
+  }
+fi
 
 alias g=git
 alias gst='git status'
