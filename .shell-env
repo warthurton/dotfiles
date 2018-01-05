@@ -43,15 +43,15 @@ fi
 # gpg-agent, only for linux, on OS X use gpgtools instead
 
 # [[ "${OSTYPE:0:5}" = "linux" ]] && command -v gpgconf >/dev/null 2>/dev/null && gpgconf --launch gpg-agent
-
+# --------------------------------------------------------------------------
+[[ -s "$HOME/.config/base16-shell" ]] && export BASE16_SHELL="$HOME/.config/base16-shell"
 # --------------------------------------------------------------------------
 [[ -z "$PS1" ]] && return
+
 [[ "${XPC_SERVICE_NAME:0:13}" == "com.jetbrains" ]] && return  # RubyyMine etc...
 # --------------------------------------------------------------------------
 if [[ -s "$HOME/.config/base16-shell/profile_helper.sh" ]] ; then
-  export BASE16_SHELL="$HOME/.config/base16-shell"
   eval "$("$BASE16_SHELL"/profile_helper.sh)"
 fi
-
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:
