@@ -55,6 +55,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-haml', { 'for': 'haml' }
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-rake'
+Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-vinegar'
@@ -69,26 +70,23 @@ Plug 'junegunn/vim-emoji'
 Plug 'junegunn/vim-slash'
 
 Plug 'AndrewRadev/splitjoin.vim'
+" Plug 'Chiel92/vim-autoformat'
+Plug 'Shougo/vimproc.vim', {'do' : 'make'}
+Plug 'Shougo/vimshell'
 Plug 'airblade/vim-gitgutter'
 Plug 'albfan/ag.vim'
 Plug 'chriskempson/base16-vim'
 Plug 'godlygeek/tabular'
 Plug 'jreybert/vimagit'
 Plug 'majutsushi/tagbar'
+Plug 'mattn/emmet-vim'
 Plug 'mbbill/undotree'
 Plug 'scrooloose/nerdtree'
-" Plug 'Shougo/vimproc.vim', {'do' : 'make'}
-Plug 'Shougo/vimshell'
+Plug 'skalnik/vim-vroom'
 Plug 'tomtom/tcomment_vim'
 Plug 'vim-ruby/vim-ruby'
+Plug 'vim-scripts/Specky'
 Plug 'w0rp/ale'
-Plug 'ruby-formatter/rufo-vim'
-
-" Plug 'mattn/emmet-vim'
-" Plug 'skalnik/vim-vroom'
-" Plug 'vim-scripts/Specky'
-
-Plug 'Chiel92/vim-autoformat'
 
 " Filetypes
 Plug 'kchmck/vim-coffee-script',                   { 'for': 'coffee' }
@@ -140,11 +138,11 @@ let g:use_neocomplete = 0
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   Plug 'Shougo/deoplete-rct', { 'do': ':UpdateRemotePlugins' }
-elseif v:version >= 703 && has('lua')
-  let g:use_neocomplete = 1
-  Plug 'Shougo/neocomplete.vim'
-elseif v:version >= 704 && has('python')
-  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --system-libclang --clang-completer --racer-completer --tern-completer' }
+" elseif v:version >= 703 && has('lua')
+"   let g:use_neocomplete = 1
+"   Plug 'Shougo/neocomplete.vim'
+" elseif v:version >= 704 && has('python')
+"   Plug 'Valloric/YouCompleteMe', { 'do': './install.py --system-libclang --clang-completer --racer-completer --tern-completer' }
 else
   Plug 'maralla/completor.vim', { 'do': 'make js' }
 endif
@@ -298,6 +296,11 @@ let g:ale_javascript_xo_use_global = 0
 let g:ale_ruby_rubocop_options = '-EDS'
 
 
+" autoformat
+let g:autoformat_autoindent = 0
+let g:autoformat_retab = 1
+let g:autoformat_remove_trailing_spaces = 1
+
 " better-javascript-completion
 let g:vimjs#casesensistive = 0
 let g:vimjs#smartcomplete = 1
@@ -329,11 +332,11 @@ if has('nvim')
 endif
 " Likewise, Files command with preview window
 command! -bang -nargs=? -complete=dir Files
-  \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
+      \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
 let g:fzf_action = {
-  \ 'ctrl-t': 'tab split',
-  \ 'ctrl-x': 'split',
-  \ 'ctrl-v': 'vsplit' }
+      \ 'ctrl-t': 'tab split',
+      \ 'ctrl-x': 'split',
+      \ 'ctrl-v': 'vsplit' }
 let g:fzf_layout = { 'down': '~50%' }
 let g:fzf_tags_command = 'ctags -R'
 let g:fzf_buffers_jump = 1
@@ -365,22 +368,17 @@ let g:gitgutter_enabled   = 1
 let g:gitgutter_max_signs = 10000
 let g:gitgutter_realtime  = -1
 
-" let g:gitgutter_sign_added = emoji#for('small_blue_diamond')
-" let g:gitgutter_sign_modified = emoji#for('small_orange_diamond')
-" let g:gitgutter_sign_removed = emoji#for('small_red_triangle')
-" let g:gitgutter_sign_modified_removed = emoji#for('collision')
-
 
 " gutentags
-" if executable('ripper-tags')
-"   let g:gutentags_ctags_executable_ruby = 'ripper-tags --ignore-unsupported-options'
-" endif
+if executable('ripper-tags')
+  let g:gutentags_ctags_executable_ruby = 'ripper-tags --ignore-unsupported-options'
+endif
 let g:gutentags_cache_dir = g:cachedir
 let g:gutentags_ctags_exclude = ['node_modules']
 
 
 " javascript-libraries-syntax
-let g:used_javascript_libs = 'jquery,react,jasmine,d3'
+let g:used_javascript_libs = 'jquery,react'
 
 
 " nerdtree
@@ -410,6 +408,7 @@ if g:use_neocomplete
   endfunction
 endif
 
+
 " rspec
 let g:rspec_command = 'Dispatch rspec {spec}'
 map <Leader>t :call RunCurrentSpecFile()<CR>
@@ -430,7 +429,6 @@ let g:rubycomplete_load_gemfile = 1
 
 " rufo
 let g:rufo_auto_formatting = 0
-
 
 
 " " Specky
@@ -487,28 +485,27 @@ nmap <leader>u :UndotreeToggle<CR>
 vmap <leader>u :UndotreeToggle<CR>
 
 
-" " vroom
-" let g:vroom_cucumber_path = '__run=cucumber ; bundle show spinach >& /dev/null && __run=spinach ; bundle exec $__run'
-" let g:vroom_map_keys = 1
-" let g:vroom_use_colors = 1
-" let g:vroom_use_spring = 0
-" let g:vroom_use_vimux = 0
-" if has('nvim')
-"    let g:vroom_use_terminal = 1
-" else
-"   let g:vroom_use_vimshell = 1
-" endif
+" vroom
+let g:vroom_cucumber_path = '__run=cucumber ; bundle show spinach >& /dev/null && __run=spinach ; bundle exec $__run'
+let g:vroom_map_keys = 1
+let g:vroom_use_colors = 1
+let g:vroom_use_spring = 0
+let g:vroom_use_vimux = 0
+if has('nvim')
+  let g:vroom_use_terminal = 1
+else
+  let g:vroom_use_vimshell = 1
+endif
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 augroup RememberLastPosition
   autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+  autocmd BufReadPost COMMIT_EDITMSG,PULLREQ_EDITMSG call setpos('.', [0, 1, 1, 0])
 augroup END
 
 augroup GitCommits
-  autocmd!
-  autocmd FileType gitcommit            nested setlocal nospell
-  autocmd VimEnter .git/PULLREQ_EDITMSG nested setlocal filetype=markdown
+  autocmd FileType gitcommit nested setlocal nospell
 augroup END
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -575,8 +572,8 @@ vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
 map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
-\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
-\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+      \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+      \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
 function ShutUp()
   :ALEToggle
@@ -590,11 +587,12 @@ syntax on
 filetype plugin indent on
 set omnifunc=syntaxcomplete#Complete
 
-if !empty($BASE16_THEME)
-  let g:base16colorspace = 256
-  let g:base16_shell_path =  SafeDirectory('~/.config/base16-shell/scripts')
+let g:base16colorspace = 256
+let g:base16_shell_path =  SafeDirectory('~/.config/base16-shell/scripts')
+
+if isdirectory(expand(g:vimhome . '/plugged/base16-vim')) && !empty($BASE16_THEME)
   colorscheme $BASE16_THEME
-  hi LineNr ctermfg=236 ctermbg=234
+  " hi LineNr ctermfg=236 ctermbg=234
   hi Error ctermfg=11 ctermbg=none guifg='#ffff00' guibg='#000000'
 endif
 
