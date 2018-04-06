@@ -1,10 +1,10 @@
 # This is a comment
 
 brew:
-  sidaf/pentest       # This is also a comment
-  caskroom/fonts
   caskroom/drivers
+  caskroom/fonts
   habitat-sh/habitat
+  sidaf/pentest       # This is also a comment
 
 brewed:
   arping
@@ -31,7 +31,6 @@ brewed:
   ffmpeg
   figlet
   gem-completion
-  ghq
   gibo
   gist
   git
@@ -45,6 +44,7 @@ brewed:
   graphviz
   hab
   hadolint
+  handbrake
   heroku
   html2text
   htop
@@ -56,11 +56,13 @@ brewed:
   less
   lua
   luajit
-  macvim
   miniupnpc
+  mkvtoolnix
   mmv
   mosh
   moreutils
+  mp4v2
+  mpv
   msgpack
   mtr
   neovim
@@ -76,8 +78,7 @@ brewed:
   phantomjs
   pidof
   pv
-  python
-  python3
+  python2
   qpdf
   rails-completion
   rake-completion
@@ -104,81 +105,95 @@ brewed:
   tmux
   tofrodos
   uni2ascii
-  vim
   webp
   wget
   x264
   x265
   xvid
   xz
-  yarn
   youtube-dl
   zlib
   zsh
 
-gems:
+gem:
   brakeman
+  cocoapods
+  cucumber_lint
+  did_you_mean
   foodcritic
+  gem-browse
+  gem-ctags
   haml_lint
-  mdl
-  slim_lint
-  sqlint
-  pry-byebug
-  pry-doc
-  did_you_mean
-  did_you_mean
-  looksee
   irbtools
   irbtools-more
-  wirb
-  gem-ctags
-  gem-browse
+  looksee
+  mailcatcher
+  mdl
+  neovim
+  pry-byebug
+  pry-doc
   ripper-tags
   rufo
-  neovim
+  slim_lint
+  solargraph
+  sqlint
   travis
-  cucumber_lint
-  cocoapods
+  video_transcoding
+  wirb
 
-pips:
+pip:
   ansible-lint
-  proselint
-  vim-vint
-  yamllint
   doge
   neovim
+  proselint
+  solargraph-utils.py
+  vim-vint
+  virtualenv
+  yamllint
+  yarn
 
-npms:
+npm:
   babel-eslint
+  bower
   eslint
+  eslint-config-airbnb-base
   eslint-config-prettier
-  eslint-config-standard
-  eslint-plugin-flowtype
+  eslint-plugin-angular
   eslint-plugin-import
   eslint-plugin-jasmine
   eslint-plugin-jest
+  eslint-plugin-lodash
   eslint-plugin-node
   eslint-plugin-prettier
   eslint-plugin-promise
-  eslint-plugin-react
-  eslint-plugin-standard
+  grunt-cli
   jasmine
   jest-cli
-  neovim-client
+  neovim
   prettier
   prettier-eslint-cli
-  react-devtools
+  sqlite-json
   stylelint
   ternjs
+  ttystudio
 
-cargos:
+cargo:
   parallel
   racer
   ripgrep
   svgbob_cli
   xsv
 
-gits:
+git:
   $HOME/.config
   $HOME/src
+
+go:
+  github.com/sugyan/ttygif
+  github.com/eliukblau/pixterm
+  github.com/ericchiang/pup
+  github.com/olivere/iterm2-imagetools/cmd/imgcat
+  github.com/olivere/iterm2-imagetools/cmd/imgls
+  github.com/schachmat/wego
+  github.com/rs/jplot
 

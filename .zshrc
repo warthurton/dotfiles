@@ -1,7 +1,7 @@
 #-----------------------------------------------------------------------------
 for s in  ~/.shell-common \
-          ~/.ghq/github.com/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh \
-          ~/.ghq/github.com/zdharma/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh \
+          ~/.config/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh \
+          ~/.config/zsh/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh \
           ~/.fzf.zsh
 do
   [[ -f "$s" ]] && source "$s"
@@ -20,8 +20,7 @@ colors
 #-----------------------------------------------------------------------------
 typeset -g -A __preferred_languages=(
   ruby .ruby-version
-  nodejs .node-version
-  elixir .elixir-version
+  nodejs .nvmrc
 )
 typeset -g -A __language_versions
 
@@ -211,34 +210,46 @@ function build_left_prompt() {
     fi
   fi
 
-  echo -n "${_leading_space}%F{7}%~\n"
-
   # Time
-  echo -n '%F{8}%D{%H:%M:%S} '
+  echo -n "\n%F{8}%D{%H:%M:%S}"
 
   if am_i_someone_else ; then
-    echo -n '%F{9}__%n__'
-  else
-    echo -n '%F{4}%n'
+    echo -n ' %F{9}__%n__'
   fi
 
-  # host
-  if [[ -z $TMUX ]] ; then
-    case $HOST in
-      Shodan*)
-        echo -n "%F{15}@%F{4}%m"
-        ;;
-      *)
-        echo -n "%F{15}@%F{14}%m"
-        ;;
-    esac
+  # host if remote
+  if [[ -n $SSH_TTY ]] ; then
+    echo -n " %F{15}@%F{14}%m"
   fi
 
   # path
-  echo -n ' %(?.%F{7}.%F{15})%? %(!.#.$) '
+  echo -n ' %F{7}%~ %(?.%F{7}.%F{15})%? %(!.#.$) '
 
   echo "%f%b%k%u%s"
 }
+#-----------------------------------------------------------------------------
+if (( $+commands[nvm] )) ; then
+  autoload -U add-zsh-hook
+  load-nvmrc() {
+    local node_version="$(nvm version)"
+    local nvmrc_path="$(nvm_find_nvmrc)"
+
+    if [ -n "$nvmrc_path" ]; then
+      local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+
+      if [ "$nvmrc_node_version" = "N/A" ]; then
+        nvm install
+      elif [ "$nvmrc_node_version" != "$node_version" ]; then
+        nvm use
+      fi
+    elif [ "$node_version" != "$(nvm version default)" ]; then
+      echo "Reverting to nvm default version"
+      nvm use default
+    fi
+  }
+  add-zsh-hook chpwd load-nvmrc
+  load-nvmrc
+fi
 #-----------------------------------------------------------------------------
 if (( $+commands[direnv] )) ; then
   eval "$(direnv hook zsh)"

@@ -1,7 +1,8 @@
 ---
+:backtrace: false
+:bulk_threshold: 1000
 :sources:
 - https://rubygems.org/
 :update_sources: true
-:verbose: false
-:document: false
-:ssl_verify_mode: 1
+:verbose: true
+gem: "--document=yri"

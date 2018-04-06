@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------
-typeset -g HISTFILE="$HOME/.shell-history"
+typeset -g HISTFILE="$HOME/.zsh_history"
 typeset -g SAVEHIST=99999999999
 typeset -g WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
 skip_global_compinit=1
@@ -60,31 +60,30 @@ unsetopt \
 setopt \
   append_history \
   bang_hist \
+  extended_history \
   hist_allow_clobber \
   hist_fcntl_lock \
-  hist_ignore_dups \
   hist_ignore_space \
   hist_no_store \
   hist_reduce_blanks \
   hist_verify \
-  inc_append_history_time
+  inc_append_history
 
 unsetopt \
-  extended_history \
   hist_find_no_dups \
-  inc_append_history \
   hist_ignore_all_dups \
+  inc_append_history_time \
   share_history
 #-----------------------------------------------------------------------------
-typeset -g _debug_times
-typeset -F SECONDS
-
-function debug_timer() {
-  [[ -z "$_debug_times" ]] && return
-  local _what="$1"
-  local _start="$2"
-  print -f "%d %2.3f %s\n" $$ $(( SECONDS - _start )) "$_what" >> ~/zsh_debug_timer
-}
+# typeset -g _debug_times
+# typeset -F SECONDS
+#
+# function debug_timer() {
+#   [[ -z "$_debug_times" ]] && return
+#   local _what="$1"
+#   local _start="$2"
+#   print -f "%d %2.3f %s\n" $$ $(( SECONDS - _start )) "$_what" >> ~/zsh_debug_timer
+# }
 #-----------------------------------------------------------------------------
 for s in ~/.shell-path ~/.shell-env ; do
   [[ -f "$s" ]] && source "$s"

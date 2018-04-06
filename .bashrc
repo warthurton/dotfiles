@@ -1,9 +1,8 @@
 # --------------------------------------------------------------------------
-export HISTCONTROL=ignoreboth
-export HISTFILE="$HOME/.shell-history"
+export HISTFILE="$HOME/.bash_history"
+export HISTCONTROL=ignorespace
 export HISTFILESIZE=999999999
 export INPUTRC="$HOME/.bash_inputrc"
-export PS1='\t \u@\h \w \$ '
 
 set -o emacs -o monitor -o notify
 shopt -qs checkwinsize cmdhist expand_aliases histappend hostcomplete histverify interactive_comments nocaseglob nocasematch no_empty_cmd_completion progcomp promptvars sourcepath
@@ -14,7 +13,7 @@ if [[ "${BASH_VERSINFO[0]}" -gt "3" ]] ; then
 fi
 
 # --------------------------------------------------------------------------
-for s in "$HOME/.shell-path" "$HOME/.shell-env" "$HOME/.shell-common" "$HOME/.fzf.bash"  ; do
+for s in "$HOME/.shell-path" "$HOME/.shell-env" "$HOME/.shell-common" ; do
   [[ -s "$s" ]] && source "$s"
 done
 # --------------------------------------------------------------------------
@@ -23,6 +22,14 @@ if command -v direnv >/dev/null 2>/dev/null ; then
 fi
 # --------------------------------------------------------------------------
 [[ -z "$PS1" ]] && return
+
+# --------------------------------------------------------------------------
+for s in "$HOME/.fzf.bash"  ; do
+  [[ -s "$s" ]] && source "$s"
+done
+# --------------------------------------------------------------------------
+
+export PS1='\t \u@\h \w \$ '
 # --------------------------------------------------------------------------
 _completion_loader() {
   local _command="$1"
@@ -50,6 +57,9 @@ if ! command -v __git_ps1 >/dev/null 2>/dev/null ; then
 fi
 
 # Colors---------------------------------------------------------------------
+[[ -z $TERM || $TERM = "dumb" || $TERM = "tty" ]] && return
+command -v tput >&/dev/null || return
+# Colors---------------------------------------------------------------------
 _ps1_time_color() { echo -n ''; }
 _ps1_id_color() { echo -n ''; }
 _ps1_id() { echo -n ''; }
@@ -60,8 +70,8 @@ ps1_update() {
   export PS1='\[$__reset\]\[$(_ps1_time_color)\]\t\[$__reset\] \[$(_ps1_id_color)\]$(_ps1_id)\[$__reset\]@\[$(_ps1_time_color)\]\h\[$__reset\]\[$(_ps1_git_color)\]$(_ps1_git)\[$__reset\] \w \$ '
 }
 export PROMPT_COMMAND="ps1_update"
-
-[[ -z $TERM || $TERM = "dumb" ]] && return
+# export PROMPT_COMMAND="history -a; history -n; ${PROMPT_COMMAND}"   # mem/file sync
+# if [[ $- =~ .*i.* ]]; then bind '"\C-r": "\C-a hh -- \C-j"'; fi
 
 __reset=$(tput sgr0)
 
@@ -122,5 +132,10 @@ if command -v git >/dev/null 2>/dev/null ; then
   }
 fi
 
-# --------------------------------------------------------------------------
+if [[ -s "$HOME/.nvm" ]] ; then
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+fi
+
+#--------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:
+

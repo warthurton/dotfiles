@@ -46,15 +46,15 @@ endif
 call plug#begin(SafeDirectory(g:vimhome . '/plugged'))
 
 " tpope
-Plug 'tpope/vim-bundler'
+Plug 'tpope/vim-bundler', { 'for': 'ruby' }
 Plug 'tpope/vim-characterize'
 Plug 'tpope/vim-cucumber', { 'for': 'ruby' }
 Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-endwise', { 'for': 'ruby' }
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-haml', { 'for': 'haml' }
-Plug 'tpope/vim-rails'
-Plug 'tpope/vim-rake'
+Plug 'tpope/vim-rails', { 'for': 'ruby' }
+Plug 'tpope/vim-rake', { 'for': 'ruby' }
 Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
@@ -63,30 +63,32 @@ Plug 'tpope/vim-vinegar'
 " junegunn
 Plug 'junegunn/fzf', { 'dir': '~/.config/fzf', 'do': './install --no-update-rc --key-bindings --completion' }
 Plug 'junegunn/fzf.vim'
-Plug 'junegunn/gv.vim'
-Plug 'junegunn/rainbow_parentheses.vim'
-Plug 'junegunn/vim-easy-align'
-Plug 'junegunn/vim-emoji'
-Plug 'junegunn/vim-slash'
+" Plug 'junegunn/gv.vim'
+" Plug 'junegunn/rainbow_parentheses.vim'
+" Plug 'junegunn/vim-easy-align'
+" Plug 'junegunn/vim-emoji'
+" Plug 'junegunn/vim-slash'
 
+Plug 'mhinz/vim-signify'
 Plug 'AndrewRadev/splitjoin.vim'
-" Plug 'Chiel92/vim-autoformat'
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 Plug 'Shougo/vimshell'
-Plug 'airblade/vim-gitgutter'
 Plug 'albfan/ag.vim'
 Plug 'chriskempson/base16-vim'
 Plug 'godlygeek/tabular'
-Plug 'jreybert/vimagit'
+" Plug 'jreybert/vimagit'
 Plug 'majutsushi/tagbar'
 Plug 'mattn/emmet-vim'
 Plug 'mbbill/undotree'
 Plug 'scrooloose/nerdtree'
-Plug 'skalnik/vim-vroom'
+" Plug 'skalnik/vim-vroom'
 Plug 'tomtom/tcomment_vim'
-Plug 'vim-ruby/vim-ruby'
-Plug 'vim-scripts/Specky'
+Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
+" Plug 'vim-scripts/Specky'
 Plug 'w0rp/ale'
+Plug 'editorconfig/editorconfig-vim'
+
+" Plug 'airblade/vim-gitgutter'
 
 " Filetypes
 Plug 'kchmck/vim-coffee-script',                   { 'for': 'coffee' }
@@ -98,7 +100,7 @@ Plug 'spiegela/vimix',                             { 'for': 'elixir' }
 Plug 'elmcast/elm-vim',                            { 'for': 'elm' }
 Plug 'fatih/vim-go',                               { 'for': 'go' }
 Plug 'ksauzz/haproxy.vim',                         { 'for': 'haproxy' }
-Plug 'othree/html5.vim',                           { 'for': 'html' }
+Plug 'othree/html5.vim'
 Plug 'plasticboy/vim-markdown',                    { 'for': 'markdown' }
 Plug 'mutewinter/nginx.vim',                       { 'for': 'nginx' }
 Plug 'jceb/vim-orgmode',                           { 'for': 'org' }
@@ -109,14 +111,16 @@ Plug 'sheerun/vim-yardoc',                         { 'for': 'yard' }
 Plug 'tmux-plugins/vim-tmux',                      { 'for': 'tmux' }
 
 " javascript
-Plug 'othree/yajs.vim'
-Plug 'othree/es.next.syntax.vim'
-Plug 'othree/javascript-libraries-syntax.vim'
-Plug 'mxw/vim-jsx'
-Plug '1995eaton/vim-better-javascript-completion'
-Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
-Plug 'othree/jspc.vim'
-Plug 'moll/vim-node'
+Plug 'othree/yajs.vim', { 'for': 'javascript' }
+Plug 'othree/es.next.syntax.vim', { 'for': 'javascript' }
+Plug 'othree/javascript-libraries-syntax.vim', { 'for': 'javascript' }
+Plug 'othree/jspc.vim', { 'for': 'javascript' }
+Plug 'isRuslan/vim-es6', { 'for': 'javascript' }
+Plug 'ternjs/tern_for_vim', { 'for': 'javascript', 'do': 'npm install' }
+Plug 'prettier/vim-prettier', { 'for': 'javascript', 'do': 'yarn install' }
+Plug 'moll/vim-node', { 'for': 'javascript' }
+
+" Plug '1995eaton/vim-better-javascript-completion', { 'for': 'javascript' }
 
 if v:version >= 702
   Plug 'vim-airline/vim-airline'
@@ -133,18 +137,26 @@ if executable('ctags')
   Plug 'ludovicchabant/vim-gutentags'
 endif
 
-let g:use_neocomplete = 0
+let g:use_deoplete = 0
 
 if has('nvim')
+  let g:use_deoplete = 1
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-  Plug 'Shougo/deoplete-rct', { 'do': ':UpdateRemotePlugins' }
-" elseif v:version >= 703 && has('lua')
-"   let g:use_neocomplete = 1
-"   Plug 'Shougo/neocomplete.vim'
-" elseif v:version >= 704 && has('python')
-"   Plug 'Valloric/YouCompleteMe', { 'do': './install.py --system-libclang --clang-completer --racer-completer --tern-completer' }
+elseif v:version >= 800 && has('python3')
+  let g:use_deoplete = 1
+  Plug 'Shougo/deoplete.nvim'
+  Plug 'roxma/nvim-yarp'
+  Plug 'roxma/vim-hug-neovim-rpc'
 else
   Plug 'maralla/completor.vim', { 'do': 'make js' }
+endif
+
+if g:use_deoplete
+  Plug 'uplus/deoplete-solargraph'
+  Plug 'zchee/deoplete-zsh'
+  Plug 'slashmili/alchemist.vim', { 'for': 'elixir' }
+  Plug 'sebastianmarkow/deoplete-rust', { 'for': 'rust' }
+  Plug 'carlitux/deoplete-ternjs', { 'for': 'javascript', 'do': 'npm install -g tern' }
 endif
 
 call plug#end()
@@ -284,22 +296,29 @@ nmap <leader>+ <Plug>AirlineSelectNextTab
 " ale
 let g:ale_change_sign_column_color = 0
 let g:ale_lint_delay = 50
+let g:ale_lint_on_enter = 1
 let g:ale_lint_on_insert_leave = 1
+let g:ale_lint_on_text_changed = 'never'
 let g:ale_sign_column_always = 1
 let g:ale_sign_error = 'E'
 let g:ale_sign_warning = 'W'
 let g:ale_emit_conflict_warnings = 1
-let g:ale_javascript_eslint_use_global = 1
+let g:ale_javascript_eslint_use_global = 0
 let g:ale_javascript_flow_use_global = 0
 let g:ale_javascript_standard_use_global = 0
 let g:ale_javascript_xo_use_global = 0
 let g:ale_ruby_rubocop_options = '-EDS'
+let g:ale_fixers = {
+  \ 'javascript': ['eslint'],
+\ }
+let g:ale_pattern_options = {
+  \ '\.min\.js$': {'ale_linters': [], 'ale_fixers': []},
+  \ '\.min\.css$': {'ale_linters': [], 'ale_fixers': []},
+\}
+nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+nmap <silent> <C-j> <Plug>(ale_next_wrap)
 
 
-" autoformat
-let g:autoformat_autoindent = 0
-let g:autoformat_retab = 1
-let g:autoformat_remove_trailing_spaces = 1
 
 " better-javascript-completion
 let g:vimjs#casesensistive = 0
@@ -315,6 +334,10 @@ let g:bufferline_modified            = '+'
 let g:bufferline_rotate              = 0
 let g:bufferline_show_bufnr          = 1
 let g:bufferline_solo_highlight      = 1
+
+
+" deoplete
+let g:deoplete#enable_at_startup = 1
 
 
 " fzf
@@ -378,7 +401,7 @@ let g:gutentags_ctags_exclude = ['node_modules']
 
 
 " javascript-libraries-syntax
-let g:used_javascript_libs = 'jquery,react'
+let g:used_javascript_libs = 'jquery,angularjs,underscore,jasmine,d3'
 
 
 " nerdtree
@@ -386,35 +409,12 @@ nmap <leader>n :NERDTreeToggle<CR>
 vmap <leader>n :NERDTreeToggle<CR>
 
 
-" neocomplete
-if g:use_neocomplete
-  let g:acp_enableAtStartup = 1
-  let g:neocomplete#disable_auto_complete = 0
-  let g:neocomplete#enable_at_startup = 1
-  let g:neocomplete#enable_auto_select = 0
-  let g:neocomplete#enable_smart_case = 1
-  let g:neocomplete#sources#syntax#min_keyword_length = 2
-  if !exists('g:neocomplete#sources#omni#input_patterns')
-    let g:neocomplete#sources#omni#input_patterns = {}
-  endif
-  inoremap <expr><C-g> neocomplete#undo_completion()
-  inoremap <expr><C-l> neocomplete#complete_common_string()
-  inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
-  inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-  inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-  inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-  function! s:my_cr_function()
-    return pumvisible() ? "\<C-y>" : "\<CR>"
-  endfunction
-endif
-
-
 " rspec
-let g:rspec_command = 'Dispatch rspec {spec}'
-map <Leader>t :call RunCurrentSpecFile()<CR>
-map <Leader>s :call RunNearestSpec()<CR>
-map <Leader>l :call RunLastSpec()<CR>
-map <Leader>a :call RunAllSpecs()<CR>
+" let g:rspec_command = 'Dispatch rspec {spec}'
+" map <Leader>t :call RunCurrentSpecFile()<CR>
+" map <Leader>s :call RunNearestSpec()<CR>
+" map <Leader>l :call RunLastSpec()<CR>
+" map <Leader>a :call RunAllSpecs()<CR>
 
 
 " ruby
@@ -425,10 +425,6 @@ let g:ruby_spellcheck_strings = 1
 let g:rubycomplete_buffer_loading = 1
 let g:rubycomplete_rails = 1
 let g:rubycomplete_load_gemfile = 1
-
-
-" rufo
-let g:rufo_auto_formatting = 0
 
 
 " " Specky
@@ -508,6 +504,13 @@ augroup GitCommits
   autocmd FileType gitcommit nested setlocal nospell
 augroup END
 
+augroup Javascript
+  autocmd FileType javascript setlocal tabstop=4 softtabstop=4 shiftwidth=4
+augroup END
+
+augroup Groovy
+  au BufNewFile,BufRead Jenkinsfile setf groovy
+augroup END
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Just for TMUX
 if v:version > 704
@@ -590,8 +593,12 @@ set omnifunc=syntaxcomplete#Complete
 let g:base16colorspace = 256
 let g:base16_shell_path =  SafeDirectory('~/.config/base16-shell/scripts')
 
-if isdirectory(expand(g:vimhome . '/plugged/base16-vim')) && !empty($BASE16_THEME)
-  colorscheme $BASE16_THEME
+if isdirectory(expand(g:vimhome . '/plugged/base16-vim')) 
+  if empty($BASE16_THEME)
+    colorscheme base16-twilight
+  else
+    colorscheme $BASE16_THEME
+  endif
   " hi LineNr ctermfg=236 ctermbg=234
   hi Error ctermfg=11 ctermbg=none guifg='#ffff00' guibg='#000000'
 endif

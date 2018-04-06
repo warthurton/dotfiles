@@ -1,7 +1,17 @@
-# Aliases & Functions for Interactive shells -------------------------------
+#-----------------------------------------------------------------------------
+# Aliases & Functions
 
 #-----------------------------------------------------------------------------
 [[ -s "$HOME/.shell-prv" ]] && source "$HOME/.shell-prv"
+
+
+# function log2syslog
+# {
+#    declare COMMAND
+#    COMMAND=$(fc -ln -0)
+#    logger -p local1.notice -t bash -i -- "${USER}:${COMMAND}"
+# }
+# trap log2syslog DEBUG
 
 # OS X ---------------------------------------------------------------------
 if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
