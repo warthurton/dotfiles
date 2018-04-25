@@ -3,8 +3,6 @@
 brew:
   caskroom/drivers
   caskroom/fonts
-  habitat-sh/habitat
-  sidaf/pentest       # This is also a comment
 
 brewed:
   arping
@@ -12,7 +10,6 @@ brewed:
   bash
   bash-completion
   bundler-completion
-  catimg
   checkbashisms
   cmake
   coreutils
@@ -24,15 +21,10 @@ brewed:
   docker-clean
   docker-completion
   docker-compose-completion
-  emojify
-  exercism
   fasd
   fdupes
-  ffmpeg
   figlet
   gem-completion
-  gibo
-  gist
   git
   git-extras
   git-hooks
@@ -40,142 +32,45 @@ brewed:
   gnu-sed
   gnu-tar
   gnu-time
-  graphicsmagick
-  graphviz
-  hab
-  hadolint
-  handbrake
-  heroku
-  html2text
-  htop
-  hub
-  imagemagick
   jq
-  lame
-  leiningen
   less
-  lua
-  luajit
-  miniupnpc
-  mkvtoolnix
-  mmv
   mosh
-  moreutils
-  mp4v2
-  mpv
-  msgpack
   mtr
   neovim
-  netcat
-  nethack
   nmap
   no-more-secrets
   open-completion
   openssh
   openssl
-  osxutils
   p7zip
   phantomjs
   pidof
   pv
   python2
-  qpdf
-  rails-completion
-  rake-completion
-  recode
-  redis
-  rmlint
   rsync
-  ruby
-  ruby-build
-  ruby-completion
-  sdl
-  sdl2
-  sdl_net
-  sdl_sound
-  shellcheck
   socat
-  spring-completion
   sqlite
   ssh-copy-id
-  tcping
   the_silver_searcher
-  tidy-html5
-  tmate
   tmux
-  tofrodos
-  uni2ascii
-  webp
   wget
-  x264
-  x265
-  xvid
   xz
-  youtube-dl
-  zlib
   zsh
 
 gem:
-  brakeman
-  cocoapods
-  cucumber_lint
-  did_you_mean
-  foodcritic
-  gem-browse
-  gem-ctags
-  haml_lint
-  irbtools
-  irbtools-more
-  looksee
-  mailcatcher
-  mdl
   neovim
-  pry-byebug
-  pry-doc
-  ripper-tags
-  rufo
-  slim_lint
-  solargraph
-  sqlint
-  travis
-  video_transcoding
-  wirb
 
 pip:
-  ansible-lint
   doge
   neovim
   proselint
-  solargraph-utils.py
   vim-vint
   virtualenv
-  yamllint
-  yarn
 
 npm:
-  babel-eslint
   bower
-  eslint
-  eslint-config-airbnb-base
-  eslint-config-prettier
-  eslint-plugin-angular
-  eslint-plugin-import
-  eslint-plugin-jasmine
-  eslint-plugin-jest
-  eslint-plugin-lodash
-  eslint-plugin-node
-  eslint-plugin-prettier
-  eslint-plugin-promise
   grunt-cli
-  jasmine
-  jest-cli
   neovim
-  prettier
-  prettier-eslint-cli
-  sqlite-json
-  stylelint
-  ternjs
-  ttystudio
 
 cargo:
   parallel
