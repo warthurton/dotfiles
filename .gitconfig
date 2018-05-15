@@ -27,6 +27,8 @@
   showinfo = true
 [rerere]
   enabled = true
+[merge]
+  ff = only
 [include]
   path = ~/.gitconfig-alias
 
