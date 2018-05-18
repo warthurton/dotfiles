@@ -8,6 +8,9 @@ _safe_add_to_path() {
 }
 # --------------------------------------------------------------------------
 for dir in \
+  /Applications/VMware\ Fusion.app/Contents/Library \
+  /Applications/VirtualBox.app/Contents/MacOS \
+  /Applications/Postgres.app/Contents/Versions/latest/bin \
   /{bin,sbin} \
   /{usr,opt}/{bin,sbin} \
   /{usr,opt,Apps}/{local,X11,opt}/{bin,sbin} \

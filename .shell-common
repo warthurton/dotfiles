@@ -4,7 +4,6 @@
 #-----------------------------------------------------------------------------
 [[ -s "$HOME/.shell-prv" ]] && source "$HOME/.shell-prv"
 
-
 # function log2syslog
 # {
 #    declare COMMAND
