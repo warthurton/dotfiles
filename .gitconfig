@@ -2,6 +2,7 @@
 
 [user]
   name = chorn
+  email = chorn@chorn.com
   signingKey = chorn
 [branch]
   autoSetupRebase = always
@@ -32,5 +33,5 @@
 [merge]
   ff = only
 [include]
-  path = ~/.gitconfig-user
   path = ~/.gitconfig-alias
+  path = ~/.gitconfig-private
