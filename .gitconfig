@@ -2,7 +2,6 @@
 
 [user]
   name = chorn
-  email = christopher.horn@tanium.com
   signingKey = chorn
 [branch]
   autoSetupRebase = always
@@ -33,4 +32,5 @@
 [merge]
   ff = only
 [include]
+  path = ~/.gitconfig-user
   path = ~/.gitconfig-alias
