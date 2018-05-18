@@ -15,11 +15,7 @@ if has('nvim')
   set clipboard+=unnamedplus
 else
   let g:vimhome = SafeDirectory('~/.vim')
-
-  if has('clipboard')
-    set guioptions+=aA
-    set clipboard+=unnamed
-  endif
+  set clipboard+=autoselect
 endif
 
 let &backupdir    = SafeDirectory(g:vimhome . '/backup')
@@ -177,6 +173,7 @@ set nofoldenable
 set foldmethod=marker
 set foldopen+=jump
 set formatoptions=rq
+set guioptions+=P
 set nohidden
 set history=1000
 set hlsearch
