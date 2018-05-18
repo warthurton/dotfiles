@@ -34,6 +34,8 @@ if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
 
 # Linux ---------------------------------------------------------------------
 elif [[ "${OSTYPE:0:5}" = "linux" ]] ; then
+  command -v tty >&/dev/null && export GPG_TTY=$(tty)
+
   alias ls="/bin/ls --color=auto -F"
   alias l="ls -l"
   alias p="ps auxOU"
