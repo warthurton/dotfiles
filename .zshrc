@@ -5,6 +5,10 @@ for s in  ~/.shell-common \
           ~/.fzf.zsh
 do
   [[ -f "$s" ]] && source "$s"
+done
+
+#-----------------------------------------------------------------------------
+fpath=(/usr/local/share/zsh-completions $fpath)
 #-----------------------------------------------------------------------------
 export PROMPT="\$(build_left_prompt)"
 export RPROMPT=""

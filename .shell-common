@@ -84,32 +84,32 @@ ps_owners() {
   [[ -n "${BASH_VERSINFO[1]}" && "${BASH_VERSINFO[1]}" -lt 4 ]] && return 1
 
   local _pid="${1:-$$}"
-  local _what_to_print="$2"
 
-  [[ -z "$_what_to_print" ]] && _what_to_print="user"
-  read -r _user _ppid _command < <(ps -o user,ppid,command -p "$_pid" | grep -v PPID)
-  case "$_what_to_print" in
-    pid) echo "$_pid" ;;
-    command) echo "$_command" ;;
-    *) echo "$_user" ;;
-  esac
-  [[ $_pid -ne 1 ]] && ps_owners "$_ppid" "$_what_to_print"
+  [[ $_pid -eq 0 ]] && return
+
+  read -r _uid _user _ppid _command < <(ps -o uid=,user=,ppid=,command= -p "$_pid")
+
+  echo "$_pid $_user $_uid $_ppid \"$_command\""
+
+  ps_owners "$_ppid"
 }
 
 am_i_someone_else() {
-  ps aux | grep -q '^root' || return 1
   [[ -n "${BASH_VERSINFO[0]}" && "${BASH_VERSINFO[0]}" -lt 4 ]] && return 1
   [[ -n "${BASH_VERSINFO[1]}" && "${BASH_VERSINFO[1]}" -lt 4 ]] && return 1
+
+  pgrep -u 0 >&/dev/null || return 1
+  [[ $EUID -eq 0 ]] && return 1
 
   local -a _owners
   local -A _counts
 
-  while read -r _owner ; do
-    if [[ -z "${_counts[$_owner]}" ]] ; then
-      _owners+=($_owner)
-      _counts[$_owner]=1
+  while read -r _pid _user _uid _ppid _command ; do
+    if [[ -z "${_counts[$_user]}" ]] ; then
+      _owners+=("$_user")
+      _counts[$_user]=1
     else
-      (( _counts[$_owner]++ ))
+      (( _counts[$_user]++ ))
     fi
   done < <(ps_owners)
 
