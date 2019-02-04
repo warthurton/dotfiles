@@ -20,7 +20,6 @@ bindkey -m 2>/dev/null
 autoload -Uz compinit colors
 compinit -C
 colors
-done
 #-----------------------------------------------------------------------------
 # function powerline_precmd() {
 #   # (valid choices: aws, cwd, docker, dotenv, exit, git, gitlite, hg, host, jobs, load, nix-shell, perlbrew, perms, root, shell-var, ssh, termtitle, time, user, venv, node)
