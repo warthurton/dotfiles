@@ -1,4 +1,6 @@
 .envrc
+.localStorage
+.tern-port
 
 *.DS_Store
 .AppleDouble

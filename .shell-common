@@ -47,6 +47,11 @@ if command -v ag >/dev/null 2>/dev/null ; then
   alias ag_next='git $(git diff --name-only master..HEAD . | sed -e "s/^/ --ignore=/")'
 fi
 # ---------------------------------------------------------------------------
+if command -v nvim >/dev/null 2>/dev/null ; then
+  alias vim=nvim
+  alias v=nvim
+fi
+# ---------------------------------------------------------------------------
 alias list_to_regex="sed -e 's/[^0-9]//g' | tr '\n' '|' | sed -e 's/^/(/' -e 's/\|$/)/'"
 alias m='$PAGER'
 alias l1="ls -1"
@@ -54,7 +59,6 @@ alias ll="l -A"
 alias la="ls -A"
 alias live_ip='dig +short myip.opendns.com @resolver1.opendns.com || curl -f4L http://ifconfig.me'
 alias to_csv='soffice --convert-to csv --headless'
-alias v=vim
 alias dc=docker-compose
 # ---------------------------------------------------------------------------
 cassette_to_json() {

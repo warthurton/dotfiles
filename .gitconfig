@@ -1,15 +1,22 @@
 ; vim: ft=gitconfig sw=2 ts=2 et
 
-[include]
-  path = ~/.gitconfig-private
+[user]
+  name = chorn
+  email = christopher.horn@tanium.com
+  signingKey = chorn
+[commit]
+  gpgsign = true
 [branch]
   autoSetupRebase = always
 [core]
   editor = vim
   pager = less -r
   excludesfile = ~/.gitignore
+[pager]
+  diff = diff-so-fancy | less --tabs=1,5 -RFX
+  show = diff-so-fancy | less --tabs=1,5 -RFX
 [color]
-  ui = auto
+  ui = true
 [pull]
   rebase = true
 [push]

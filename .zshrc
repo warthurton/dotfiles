@@ -5,22 +5,49 @@ for s in  ~/.shell-common \
           ~/.fzf.zsh
 do
   [[ -f "$s" ]] && source "$s"
-done
 #-----------------------------------------------------------------------------
 export PROMPT="\$(build_left_prompt)"
 export RPROMPT=""
 
-alias -g M='|& $PAGER'
+alias -g M='| $PAGER'
 bindkey -e
 bindkey -m 2>/dev/null
 
 autoload -Uz compinit colors
 compinit -C
 colors
+done
+#-----------------------------------------------------------------------------
+# function powerline_precmd() {
+#   # (valid choices: aws, cwd, docker, dotenv, exit, git, gitlite, hg, host, jobs, load, nix-shell, perlbrew, perms, root, shell-var, ssh, termtitle, time, user, venv, node)
+#   # (default "venv,user,host,ssh,cwd,perms,git,hg,jobs,exit,root")
+#
+#   PS1="$(${GOPATH}/bin/powerline-go \
+#       -numeric-exit-codes \
+#       -error $? \
+#       -shell zsh \
+#       -modules time,node,cwd,perms,git,jobs,exit,root \
+#       -path-aliases \~/code/tanium/connect=@CONNECT,\~/code=@CODE \
+#       )"
+# }
+#
+# function install_powerline_precmd() {
+#   for s in "${precmd_functions[@]}"; do
+#     if [ "$s" = "powerline_precmd" ]; then
+#       return
+#     fi
+#   done
+#   precmd_functions+=(powerline_precmd)
+# }
+#
+# if [ "$TERM" != "linux" ]; then
+#   install_powerline_precmd
+# fi
+#
 #-----------------------------------------------------------------------------
 typeset -g -A __preferred_languages=(
   ruby .ruby-version
-  nodejs .nvmrc
+  nodejs .node-version
 )
 typeset -g -A __language_versions
 

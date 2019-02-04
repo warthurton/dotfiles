@@ -9,12 +9,14 @@ brewed:
   asciiquarium
   bash
   bash-completion
+  bat
   bundler-completion
   checkbashisms
   cmake
   coreutils
   cscope
   csv-fix
+  csvkit
   ctags
   curl
   direnv
@@ -22,6 +24,7 @@ brewed:
   docker-completion
   docker-compose-completion
   fasd
+  fd
   fdupes
   figlet
   gem-completion
@@ -38,7 +41,9 @@ brewed:
   mtr
   neovim
   nmap
+  nnn
   no-more-secrets
+  noti
   open-completion
   openssh
   openssl
@@ -68,8 +73,6 @@ pip:
   virtualenv
 
 npm:
-  bower
-  grunt-cli
   neovim
 
 cargo:

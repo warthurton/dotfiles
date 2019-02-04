@@ -11,6 +11,7 @@ for dir in \
   /Applications/VMware\ Fusion.app/Contents/Library \
   /Applications/VirtualBox.app/Contents/MacOS \
   /Applications/Postgres.app/Contents/Versions/latest/bin \
+  /usr/local/opt/openssl/bin \
   /{bin,sbin} \
   /{usr,opt}/{bin,sbin} \
   /{usr,opt,Apps}/{local,X11,opt}/{bin,sbin} \
@@ -18,12 +19,13 @@ for dir in \
   $HOME/.asdf/{bin,shims} \
   $HOME/.go/bin \
   $HOME/.cargo/bin \
-  $HOME/bin
+  $HOME/bin \
+  $HOME/tbin
 do
   _safe_add_to_path "$dir"
 done
 # --------------------------------------------------------------------------
-for _version_manager in rbenv nodenv ; do
+for _version_manager in rbenv ; do
   _safe_add_to_path "$HOME/.${_version_manager}/bin"
   _safe_add_to_path "$HOME/.${_version_manager}/shims"
 
@@ -40,17 +42,38 @@ for _version_manager in rbenv nodenv ; do
   eval "export __${_version_manager}=${_cmd}"
 done
 
-if [[ -n "${__nodenv}" ]] ; then
-  nodenv() {
-    eval "unset -f nodenv ; $(${__nodenv} init ${ZSH_VERSION:+zsh} - )"
-    _safe_add_to_path "$(dirname \"$(nodenv which npm)\")"
-    nodenv $*
-  }
+# --------------------------------------------------------------------------
+if command pyenv-virtualenv-init >&/dev/null; then
+  eval "$(pyenv virtualenv-init -)"
 fi
 # --------------------------------------------------------------------------
-if [[ -s "$HOME/.nvm" ]] ; then
+if command -v fnm >&/dev/null ; then
+  eval `fnm env`
+elif [[ -s "$HOME/.nvm" ]] ; then
   export NVM_DIR="$HOME/.nvm"
   [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
 fi
+# --------------------------------------------------------------------------
+_clean_path() {
+  local -a _found=()
+
+  while read -d: -r _dir ; do
+    if [[ -d "$_dir" ]] ; then
+      local _dupe=0
+
+      for _check in ${_found[@]} ; do
+        [[ "$_check" == "$_dir" ]] && _dupe=1
+      done
+
+      [[ "$_dupe" -eq 1 ]] && continue
+
+      _found+=($_dir)
+    fi
+  done < <(echo "$PATH")
+
+
+  echo $(IFS=:; echo "${_found[*]}")
+}
+export PATH=$(_clean_path)
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:

@@ -63,6 +63,7 @@ setopt \
   extended_history \
   hist_allow_clobber \
   hist_fcntl_lock \
+  hist_find_no_dups \
   hist_ignore_space \
   hist_no_store \
   hist_reduce_blanks \
@@ -70,7 +71,6 @@ setopt \
   inc_append_history
 
 unsetopt \
-  hist_find_no_dups \
   hist_ignore_all_dups \
   inc_append_history_time \
   share_history

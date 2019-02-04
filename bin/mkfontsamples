@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+for check in figlet toilet ; do
+  if ! command -v "$check" >&/dev/null ; then
+    echo "You must have $check installed and in your \$PATH"
+  fi
+done
+
+shopt -s checkwinsize
+(:;:)
+
+declare start="$1"
+
+if [[ ! -d "$start" ]] ; then
+  echo "Usage: $0 <directory heirarchy with .flf and/or .tlf format fonts>"
+  echo
+  echo "A great library of fonts:"
+  echo "https://github.com/cmatsuoka/figlet-fonts"
+  exit 1
+fi
+
+find "$start" -type f -iname '*.flf' -or -iname '*.tlf' | while read -r f ; do
+  echo -e '-----------------------------------------------------------'
+  declare _dirname="$(dirname "$f")"
+  declare _basename="$(basename "$f")"
+  declare _fontname="$(echo "$_basename" | sed -e 's/^.*\///' -e 's/\.[ft]lf//')"
+
+  if [[ "$_basename" =~ \.tlf ]] ; then
+    _cmd="toilet"
+  else
+    _cmd="figlet"
+  fi
+
+  _full_cmd="${_cmd} -d '${_dirname}' -f '${_fontname}'"
+
+  echo -e "${_full_cmd}\\n\\n"
+
+  "${_cmd}" -w "$COLUMNS" -d "${_dirname}" -f "${_fontname}" "Now is the time to super derp." 2>/dev/null
+
+  echo -e "\\n\\n${_full_cmd}"
+done
+
