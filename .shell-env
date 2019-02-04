@@ -12,7 +12,6 @@ export SHELLCHECK_OPTS="--shell=bash --exclude=SC2001,SC1090,SC2164,SC2068,SC215
 export GOPATH="$HOME/.go"
 export GROOVY_HOME=/usr/local/opt/groovy/libexec
 export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
-export GITHUB_URL="https://git.corp.tanium.com/"
 
 if command -v nvim >&/dev/null ; then
   export EDITOR=nvim
