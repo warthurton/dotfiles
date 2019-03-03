@@ -16,3 +16,6 @@ line:style:bold
 --glob
 !.git/*
 
+--glob
+!tpan2/*
+

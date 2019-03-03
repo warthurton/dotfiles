@@ -20,7 +20,8 @@ for dir in \
   $HOME/.go/bin \
   $HOME/.cargo/bin \
   $HOME/bin \
-  $HOME/tbin
+  $HOME/tbin \
+  $HOME/TaniumContentBuildTools
 do
   _safe_add_to_path "$dir"
 done
