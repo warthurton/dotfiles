@@ -49,7 +49,7 @@ if command pyenv-virtualenv-init >&/dev/null; then
 fi
 # --------------------------------------------------------------------------
 if command -v fnm >&/dev/null ; then
-  eval `fnm env`
+  eval "$(fnm env --multi)"
 elif [[ -s "$HOME/.nvm" ]] ; then
   export NVM_DIR="$HOME/.nvm"
   [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
