@@ -12,7 +12,7 @@ done
 #-----------------------------------------------------------------------------
 fpath=(/usr/local/share/zsh-completions $fpath)
 #-----------------------------------------------------------------------------
-PROMPT='$(dump_prompt) %(?.%F{7}.%F{15})%? %(!.#.$)%f%b%k%u%s '
+PROMPT='$(dump_prompt)'
 RPROMPT=''
 
 alias -g M='| $PAGER'
@@ -141,10 +141,14 @@ dump_prompt() {
     [[ -n "${_prompt[$piece]}" ]] && _line2+=("${_prompt[$piece]}")
   done
 
-  print -Pn "${_prompt[reset]}"
-  (( ${#_line1[@]} > 0 )) && print -P "${_line1[@]}"
+  echo -n "${_prompt[reset]}"
+  (( ${#_line1[@]} > 0 )) && echo "${_line1[@]}"
+
+
+  echo -n "${_line2[@]}"
+  echo -n ' %(?.%F{7}.%F{15})%? %(!.#.$)%f%b%k%u%s '
+
   _hey_readline_i_am_not_part_of_your_linelength
-  (( ${#_line2[@]} > 0 )) && print -Pn "${_line2[@]}"
 }
 #-----------------------------------------------------------------------------
 _async_prompt_languages() {
@@ -160,7 +164,6 @@ _async_prompt_gitconfigs() {
 }
 #-----------------------------------------------------------------------------
 precmd() {
-  _hey_readline_i_am_not_part_of_your_linelength
   _update_fast_left_prompt_parts
 
   if [[ "${#_prompt_procs[@]}" -gt 0 ]] ; then
@@ -202,7 +205,7 @@ TRAPWINCH() {
 #-----------------------------------------------------------------------------
 PERIOD=10
 periodic() {
-  find "$HOME" -type f -maxdepth 1 -mmin +1 -name '.zsh_prompt_*' -delete
+  find "$HOME" -type f -maxdepth 1 -mtime +10s -name '.zsh_prompt_*' -delete
 }
 #-----------------------------------------------------------------------------
 if (( $+commands[direnv] )) ; then
