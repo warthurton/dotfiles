@@ -28,8 +28,17 @@ typeset -g -a _preferred_languages=(ruby node python rust)
 typeset -g -A _prompt
 typeset -g -a _prompt_procs
 #-----------------------------------------------------------------------------
+_nonprintable_begin() {
+  echo -e "\001"
+}
+#-----------------------------------------------------------------------------
+_nonprintable_end() {
+  echo -e "\001"
+}
+#-----------------------------------------------------------------------------
 _hey_readline_i_am_not_part_of_your_linelength() {
-  print -Pn "\e]0;\a"
+  # print -Pn "\e]0;\a"
+  # print -n "\[\e]0;\a\]"
 }
 #-----------------------------------------------------------------------------
 _language_version() {
@@ -125,19 +134,17 @@ _update_fast_left_prompt_parts() {
   _prompt[user]="$(_prompt_user)"
   _prompt[host]="$(_prompt_host)"
   _prompt[path]="$(_prompt_path)"
-  _prompt[reset]="$(_prompt_reset)"
 }
 #-----------------------------------------------------------------------------
 dump_prompt() {
-  declare -p _prompt > ~/zsh.debug
   local -a _line1=()
   local -a _line2=()
 
-  for piece in languages gitconfigs ; do
+  for piece in languages gitrepo gitconfigs ; do
     [[ -n "${_prompt[$piece]}" ]] && _line1+=("${_prompt[$piece]}")
   done
 
-  for piece in time user host path gitrepo ; do
+  for piece in time user host path ; do
     [[ -n "${_prompt[$piece]}" ]] && _line2+=("${_prompt[$piece]}")
   done
 
@@ -148,7 +155,7 @@ dump_prompt() {
   echo -n "${_line2[@]}"
   echo -n ' %(?.%F{7}.%F{15})%? %(!.#.$)%f%b%k%u%s '
 
-  _hey_readline_i_am_not_part_of_your_linelength
+  # _hey_readline_i_am_not_part_of_your_linelength
 }
 #-----------------------------------------------------------------------------
 _async_prompt_languages() {
@@ -168,7 +175,9 @@ precmd() {
 
   if [[ "${#_prompt_procs[@]}" -gt 0 ]] ; then
     for pid in "${_prompt_procs[@]}" ; do
-      kill -0 "$pid" >&/dev/null && kill -s HUP "$pid" >&/dev/null
+      if [[ "$pid" -ne "$$" ]] ; then
+        kill -0 "$pid" >&/dev/null && kill -s HUP "$pid" >&/dev/null
+      fi
     done
     _prompt_procs=()
   fi
@@ -201,6 +210,17 @@ TRAPUSR1() {
 #-----------------------------------------------------------------------------
 TRAPWINCH() {
   zle && zle reset-prompt >&/dev/null
+}
+#-----------------------------------------------------------------------------
+TRAPALRM() {
+  case "$WIDGET" in
+    expand-or-complete|self-insert|up-line-or-beginning-search|down-line-or-beginning-search|backward-delete-char|.history-incremental-search-backward|.history-incremental-search-forward)
+      :
+    ;;
+    *)
+      zle && zle reset-prompt >&/dev/null
+      ;;
+    esac
 }
 #-----------------------------------------------------------------------------
 PERIOD=10
