@@ -45,7 +45,9 @@ if [[ -d "/usr/syno" ]] ; then
   export TERM=${TERM:-cons25}
   command -v less >&/dev/null || export PAGER="more"
   [[ -s "$HOME/.certs/curl-cacert.pem" ]] && export CURL_CA_BUNDLE="$HOME/.certs/curl-cacert.pem"
-fi
+fi 
+
+
 # --------------------------------------------------------------------------
 # gpg-agent, only for linux, on OS X use gpgtools instead
 
