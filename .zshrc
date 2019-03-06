@@ -1,8 +1,10 @@
 #-----------------------------------------------------------------------------
 for s in  ~/.shell-common \
+          ~/.config/zsh/zsh-async/async.zsh \
           ~/.config/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh \
           ~/.config/zsh/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh \
-          ~/.fzf.zsh
+          ~/.fzf.zsh \
+          ~/.zsh-git
 do
   [[ -f "$s" ]] && source "$s"
 done
@@ -10,8 +12,8 @@ done
 #-----------------------------------------------------------------------------
 fpath=(/usr/local/share/zsh-completions $fpath)
 #-----------------------------------------------------------------------------
-export PROMPT="\$(build_left_prompt)"
-export RPROMPT=""
+PROMPT='$(dump_prompt) %(?.%F{7}.%F{15})%? %(!.#.$)%f%b%k%u%s '
+RPROMPT=''
 
 alias -g M='| $PAGER'
 bindkey -e
@@ -20,266 +22,206 @@ bindkey -m 2>/dev/null
 autoload -Uz compinit colors
 compinit -C
 colors
+
 #-----------------------------------------------------------------------------
-# function powerline_precmd() {
-#   # (valid choices: aws, cwd, docker, dotenv, exit, git, gitlite, hg, host, jobs, load, nix-shell, perlbrew, perms, root, shell-var, ssh, termtitle, time, user, venv, node)
-#   # (default "venv,user,host,ssh,cwd,perms,git,hg,jobs,exit,root")
-#
-#   PS1="$(${GOPATH}/bin/powerline-go \
-#       -numeric-exit-codes \
-#       -error $? \
-#       -shell zsh \
-#       -modules time,node,cwd,perms,git,jobs,exit,root \
-#       -path-aliases \~/code/tanium/connect=@CONNECT,\~/code=@CODE \
-#       )"
-# }
-#
-# function install_powerline_precmd() {
-#   for s in "${precmd_functions[@]}"; do
-#     if [ "$s" = "powerline_precmd" ]; then
-#       return
-#     fi
-#   done
-#   precmd_functions+=(powerline_precmd)
-# }
-#
-# if [ "$TERM" != "linux" ]; then
-#   install_powerline_precmd
-# fi
-#
+typeset -g -a _preferred_languages=(ruby node python rust)
+typeset -g -A _prompt
+typeset -g -a _prompt_procs
 #-----------------------------------------------------------------------------
-typeset -g -A __preferred_languages=(
-  ruby .ruby-version
-  nodejs .node-version
-)
-typeset -g -A __language_versions
-
-typeset -g -A __git_theme=(
-  prefix "("
-  suffix ")"
-  separator "|"
-  branch "%{$reset_color%}%{$fg_bold[magenta]%}"
-  clean "%{$reset_color%}%{$fg_bold[green]%}%{✔%G%}"
-  changed "%{$reset_color%}%{$fg[blue]%}%{✚%G%}"
-  staged "%{$reset_color%}%{$fg[red]%}%{●%G%}"
-  conflicts "%{$reset_color%}%{$fg[red]%}%{✖%G%}"
-  oid "%{$reset_color%}%{$fg[gray]%}"
-  ahead "%{$reset_color%}%{↑%G%}"
-  behind "%{$reset_color%}%{↓%G%}"
-  untracked "%{$reset_color%}%{…%G%}"
-  show_changed_count 1
-  show_staged_count 1
-  show_conflict_count 1
-  show_ahead_count 1
-  show_behind_count 1
-  show_untracked_count 0
-)
-typeset -g -A __git_status
-#-----------------------------------------------------------------------------
-function build_git_status() {
-  (( $+commands[git] )) || return
-  local _git_command="${1:=git}"
-  [[ -z "${__git_status[$_git_command]}" ]] && return
-  eval "$__git_status[$_git_command]"
-
-  (( g[no_repository] == 1 )) && return
-
-  function __print() {
-    local theme="${__git_theme[$1]}"
-    local show="${__git_theme[show_${1}_count]}"
-    local value="${g[$1]}"
-
-    [[ -z "$theme" ]] && return
-    [[ "${show:=1}" == "1" ]] || return
-    [[ "$value" == "0" ]] && return
-    echo -n "$theme"
-
-    [[ -z "$value" || "$value" == "yes_but_no_value_to_show" ]] && return
-    echo -n "$value"
-  }
-
-  for element in prefix branch behind ahead separator oid separator staged conflicts changed untracked clean suffix ; do
-    __print $element
-  done
-
-  echo -n "%{${reset_color}%}"
+_hey_readline_i_am_not_part_of_your_linelength() {
+  print -Pn "\e]0;\a"
 }
 #-----------------------------------------------------------------------------
-function _prompt__update_git() {
-  (( $+commands[git] )) || return
-  local _git_command="${1:=git}"
+_language_version() {
+  local language="$1"
 
-  typeset -A g=(staged 0 conflicts 0 changed 0 untracked 0 ignored 0 no_repository 0 clean 0)
-
-  while read -rA _status ; do
-    case "${_status[1]}" in
-      fatal*)
-        g[no_repository]=1
-        ;;
-      \#)
-        case "${_status[2]}" in
-          branch.oid)
-            g[oid]="${_status[3]:0:8}"
-            ;;
-          branch.head)
-            g[branch]="${_status[3]}"
-            ;;
-          branch.upstream)
-            g[upstream]="${_status[3]}"
-            ;;
-          branch.ab)
-            g[ahead]=$((${_status[3]}))
-            g[behind]=$((${_status[4]}))
-            ;;
-        esac
-        ;;
-      \?)
-        (( g[untracked]++ ))
-        ;;
-      \!)
-        (( g[ignored]++ ))
-        ;;
-      1)
-        case "${_status[2]}" in
-          .M)
-            (( g[changed]++ ))
-            ;;
-          A.|M.)
-            (( g[staged]++ ))
-            ;;
-        esac
-        ;;
-      2)
-        case "${_status[2]}" in
-          R.)
-            (( g[changed]++ ))
-            ;;
-        esac
-        ;;
-    esac
-  done < <($_git_command status --porcelain=2 --branch 2>&1)
-
-  if (( g[changed] == 0 && g[conflicts] == 0 && g[staged] == 0 && g[untracked] == 0 )) ; then
-    g[clean]="yes_but_no_value_to_show"
-  fi
-
-  __git_status[$_git_command]="$(typeset -p g)"
-}
-#-----------------------------------------------------------------------------
-function _prompt__update_language() {
-  local plugin="$1"
-  [[ -z "$plugin" ]] && return
-  local version_file="$2"
-  [[ -z "$version_file" ]] && return
-
-  local version_env_var="ASDF_${(U)plugin}_VERSION"
-  local version=${(P)version_env_var}
-
-  if [[ -n "$version" ]] ; then
-    __language_versions[$plugin]="$version"
+  if ! (( $+commands[$language] )) ; then
+    echo "none"
     return
   fi
 
-  local search_path="$PWD"
-
-  while [[ "$search_path" != "/" ]] ; do
-    local _version_file="${search_path}/${version_file}"
-
-    if [[ -s "${_version_file}" ]] ; then
-      __language_versions[$plugin]="$(<$_version_file)"
-      return
-    fi
-
-    if [[ -s '.tool-versions' ]] ; then
-      __language_versions=(${=${(f)"$(<.tool-versions)"}})
-      return
-    fi
-
-    search_path=$(dirname "$search_path")
-  done
+  case "$language" in
+    ruby)
+      ruby --version | awk '{print $2}'
+      ;;
+    node)
+      node --version | sed -e 's/^v//'
+      ;;
+    python*)
+      "$language" --version |& awk '{print $2}'
+      ;;
+    elixir)
+      "$language" --version |& grep '^Elixir' | awk '{print $2}'
+      ;;
+    *)
+      "$language" --version
+      ;;
+  esac
 }
 #-----------------------------------------------------------------------------
-function _prompt__update_languages() {
-  (( $+commands[asdf] )) || return
-
-  for plugin in ${(k)__preferred_languages[@]} ; do
-    _prompt__update_language "$plugin" "${__preferred_languages[$plugin]}"
-  done
+# _prompt_update_languages
+# for plugin in ${(k)_preferred_languages[@]} ; do
+#   local version="${_language_versions[$plugin]}"
+#
+#   if [[ -n "$version" ]] ; then
+#     echo -n "${_prompt_leading_space}%F{6}${plugin}-${version}"
+#     _prompt_leading_space=" "
+#   fi
+# done
+#-----------------------------------------------------------------------------
+_prompt_reset() {
+  print -Pn "%f%b%k%u%s"
 }
 #-----------------------------------------------------------------------------
-function build_left_prompt() {
-  local _leading_space=""
-
-  _prompt__update_languages
-
-  echo -n "%f%b%k%u%s"
-
-  for plugin in ${(k)__preferred_languages[@]} ; do
-    local version="${__language_versions[$plugin]}"
-
-    if [[ -n "$version" ]] ; then
-      echo -n "${_leading_space}%F{6}${plugin}-${version}"
-      _leading_space=" "
-    fi
-  done
-
-  if [[ "$PWD" == "$HOME" ]] && typeset -f pubgit prvgit >&/dev/null ; then
-    _prompt__update_git pubgit .git-pub-dotfiles
-    _prompt__update_git prvgit .git-prv-dotfiles
-
-    echo -n "${_leading_space}%F{8}PUB:%f$(build_git_status pubgit)"
-    echo -n " "
-    echo -n "%F{8}PRV:%f$(build_git_status prvgit)"
-    _leading_space=" "
-  else
-    _prompt__update_git git .git
-    local _git_prompt="$(build_git_status)"
-    if [[ -n "${_git_prompt}" ]] ; then
-      echo -n "${_leading_space}%f${_git_prompt}"
-      _leading_space=" "
-    fi
-  fi
-
-  # Time
-  echo -n "\n%F{8}%D{%H:%M:%S}"
-
+_prompt_time() {
+  print -Pn "%F{8}%D{%H:%M:%S}"
+}
+#-----------------------------------------------------------------------------
+_prompt_user() {
   if am_i_someone_else ; then
-    echo -n ' %F{9}__%n__'
+    print -Pn "%F{9}_%n_"
   fi
-
-  # host if remote
-  if [[ -n $SSH_TTY ]] ; then
-    echo -n " %F{15}@%F{14}%m"
-  fi
-
-  # path
-  echo -n ' %F{7}%~ %(?.%F{7}.%F{15})%? %(!.#.$) '
-
-  echo "%f%b%k%u%s"
 }
 #-----------------------------------------------------------------------------
-if (( $+commands[nvm] )) ; then
-  autoload -U add-zsh-hook
-  load-nvmrc() {
-    local node_version="$(nvm version)"
-    local nvmrc_path="$(nvm_find_nvmrc)"
+_prompt_host() {
+  if [[ -n $SSH_TTY ]] ; then
+    print -Pn "%F{15}@%F{14}%m"
+  fi
+}
+#-----------------------------------------------------------------------------
+_prompt_path() {
+  print -Pn "%F{7}%~"
+}
+#-----------------------------------------------------------------------------
+_prompt_languages() {
+  local -a _langs
+  for language in ${_preferred_languages[@]} ; do
+    _langs+=("%F{6}${language}-$(_language_version $language)")
+  done
 
-    if [ -n "$nvmrc_path" ]; then
-      local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+  print -Pn "${_langs[@]}"
+}
+#-----------------------------------------------------------------------------
+_prompt_gitrepo() {
+  (( $+commands[git] )) || return
+  _prompt_update_git
+  local _git_prompt="$(build_git_status)"
 
-      if [ "$nvmrc_node_version" = "N/A" ]; then
-        nvm install
-      elif [ "$nvmrc_node_version" != "$node_version" ]; then
-        nvm use
-      fi
-    elif [ "$node_version" != "$(nvm version default)" ]; then
-      echo "Reverting to nvm default version"
-      nvm use default
-    fi
-  }
-  add-zsh-hook chpwd load-nvmrc
-  load-nvmrc
-fi
+  if [[ -n "${_git_prompt}" ]] ; then
+    print -Pn "%f${_git_prompt}"
+  fi
+}
+#-----------------------------------------------------------------------------
+_prompt_gitconfigs() {
+  (( $+commands[git] )) || return
+  # [[ "$PWD" == "$HOME" ]] || return
+
+  if typeset -f pubgit >&/dev/null ; then
+    _prompt_update_git pubgit .git-pub-dotfiles
+    print -Pn "%F{8}PUB:%f$(build_git_status pubgit)"
+  fi
+
+  if typeset -f prvgit >&/dev/null ; then
+    _prompt_update_git prvgit .git-prv-dotfiles
+    print -Pn " "
+    print -Pn "%F{8}PRV:%f$(build_git_status prvgit)"
+  fi
+}
+#-----------------------------------------------------------------------------
+_update_fast_left_prompt_parts() {
+  _prompt=()
+  _prompt[reset]="$(_prompt_reset)"
+  _prompt[time]="$(_prompt_time)"
+  _prompt[user]="$(_prompt_user)"
+  _prompt[host]="$(_prompt_host)"
+  _prompt[path]="$(_prompt_path)"
+  _prompt[reset]="$(_prompt_reset)"
+}
+#-----------------------------------------------------------------------------
+# _update_slow_left_prompt_part() {
+#   _prompt[languages]="$(_prompt_languages)"
+#   _prompt[gitrepo]="$(_prompt_gitrepo)"
+#   _prompt[gitconfigs]="$(_prompt_gitconfigs)"
+# }
+#-----------------------------------------------------------------------------
+dump_prompt() {
+  declare -p _prompt > ~/zsh.debug
+  local -a _line1=()
+  local -a _line2=()
+
+  for piece in languages gitconfigs ; do
+    [[ -n "${_prompt[$piece]}" ]] && _line1+=("${_prompt[$piece]}")
+  done
+
+  for piece in time user host path gitrepo ; do
+    [[ -n "${_prompt[$piece]}" ]] && _line2+=("${_prompt[$piece]}")
+  done
+
+  print -Pn "${_prompt[reset]}"
+  (( ${#_line1[@]} > 0 )) && print -P "${_line1[@]}"
+  _hey_readline_i_am_not_part_of_your_linelength
+  (( ${#_line2[@]} > 0 )) && print -Pn "${_line2[@]}"
+}
+#-----------------------------------------------------------------------------
+_async_prompt_languages() {
+  echo "_prompt[languages]=\"$(_prompt_languages)\""
+}
+#-----------------------------------------------------------------------------
+_async_prompt_gitrepo() {
+  echo "_prompt[gitrepo]=\"$(_prompt_gitrepo)\""
+}
+#-----------------------------------------------------------------------------
+_async_prompt_gitconfigs() {
+  echo "_prompt[gitconfigs]=\"$(_prompt_gitconfigs)\""
+}
+#-----------------------------------------------------------------------------
+# _prompt_precmd() {
+precmd() {
+  _hey_readline_i_am_not_part_of_your_linelength
+  _update_fast_left_prompt_parts
+  # _update_slow_left_prompt_part
+
+  if [[ "${#_prompt_procs[@]}" -gt 0 ]] ; then
+    for pid in "${_prompt_procs[@]}" ; do
+      kill -0 "$pid" >&/dev/null && kill -s HUP "$pid" >&/dev/null
+    done
+    _prompt_procs=()
+  fi
+
+  typeset -g _prompt_file_left="$HOME/.zsh_prompt_left_${$}_${RANDOM}"
+
+  () {
+    cat "$1" >> "$_prompt_file_left"
+    kill -s USR1 $$
+  } =(_async_prompt_languages) &!
+  _prompt_procs+=($!)
+
+  () {
+    cat "$1" >> "$_prompt_file_left"
+    kill -s USR1 $$
+  } =(_async_prompt_gitrepo) &!
+  _prompt_procs+=($!)
+
+  () {
+    cat "$1" >> "$_prompt_file_left"
+    kill -s USR1 $$
+  } =(_async_prompt_gitconfigs) &!
+  _prompt_procs+=($!)
+}
+
+#-----------------------------------------------------------------------------
+TRAPUSR1() {
+  eval "$(<$_prompt_file_left)" && zle && zle reset-prompt >&/dev/null
+}
+#-----------------------------------------------------------------------------
+TRAPWINCH() {
+  zle && zle reset-prompt >&/dev/null
+}
+#-----------------------------------------------------------------------------
+PERIOD=10
+periodic() {
+  find "$HOME" -type f -maxdepth 1 -mmin +1 -name '.zsh_prompt_*' -delete
+}
 #-----------------------------------------------------------------------------
 if (( $+commands[direnv] )) ; then
   eval "$(direnv hook zsh)"
