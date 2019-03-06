@@ -1,6 +1,6 @@
 #-----------------------------------------------------------------------------
+# ~/.config/zsh/zsh-async/async.zsh \
 for s in  ~/.shell-common \
-          ~/.config/zsh/zsh-async/async.zsh \
           ~/.config/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh \
           ~/.config/zsh/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh \
           ~/.fzf.zsh \
@@ -58,16 +58,6 @@ _language_version() {
       ;;
   esac
 }
-#-----------------------------------------------------------------------------
-# _prompt_update_languages
-# for plugin in ${(k)_preferred_languages[@]} ; do
-#   local version="${_language_versions[$plugin]}"
-#
-#   if [[ -n "$version" ]] ; then
-#     echo -n "${_prompt_leading_space}%F{6}${plugin}-${version}"
-#     _prompt_leading_space=" "
-#   fi
-# done
 #-----------------------------------------------------------------------------
 _prompt_reset() {
   print -Pn "%f%b%k%u%s"
@@ -138,12 +128,6 @@ _update_fast_left_prompt_parts() {
   _prompt[reset]="$(_prompt_reset)"
 }
 #-----------------------------------------------------------------------------
-# _update_slow_left_prompt_part() {
-#   _prompt[languages]="$(_prompt_languages)"
-#   _prompt[gitrepo]="$(_prompt_gitrepo)"
-#   _prompt[gitconfigs]="$(_prompt_gitconfigs)"
-# }
-#-----------------------------------------------------------------------------
 dump_prompt() {
   declare -p _prompt > ~/zsh.debug
   local -a _line1=()
@@ -175,11 +159,9 @@ _async_prompt_gitconfigs() {
   echo "_prompt[gitconfigs]=\"$(_prompt_gitconfigs)\""
 }
 #-----------------------------------------------------------------------------
-# _prompt_precmd() {
 precmd() {
   _hey_readline_i_am_not_part_of_your_linelength
   _update_fast_left_prompt_parts
-  # _update_slow_left_prompt_part
 
   if [[ "${#_prompt_procs[@]}" -gt 0 ]] ; then
     for pid in "${_prompt_procs[@]}" ; do
