@@ -138,14 +138,3 @@ fi
 
 #--------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:
-
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-
-# tabtab source for serverless package
-# uninstall by removing these lines or running `tabtab uninstall serverless`
-[ -f /Users/christopher.horn/code/tanium/core/packages/gh-auto-label/node_modules/tabtab/.completions/serverless.bash ] && . /Users/christopher.horn/code/tanium/core/packages/gh-auto-label/node_modules/tabtab/.completions/serverless.bash
-# tabtab source for sls package
-# uninstall by removing these lines or running `tabtab uninstall sls`
-[ -f /Users/christopher.horn/code/tanium/core/packages/gh-auto-label/node_modules/tabtab/.completions/sls.bash ] && . /Users/christopher.horn/code/tanium/core/packages/gh-auto-label/node_modules/tabtab/.completions/sls.bash
