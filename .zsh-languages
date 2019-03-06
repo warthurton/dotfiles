@@ -1,0 +1,49 @@
+#-----------------------------------------------------------------------------
+typeset -g -A __preferred_languages=(
+  ruby .ruby-version
+  nodejs .node-version
+)
+typeset -g -A __language_versions
+#-----------------------------------------------------------------------------
+_prompt__update_language() {
+  local plugin="$1"
+  [[ -z "$plugin" ]] && return
+  local version_file="$2"
+  [[ -z "$version_file" ]] && return
+
+  local version_env_var="ASDF_${(U)plugin}_VERSION"
+  local version=${(P)version_env_var}
+
+  if [[ -n "$version" ]] ; then
+    __language_versions[$plugin]="$version"
+    return
+  fi
+
+  local search_path="$PWD"
+
+  while [[ "$search_path" != "/" ]] ; do
+    local _version_file="${search_path}/${version_file}"
+
+    if [[ -s "${_version_file}" ]] ; then
+      __language_versions[$plugin]="$(<$_version_file)"
+      return
+    fi
+
+    if [[ -s '.tool-versions' ]] ; then
+      __language_versions=(${=${(f)"$(<.tool-versions)"}})
+      return
+    fi
+
+    search_path=$(dirname "$search_path")
+  done
+}
+#-----------------------------------------------------------------------------
+_prompt__update_languages() {
+  (( $+commands[asdf] )) || return
+
+  for plugin in ${(k)__preferred_languages[@]} ; do
+    _prompt__update_language "$plugin" "${__preferred_languages[$plugin]}"
+  done
+}
+#-----------------------------------------------------------------------------
+# vim: set syntax=zsh ft=zsh sw=2 ts=2 expandtab:
