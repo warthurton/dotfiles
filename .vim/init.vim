@@ -127,12 +127,13 @@ Plug 'ncm2/ncm2-syntax' | Plug 'Shougo/neco-syntax'
 
 autocmd BufEnter * call ncm2#enable_for_buffer()
 inoremap <c-c> <ESC>
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+" inoremap <expr> <CR> pumvisible() ? "\<C-n>" : "\<CR>"
 inoremap <silent> <expr> <CR> ((pumvisible() && empty(v:completed_item)) ?  "\<c-y>\<cr>" : (!empty(v:completed_item) ? ncm2_ultisnips#expand_or("", 'n') : "\<CR>" ))
 
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>\<C-n>\<Tab>" : "\<Tab>"
-inoremap <expr> <CR> pumvisible() ? "\<C-n>\<C-n> " : "\<CR>"
-
+" inoremap <expr> <Tab> pumvisible() ? "\<C-n>\<C-n>\<Tab>" : "\<Tab>"
+" inoremap <expr> <CR> pumvisible() ? "\<C-n>\<C-n> " : "\<CR>"
 
 " Plug 'maralla/completor.vim', { 'do': 'make js' }
 
