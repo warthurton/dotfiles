@@ -1,10 +1,18 @@
 #-----------------------------------------------------------------------------
-# ~/.config/zsh/zsh-async/async.zsh \
-for s in  ~/.shell-common \
-          ~/.config/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh \
-          ~/.config/zsh/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh \
-          ~/.fzf.zsh \
-          ~/.zsh-git
+for s in ~/.shell-common \
+         ~/.config/zsh/zsh-async/async.zsh \
+         ~/.zsh-git
+do
+  if [[ -f "$s" ]] ; then
+    source "$s"
+  else
+    echo "ERROR: $s is an expected dependency"
+  fi
+done
+#-----------------------------------------------------------------------------
+for s in ~/.config/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh \
+         ~/.config/zsh/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh \
+         ~/.fzf.zsh
 do
   [[ -f "$s" ]] && source "$s"
 done
@@ -19,12 +27,26 @@ alias -g M='| $PAGER'
 bindkey -e
 bindkey -m 2>/dev/null
 
+autoload -Uz add-zsh-hook
 autoload -Uz compinit colors
 compinit -C
 colors
-
+#-----------------------------------------------------------------------------
+if (( $+commands[direnv] )) ; then
+  eval "$(direnv hook zsh)"
+fi
+#-----------------------------------------------------------------------------
+if (( $+commands[fasd] )) ; then
+  eval "$(fasd --init auto)"
+fi
 #-----------------------------------------------------------------------------
 typeset -g -a _preferred_languages=(ruby node python rust)
+typeset -g -A _preferred_language_commands=(
+  [ruby]=ruby
+  [node]=node
+  [python]=python
+  [rust]=rustc
+)
 typeset -g -A _prompt
 typeset -g -a _prompt_procs
 #-----------------------------------------------------------------------------
@@ -36,34 +58,30 @@ _nonprintable_end() {
   echo -e "\001"
 }
 #-----------------------------------------------------------------------------
-_hey_readline_i_am_not_part_of_your_linelength() {
-  # print -Pn "\e]0;\a"
-  # print -n "\[\e]0;\a\]"
-}
-#-----------------------------------------------------------------------------
 _language_version() {
   local language="$1"
+  local cmd="${_preferred_language_commands[$language]}"
 
-  if ! (( $+commands[$language] )) ; then
+  if ! (( $+commands[$cmd] )) ; then
     echo "none"
     return
   fi
 
   case "$language" in
     ruby)
-      ruby --version | awk '{print $2}'
+      "$cmd" --version | awk '{print $2}'
       ;;
     node)
-      node --version | sed -e 's/^v//'
+      "$cmd" --version | sed -e 's/^v//'
       ;;
     python*)
-      "$language" --version |& awk '{print $2}'
+      "$cmd" --version |& awk '{print $2}'
       ;;
     elixir)
-      "$language" --version |& grep '^Elixir' | awk '{print $2}'
+      "$cmd" --version |& grep '^Elixir' | awk '{print $2}'
       ;;
-    *)
-      "$language" --version
+    rust)
+      "$cmd" --version |& awk '{print $2}'
       ;;
   esac
 }
@@ -151,89 +169,43 @@ dump_prompt() {
   echo -n "${_prompt[reset]}"
   (( ${#_line1[@]} > 0 )) && echo "${_line1[@]}"
 
-
   echo -n "${_line2[@]}"
   echo -n ' %(?.%F{7}.%F{15})%? %(!.#.$)%f%b%k%u%s '
-
-  # _hey_readline_i_am_not_part_of_your_linelength
 }
 #-----------------------------------------------------------------------------
 _async_prompt_languages() {
+  cd -q "$1"
   echo "_prompt[languages]=\"$(_prompt_languages)\""
 }
 #-----------------------------------------------------------------------------
 _async_prompt_gitrepo() {
+  cd -q "$1"
   echo "_prompt[gitrepo]=\"$(_prompt_gitrepo)\""
 }
 #-----------------------------------------------------------------------------
 _async_prompt_gitconfigs() {
+  cd -q "$1"
   echo "_prompt[gitconfigs]=\"$(_prompt_gitconfigs)\""
 }
+
 #-----------------------------------------------------------------------------
-precmd() {
+_async_prompt_callback() {
+  [[ -n "$3" ]] && eval "$3" && zle && zle reset-prompt >&/dev/null
+}
+#-----------------------------------------------------------------------------
+prompt_precmd() {
   _update_fast_left_prompt_parts
-
-  if [[ "${#_prompt_procs[@]}" -gt 0 ]] ; then
-    for pid in "${_prompt_procs[@]}" ; do
-      if [[ "$pid" -ne "$$" ]] ; then
-        kill -0 "$pid" >&/dev/null && kill -s HUP "$pid" >&/dev/null
-      fi
-    done
-    _prompt_procs=()
-  fi
-
-  typeset -g _prompt_file_left="$HOME/.zsh_prompt_left_${$}_${RANDOM}"
-
-  () {
-    cat "$1" >> "$_prompt_file_left"
-    kill -s USR1 $$
-  } =(_async_prompt_languages) &!
-  _prompt_procs+=($!)
-
-  () {
-    cat "$1" >> "$_prompt_file_left"
-    kill -s USR1 $$
-  } =(_async_prompt_gitrepo) &!
-  _prompt_procs+=($!)
-
-  () {
-    cat "$1" >> "$_prompt_file_left"
-    kill -s USR1 $$
-  } =(_async_prompt_gitconfigs) &!
-  _prompt_procs+=($!)
-}
-
-#-----------------------------------------------------------------------------
-TRAPUSR1() {
-  eval "$(<$_prompt_file_left)" && zle && zle reset-prompt >&/dev/null
+  async_job 'prompt_worker' _async_prompt_languages "$PWD"
+  async_job 'prompt_worker' _async_prompt_gitrepo "$PWD"
+  async_job 'prompt_worker' _async_prompt_gitconfigs "$PWD"
 }
 #-----------------------------------------------------------------------------
-TRAPWINCH() {
-  zle && zle reset-prompt >&/dev/null
-}
-#-----------------------------------------------------------------------------
-TRAPALRM() {
-  case "$WIDGET" in
-    expand-or-complete|self-insert|up-line-or-beginning-search|down-line-or-beginning-search|backward-delete-char|.history-incremental-search-backward|.history-incremental-search-forward)
-      :
-    ;;
-    *)
-      zle && zle reset-prompt >&/dev/null
-      ;;
-    esac
-}
-#-----------------------------------------------------------------------------
-PERIOD=10
-periodic() {
-  find "$HOME" -type f -maxdepth 1 -mtime +10s -name '.zsh_prompt_*' -delete
-}
-#-----------------------------------------------------------------------------
-if (( $+commands[direnv] )) ; then
-  eval "$(direnv hook zsh)"
-fi
-#-----------------------------------------------------------------------------
-if (( $+commands[fasd] )) ; then
-  eval "$(fasd --init auto)"
-fi
+typeset -f async_init >&/dev/null || return
+async_init
+
+async_start_worker 'prompt_worker' -n
+async_register_callback 'prompt_worker' _async_prompt_callback
+
+add-zsh-hook precmd prompt_precmd
 #-----------------------------------------------------------------------------
 # vim: set syntax=zsh ft=zsh sw=2 ts=2 expandtab:
