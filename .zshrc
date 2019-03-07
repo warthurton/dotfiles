@@ -41,12 +41,7 @@ if (( $+commands[fasd] )) ; then
 fi
 #-----------------------------------------------------------------------------
 typeset -g -a _preferred_languages=(ruby node python rust)
-typeset -g -A _preferred_language_commands=(
-  [ruby]=ruby
-  [node]=node
-  [python]=python
-  [rust]=rustc
-)
+typeset -g -A _preferred_language_commands=(ruby ruby node node python python rust rustc)
 typeset -g -A _prompt
 typeset -g -a _prompt_procs
 #-----------------------------------------------------------------------------
