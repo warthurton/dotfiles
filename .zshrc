@@ -1,7 +1,8 @@
 #-----------------------------------------------------------------------------
-for s in ~/.shell-common \
-         ~/.config/zsh/zsh-async/async.zsh \
-         ~/.zsh-git
+for s in \
+    ~/.shell-common \
+    ~/.zsh-git \
+    ~/.config/zsh/zsh-async/async.zsh
 do
   if [[ -f "$s" ]] ; then
     source "$s"
@@ -10,9 +11,10 @@ do
   fi
 done
 #-----------------------------------------------------------------------------
-for s in ~/.config/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh \
-         ~/.config/zsh/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh \
-         ~/.fzf.zsh
+for s in \
+    ~/.fzf.zsh \
+    ~/.config/zsh/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh \
+    ~/.config/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 do
   [[ -f "$s" ]] && source "$s"
 done
@@ -27,10 +29,15 @@ alias -g M='| $PAGER'
 bindkey -e
 bindkey -m 2>/dev/null
 
-autoload -Uz add-zsh-hook
-autoload -Uz compinit colors
+autoload -Uz add-zsh-hook compinit colors zcalc
+
 compinit -C
 colors
+#-----------------------------------------------------------------------------
+__calc() {
+  zcalc -e "$*"
+}
+aliases[=]='noglob __calc'
 #-----------------------------------------------------------------------------
 if (( $+commands[direnv] )) ; then
   eval "$(direnv hook zsh)"
@@ -46,11 +53,11 @@ typeset -g -A _prompt
 typeset -g -a _prompt_procs
 #-----------------------------------------------------------------------------
 _nonprintable_begin() {
-  echo -e "\001"
+  print -n '\001'
 }
 #-----------------------------------------------------------------------------
 _nonprintable_end() {
-  echo -e "\001"
+  print -n '\002'
 }
 #-----------------------------------------------------------------------------
 _language_version() {
@@ -82,27 +89,27 @@ _language_version() {
 }
 #-----------------------------------------------------------------------------
 _prompt_reset() {
-  print -Pn "%f%b%k%u%s"
+  print -n "%f%b%k%u%s"
 }
 #-----------------------------------------------------------------------------
 _prompt_time() {
-  print -Pn "%F{8}%D{%H:%M:%S}"
+  print -n "%F{8}%D{%H:%M:%S}"
 }
 #-----------------------------------------------------------------------------
 _prompt_user() {
   if am_i_someone_else ; then
-    print -Pn "%F{9}_%n_"
+    print -n "%F{9}_%n_"
   fi
 }
 #-----------------------------------------------------------------------------
 _prompt_host() {
   if [[ -n $SSH_TTY ]] ; then
-    print -Pn "%F{15}@%F{14}%m"
+    print -n "%F{15}@%F{14}%m"
   fi
 }
 #-----------------------------------------------------------------------------
 _prompt_path() {
-  print -Pn "%F{7}%~"
+  print -n "%F{7}%~"
 }
 #-----------------------------------------------------------------------------
 _prompt_languages() {
@@ -111,7 +118,7 @@ _prompt_languages() {
     _langs+=("%F{6}${language}-$(_language_version $language)")
   done
 
-  print -Pn "${_langs[@]}"
+  print -n "${_langs[@]}"
 }
 #-----------------------------------------------------------------------------
 _prompt_gitrepo() {
@@ -120,7 +127,7 @@ _prompt_gitrepo() {
   local _git_prompt="$(build_git_status)"
 
   if [[ -n "${_git_prompt}" ]] ; then
-    print -Pn "%f${_git_prompt}"
+    print -n "%f${_git_prompt}"
   fi
 }
 #-----------------------------------------------------------------------------
@@ -130,19 +137,18 @@ _prompt_gitconfigs() {
 
   if typeset -f pubgit >&/dev/null ; then
     _prompt_update_git pubgit .git-pub-dotfiles
-    print -Pn "%F{8}PUB:%f$(build_git_status pubgit)"
+    print -n "%F{8}PUB:%f$(build_git_status pubgit)"
   fi
 
   if typeset -f prvgit >&/dev/null ; then
     _prompt_update_git prvgit .git-prv-dotfiles
-    print -Pn " "
-    print -Pn "%F{8}PRV:%f$(build_git_status prvgit)"
+    print -n ' '
+    print -n "%F{8}PRV:%f$(build_git_status prvgit)"
   fi
 }
 #-----------------------------------------------------------------------------
 _update_fast_left_prompt_parts() {
   _prompt=()
-  _prompt[reset]="$(_prompt_reset)"
   _prompt[time]="$(_prompt_time)"
   _prompt[user]="$(_prompt_user)"
   _prompt[host]="$(_prompt_host)"
@@ -161,11 +167,13 @@ dump_prompt() {
     [[ -n "${_prompt[$piece]}" ]] && _line2+=("${_prompt[$piece]}")
   done
 
-  echo -n "${_prompt[reset]}"
-  (( ${#_line1[@]} > 0 )) && echo "${_line1[@]}"
+  _prompt_reset
+  (( ${#_line1[@]} > 0 )) && print "${_line1[@]}"
 
-  echo -n "${_line2[@]}"
-  echo -n ' %(?.%F{7}.%F{15})%? %(!.#.$)%f%b%k%u%s '
+  print -n "${_line2[@]}"
+  print -n ' %(?.%F{7}.%F{15})%? %(!.#.$)'
+  _prompt_reset
+  print -n ' '
 }
 #-----------------------------------------------------------------------------
 _async_prompt_languages() {
