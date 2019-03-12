@@ -2,8 +2,9 @@
 typeset -g HISTFILE="$HOME/.zsh_history"
 typeset -g SAVEHIST=99999999999
 typeset -g WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
-skip_global_compinit=1
-typeset -g PROMPT="%f%b%k%u%s%n@%m %~ %(!.#.$)%f%b%k%u%s "
+# skip_global_compinit=1
+typeset -g PROMPT='%f%b%k%u%s%n@%m %~ %(!.#.$)%f%b%k%u%s '
+typeset -g RPROMPT=''
 #-----------------------------------------------------------------------------
 zmodload zsh/compctl \
          zsh/complete \
@@ -15,7 +16,6 @@ zmodload zsh/compctl \
          zsh/zle \
          zsh/zleparameter \
          zsh/zutil
-
 #-----------------------------------------------------------------------------
 setopt \
   always_to_end \
@@ -74,6 +74,8 @@ unsetopt \
   hist_ignore_all_dups \
   inc_append_history \
   inc_append_history_time
+#-----------------------------------------------------------------------------
+fpath=(~/.config/zsh/site-functions /usr/local/share/zsh-completions $fpath)
 #-----------------------------------------------------------------------------
 # typeset -g _debug_times
 # typeset -F SECONDS
