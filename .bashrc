@@ -22,13 +22,11 @@ if command -v direnv >/dev/null 2>/dev/null ; then
 fi
 # --------------------------------------------------------------------------
 [[ -z "$PS1" ]] && return
-
 # --------------------------------------------------------------------------
-for s in "$HOME/.fzf.bash"  ; do
+for s in "$HOME/.fzf.bash"  "${HOME}/.iterm2_shell_integration.bash" ; do
   [[ -s "$s" ]] && source "$s"
 done
 # --------------------------------------------------------------------------
-
 export PS1='\t \u@\h \w \$ '
 # --------------------------------------------------------------------------
 _completion_loader() {
@@ -131,10 +129,5 @@ if command -v git >/dev/null 2>/dev/null ; then
     return 0
   }
 fi
-
-if [[ -s "$HOME/.nvm" ]] ; then
-  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-fi
-
 #--------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:

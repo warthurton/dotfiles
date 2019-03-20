@@ -30,7 +30,6 @@ _clean_path() {
 # --------------------------------------------------------------------------
 # This adds systems paths, my list of sane paths, private/work paths in my preferred order.
 
-# find /etc/paths /etc/paths.d "$HOME/.shell-paths" "$HOME/.shell-prv-path" -type f -print0 2>/dev/null | xargs -0 cat | while read dir ; do
 find /etc/paths /etc/paths.d -type f -print0 2>/dev/null | xargs -0 cat | while read dir ; do
   _safe_add_to_path "${dir}"
 done
@@ -47,9 +46,7 @@ for dir in \
   $HOME/.asdf/{bin,shims} \
   $HOME/.go/bin \
   $HOME/.cargo/bin \
-  $HOME/bin \
-  $HOME/tbin \
-  $HOME/TaniumContentBuildTools
+  $HOME/bin
 do
   _safe_add_to_path "$dir"
 done
@@ -58,23 +55,14 @@ for _version_manager in rbenv nodenv ; do
   _safe_add_to_path "$HOME/.${_version_manager}/bin"
   _safe_add_to_path "$HOME/.${_version_manager}/shims"
 
-  if declare -f "${_version_manager}" >& /dev/null ; then
-    continue
-  fi
+  declare -f "${_version_manager}" >& /dev/null && continue
 
   _cmd="$(command -v "${_version_manager}")"
 
-  if [[ -z "$_cmd" ]] ; then
-    continue
-  fi
+  [[ -z "$_cmd" ]] && continue
 
   eval "export __${_version_manager}=${_cmd}"
 done
-
-# --------------------------------------------------------------------------
-#if command -v pyenv >&/dev/null; then
-#  eval "$(pyenv virtualenv-init -)"
-#fi
 # --------------------------------------------------------------------------
 if command -v fnm >&/dev/null ; then
   eval "$(fnm env --multi)"
