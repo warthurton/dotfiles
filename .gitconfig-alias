@@ -1,0 +1,23 @@
+[alias]
+  aa = add --all
+  b = branch
+  c = commit
+  ca = commit --all
+  co = checkout
+  dc = diff --cached
+  dh1 = diff HEAD~1
+  di = diff
+  f = fetch
+  fa = fetch --all --tags --prune
+  l = "!pretty_git_log"
+  la = !git l --all
+  ls = ls-files
+  merged = branch --merged
+  pu = push -u
+  r = !git l -30
+  ra = !git r --all
+  s = !git fetch && git status
+  st = status
+  unadd = reset HEAD
+
+; vim: ft=gitconfig sw=2 ts=2 et

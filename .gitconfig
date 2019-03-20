@@ -2,69 +2,13 @@
 
 [user]
   name = chorn
-  email = christopher.horn@tanium.com
+  email = chorn@chorn.com
   signingKey = chorn
-[commit]
-  gpgsign = true
-[branch]
-  autoSetupRebase = always
-[core]
-  editor = vim
-  pager = less -r
-  excludesfile = ~/.gitignore
-[pager]
-  diff = diff-so-fancy | less --tabs=1,5 -RFX
-  show = diff-so-fancy | less --tabs=1,5 -RFX
-[color]
-  ui = true
-[pull]
-  rebase = true
-[push]
-  default = tracking
-[mergetool]
-  keepBackup = true
-	prompt = false
-[advice]
-  statusHints = false
-[diff]
-  mnemonicprefix = true
-  algorithm = patience
-[prompt]
-  showinfo = true
-[rerere]
-  enabled = true
-[merge]
-  ff = only
-[alias]
-  aa = add --all
-  authors = !git log --format="%aN"
-  b = branch
-  c = commit
-  ca = commit --all
-  co = checkout
-  current-branch= !git branch | grep '*' | cut -d ' ' -f 2
-  dc = diff --cached
-  dh1 = diff HEAD~1
-  di = diff
-  ds = diff --stat=160,120
-  edit-branch-commits = !git rebase -i `git outgoing master | tail -1 | xargs git log --format="%P" -1`
-  email-domains = !git log --format="%aE" | awk -F'@' '{print $2}'
-  emails = !git log --format="%aE"
-  f = fetch
-  fa = fetch --all --tags --prune
-  h = !git head
-  head = !git l -1
-  l = "!pretty_git_log"
-  la = !git l --all
-  ls = ls-files
-  merged = branch --merged
-  pu = push -u
-  pullff = pull --ff-only
-  r = !git l -30
-  ra = !git r --all
-  ranked-authors = !git authors | sort | uniq -c | sort -n
-  ranked-email-domains = !git email-domains | sort | uniq -c | sort -n
-  s = !git fetch && git status
-  st = status
-  unadd = reset HEAD
+[include]
+  path = .gitconfig-public
+  path = .gitconfig-alias
+[includeIf "gitdir:~/.git-pub-dotfiles"]
+  path = .gitconfig-dotfiles
+[includeIf "gitdir:~/.git-prv-dotfiles"]
+  path = .gitconfig-dotfiles
 

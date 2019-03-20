@@ -13,6 +13,10 @@ export GOPATH="$HOME/.go"
 export GROOVY_HOME=/usr/local/opt/groovy/libexec
 export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 
+if command -v diff-so-fancy >&/dev/null ; then
+  export GIT_PAGER="diff-so-fancy | less --tabs=1,5 -RFX"
+fi
+
 if command -v nvim >&/dev/null ; then
   export EDITOR=nvim
   export VISUAL=nvim

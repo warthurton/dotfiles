@@ -65,77 +65,66 @@ Plug 'junegunn/vim-emoji'
 Plug 'junegunn/vim-slash'
 
 Plug 'AndrewRadev/splitjoin.vim'
-" Plug 'Shougo/vimproc.vim', {'do' : 'make'}
-" Plug 'Shougo/vimshell'
 Plug 'airblade/vim-gitgutter'
-" Plug 'albfan/ag.vim'
+Plug 'albfan/ag.vim'
 Plug 'chriskempson/base16-vim'
-" Plug 'editorconfig/editorconfig-vim'
 Plug 'godlygeek/tabular'
-" Plug 'janko-m/vim-test'
 Plug 'majutsushi/tagbar'
-" Plug 'mattn/emmet-vim'
 Plug 'mbbill/undotree'
 Plug 'mhinz/vim-signify'
 Plug 'scrooloose/nerdtree'
-" Plug 'skalnik/vim-vroom'
 Plug 'tomtom/tcomment_vim'
 Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 Plug 'w0rp/ale'
-" Plug 'Shougo/unite.vim'
-" Plug 'devjoe/vim-codequery'
 
 " Filetypes
-" Plug 'kchmck/vim-coffee-script',                   { 'for': 'coffee' }
-" Plug 'rhysd/vim-crystal',                          { 'for': 'crystal' }
+Plug 'kchmck/vim-coffee-script',                   { 'for': 'coffee' }
+Plug 'rhysd/vim-crystal',                          { 'for': 'crystal' }
 Plug 'JulesWang/css.vim',                          { 'for': [ 'css', 'sass', 'scss' ] }
-" Plug 'chrisbra/csv.vim',                           { 'for': 'csv' }
-" Plug 'elixir-lang/vim-elixir',                     { 'for': 'elixir' }
-" Plug 'spiegela/vimix',                             { 'for': 'elixir' }
-" Plug 'elmcast/elm-vim',                            { 'for': 'elm' }
+Plug 'chrisbra/csv.vim',                           { 'for': 'csv' }
+Plug 'elixir-lang/vim-elixir',                     { 'for': 'elixir' }
+Plug 'spiegela/vimix',                             { 'for': 'elixir' }
+Plug 'elmcast/elm-vim',                            { 'for': 'elm' }
 Plug 'fatih/vim-go',                               { 'for': 'go' }
-" Plug 'othree/html5.vim'
+Plug 'othree/html5.vim',                           { 'for': 'html' }
 Plug 'plasticboy/vim-markdown',                    { 'for': 'markdown' }
 Plug 'thoughtbot/vim-rspec',                       { 'for': 'ruby' }
 Plug 'tmux-plugins/vim-tmux',                      { 'for': 'tmux' }
 Plug 'leafgarland/typescript-vim',                 { 'for': 'typescript' }
-" Plug 'nvie/vim-flake8',                            { 'for': 'python' }
-" Plug 'google/yapf',                                { 'for': 'python' }
 Plug 'ambv/black',                                 { 'for': 'python' }
 
 " javascript
 Plug 'othree/yajs.vim', { 'for': 'javascript' }
 Plug 'othree/es.next.syntax.vim', { 'for': 'javascript' }
 Plug 'othree/javascript-libraries-syntax.vim', { 'for': 'javascript' }
-" Plug 'othree/jspc.vim', { 'for': 'javascript' }
 Plug 'isRuslan/vim-es6', { 'for': 'javascript' }
 " Plug 'prettier/vim-prettier', { 'for': 'javascript', 'do': 'yarn install' }
 Plug 'moll/vim-node', { 'for': 'javascript' }
-" Plug '1995eaton/vim-better-javascript-completion', { 'for': 'javascript' }
 
-Plug 'ncm2/ncm2'
-Plug 'roxma/nvim-yarp'
-Plug 'ncm2/ncm2-bufword'
-Plug 'ncm2/ncm2-path'
-Plug 'ncm2/ncm2-ultisnips'
-" Plug 'ncm2/ncm2-gtags'
-Plug 'ncm2/ncm2-jedi'
-Plug 'ncm2/ncm2-racer'
-Plug 'ncm2/ncm2-vim'
-Plug 'ncm2/ncm2-tern'
-Plug 'ncm2/ncm2-syntax' | Plug 'Shougo/neco-syntax'
-
-autocmd BufEnter * call ncm2#enable_for_buffer()
-inoremap <c-c> <ESC>
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-" inoremap <expr> <CR> pumvisible() ? "\<C-n>" : "\<CR>"
-inoremap <silent> <expr> <CR> ((pumvisible() && empty(v:completed_item)) ?  "\<c-y>\<cr>" : (!empty(v:completed_item) ? ncm2_ultisnips#expand_or("", 'n') : "\<CR>" ))
-
-" inoremap <expr> <Tab> pumvisible() ? "\<C-n>\<C-n>\<Tab>" : "\<Tab>"
-" inoremap <expr> <CR> pumvisible() ? "\<C-n>\<C-n> " : "\<CR>"
-
-" Plug 'maralla/completor.vim', { 'do': 'make js' }
+" if has('nvim')
+"   Plug 'ncm2/ncm2'
+"   Plug 'roxma/nvim-yarp'
+"   Plug 'ncm2/ncm2-bufword'
+"   Plug 'ncm2/ncm2-path'
+"   Plug 'ncm2/ncm2-ultisnips'
+"   " Plug 'ncm2/ncm2-gtags'
+"   Plug 'ncm2/ncm2-jedi'
+"   Plug 'ncm2/ncm2-racer'
+"   Plug 'ncm2/ncm2-vim'
+"   Plug 'ncm2/ncm2-tern'
+"   Plug 'ncm2/ncm2-syntax' | Plug 'Shougo/neco-syntax'
+"
+"   autocmd BufEnter * call ncm2#enable_for_buffer()
+"   inoremap <c-c> <ESC>
+"   inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+"   inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+"   " inoremap <expr> <CR> pumvisible() ? "\<C-n>" : "\<CR>"
+"   inoremap <silent> <expr> <CR> ((pumvisible() && empty(v:completed_item)) ?  "\<c-y>\<cr>" : (!empty(v:completed_item) ? ncm2_ultisnips#expand_or("", 'n') : "\<CR>" ))
+"   " inoremap <expr> <Tab> pumvisible() ? "\<C-n>\<C-n>\<Tab>" : "\<Tab>"
+"   " inoremap <expr> <CR> pumvisible() ? "\<C-n>\<C-n> " : "\<CR>"
+" else
+  Plug 'maralla/completor.vim', { 'do': 'make js' }
+" endif
 
 if v:version >= 702
   Plug 'vim-airline/vim-airline'
@@ -606,6 +595,7 @@ nmap <silent> <leader>z :call ShutUp()<CR>
 syntax on
 filetype plugin indent on
 " set omnifunc=syntaxcomplete#Complete
+
 
 let g:base16colorspace = 256
 let g:base16_shell_path =  SafeDirectory('~/.config/base16-shell/scripts')
