@@ -14,7 +14,12 @@ if has('nvim')
   set shada='100,<1000,s1000,:1000
   set clipboard=unnamedplus
 else
-  let g:vimhome = SafeDirectory('~/.vim')
+  if has('win32')
+    let g:vimhome = SafeDirectory('~/vimfiles')
+  else
+    let g:vimhome = SafeDirectory('~/.vim')
+  endif
+  
   set clipboard+=autoselect
 endif
 
