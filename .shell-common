@@ -1,7 +1,16 @@
-# Aliases & Functions for Interactive shells -------------------------------
+#-----------------------------------------------------------------------------
+# Aliases & Functions
 
 #-----------------------------------------------------------------------------
 [[ -s "$HOME/.shell-prv" ]] && source "$HOME/.shell-prv"
+
+# function log2syslog
+# {
+#    declare COMMAND
+#    COMMAND=$(fc -ln -0)
+#    logger -p local1.notice -t bash -i -- "${USER}:${COMMAND}"
+# }
+# trap log2syslog DEBUG
 
 # OS X ---------------------------------------------------------------------
 if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
@@ -25,6 +34,8 @@ if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
 
 # Linux ---------------------------------------------------------------------
 elif [[ "${OSTYPE:0:5}" = "linux" ]] ; then
+  command -v tty >&/dev/null && export GPG_TTY=$(tty)
+
   alias ls="/bin/ls --color=auto -F"
   alias l="ls -l"
   alias p="ps auxOU"
@@ -36,6 +47,11 @@ if command -v ag >/dev/null 2>/dev/null ; then
   alias ag_next='git $(git diff --name-only master..HEAD . | sed -e "s/^/ --ignore=/")'
 fi
 # ---------------------------------------------------------------------------
+if command -v nvim >/dev/null 2>/dev/null ; then
+  alias vim=nvim
+  alias v=nvim
+fi
+# ---------------------------------------------------------------------------
 alias list_to_regex="sed -e 's/[^0-9]//g' | tr '\n' '|' | sed -e 's/^/(/' -e 's/\|$/)/'"
 alias m='$PAGER'
 alias l1="ls -1"
@@ -43,7 +59,6 @@ alias ll="l -A"
 alias la="ls -A"
 alias live_ip='dig +short myip.opendns.com @resolver1.opendns.com || curl -f4L http://ifconfig.me'
 alias to_csv='soffice --convert-to csv --headless'
-alias v=vim
 alias dc=docker-compose
 # ---------------------------------------------------------------------------
 cassette_to_json() {
@@ -69,32 +84,32 @@ ps_owners() {
   [[ -n "${BASH_VERSINFO[1]}" && "${BASH_VERSINFO[1]}" -lt 4 ]] && return 1
 
   local _pid="${1:-$$}"
-  local _what_to_print="$2"
 
-  [[ -z "$_what_to_print" ]] && _what_to_print="user"
-  read -r _user _ppid _command < <(ps -o user,ppid,command -p "$_pid" | grep -v PPID)
-  case "$_what_to_print" in
-    pid) echo "$_pid" ;;
-    command) echo "$_command" ;;
-    *) echo "$_user" ;;
-  esac
-  [[ $_pid -ne 1 ]] && ps_owners "$_ppid" "$_what_to_print"
+  [[ $_pid -eq 0 ]] && return
+
+  read -r _uid _user _ppid _command < <(ps -o uid=,user=,ppid=,command= -p "$_pid")
+
+  echo "$_pid $_user $_uid $_ppid \"$_command\""
+
+  ps_owners "$_ppid"
 }
 
 am_i_someone_else() {
-  ps aux | grep -q '^root' || return 1
   [[ -n "${BASH_VERSINFO[0]}" && "${BASH_VERSINFO[0]}" -lt 4 ]] && return 1
   [[ -n "${BASH_VERSINFO[1]}" && "${BASH_VERSINFO[1]}" -lt 4 ]] && return 1
+
+  pgrep -u 0 >&/dev/null || return 1
+  [[ $EUID -eq 0 ]] && return 1
 
   local -a _owners
   local -A _counts
 
-  while read -r _owner ; do
-    if [[ -z "${_counts[$_owner]}" ]] ; then
-      _owners+=($_owner)
-      _counts[$_owner]=1
+  while read -r _pid _user _uid _ppid _command ; do
+    if [[ -z "${_counts[$_user]}" ]] ; then
+      _owners+=("$_user")
+      _counts[$_user]=1
     else
-      (( _counts[$_owner]++ ))
+      (( _counts[$_user]++ ))
     fi
   done < <(ps_owners)
 

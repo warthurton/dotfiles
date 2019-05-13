@@ -1,21 +1,22 @@
 # This is a comment
 
 brew:
-  caskroom/fonts
   caskroom/drivers
-  habitat-sh/habitat
+  caskroom/fonts
+
 brewed:
   arping
   asciiquarium
   bash
   bash-completion
+  bat
   bundler-completion
-  catimg
   checkbashisms
   cmake
   coreutils
   cscope
   csv-fix
+  csvkit
   ctags
   curl
   direnv
@@ -26,13 +27,10 @@ brewed:
   emojify
   exercism
   fasd
+  fd
   fdupes
-  ffmpeg
   figlet
   gem-completion
-  ghq
-  gibo
-  gist
   git
   git-extras
   git-hooks
@@ -49,133 +47,61 @@ brewed:
   hub
   imagemagick
   jq
-  lame
-  leiningen
   less
-  lua
-  luajit
-  macvim
-  miniupnpc
-  mmv
   mosh
-  moreutils
-  msgpack
   mtr
   neovim
-  netcat
-  nethack
   nmap
+  nnn
   no-more-secrets
+  noti
   open-completion
   openssh
   openssl
-  osxutils
   p7zip
   pidof
   pv
-  python
-  python3
-  qpdf
-  rails-completion
-  rake-completion
-  recode
-  redis
-  rmlint
+  python2
   rsync
-  ruby
-  ruby-build
-  ruby-completion
-  sdl
-  sdl2
-  sdl_net
-  sdl_sound
-  shellcheck
   socat
-  spring-completion
   sqlite
   ssh-copy-id
-  tcping
   the_silver_searcher
-  tidy-html5
-  tmate
   tmux
-  tofrodos
-  uni2ascii
-  vim
-  webp
   wget
-  x264
-  x265
-  xvid
   xz
-  yarn
-  youtube-dl
-  zlib
   zsh
 
-gems:
-  brakeman
-  foodcritic
-  haml_lint
-  mdl
-  slim_lint
-  sqlint
-  pry-byebug
-  pry-doc
-  did_you_mean
-  did_you_mean
-  looksee
-  irbtools
-  irbtools-more
-  wirb
-  gem-ctags
-  gem-browse
-  ripper-tags
-  rufo
+gem:
   neovim
-  travis
-  cucumber_lint
-  cocoapods
 
-pips:
-  ansible-lint
-  proselint
-  vim-vint
-  yamllint
+pip:
   doge
   neovim
+  proselint
+  vim-vint
+  virtualenv
 
-npms:
-  babel-eslint
-  eslint
-  eslint-config-prettier
-  eslint-config-standard
-  eslint-plugin-flowtype
-  eslint-plugin-import
-  eslint-plugin-jasmine
-  eslint-plugin-jest
-  eslint-plugin-node
-  eslint-plugin-prettier
-  eslint-plugin-promise
-  eslint-plugin-react
-  eslint-plugin-standard
-  jasmine
-  jest-cli
-  neovim-client
-  prettier
-  prettier-eslint-cli
-  react-devtools
-  stylelint
-  ternjs
+npm:
+  neovim
 
-cargos:
+cargo:
   parallel
   racer
   ripgrep
   svgbob_cli
   xsv
 
-gits:
+git:
   $HOME/.config
   $HOME/src
+
+go:
+  github.com/sugyan/ttygif
+  github.com/eliukblau/pixterm
+  github.com/ericchiang/pup
+  github.com/olivere/iterm2-imagetools/cmd/imgcat
+  github.com/olivere/iterm2-imagetools/cmd/imgls
+  github.com/schachmat/wego
+  github.com/rs/jplot
 

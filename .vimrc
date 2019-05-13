@@ -12,14 +12,10 @@ endfunction
 if has('nvim')
   let g:vimhome = SafeDirectory('~/.config/nvim')
   set shada='100,<1000,s1000,:1000
-  set clipboard+=unnamedplus
+  set clipboard=unnamedplus
 else
   let g:vimhome = SafeDirectory('~/.vim')
-
-  if has('clipboard')
-    set guioptions+=aA
-    set clipboard+=unnamed
-  endif
+  set clipboard+=autoselect
 endif
 
 let &backupdir    = SafeDirectory(g:vimhome . '/backup')
@@ -46,15 +42,14 @@ endif
 call plug#begin(SafeDirectory(g:vimhome . '/plugged'))
 
 " tpope
-Plug 'tpope/vim-bundler'
+Plug 'tpope/vim-bundler', { 'for': 'ruby' }
 Plug 'tpope/vim-characterize'
-Plug 'tpope/vim-cucumber', { 'for': 'ruby' }
 Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-endwise', { 'for': 'ruby' }
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-haml', { 'for': 'haml' }
-Plug 'tpope/vim-rails'
-Plug 'tpope/vim-rake'
+Plug 'tpope/vim-rails', { 'for': 'ruby' }
+Plug 'tpope/vim-rake', { 'for': 'ruby' }
 Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
@@ -70,22 +65,16 @@ Plug 'junegunn/vim-emoji'
 Plug 'junegunn/vim-slash'
 
 Plug 'AndrewRadev/splitjoin.vim'
-" Plug 'Chiel92/vim-autoformat'
-Plug 'Shougo/vimproc.vim', {'do' : 'make'}
-Plug 'Shougo/vimshell'
 Plug 'airblade/vim-gitgutter'
 Plug 'albfan/ag.vim'
 Plug 'chriskempson/base16-vim'
 Plug 'godlygeek/tabular'
-Plug 'jreybert/vimagit'
 Plug 'majutsushi/tagbar'
-Plug 'mattn/emmet-vim'
 Plug 'mbbill/undotree'
+Plug 'mhinz/vim-signify'
 Plug 'scrooloose/nerdtree'
-Plug 'skalnik/vim-vroom'
 Plug 'tomtom/tcomment_vim'
-Plug 'vim-ruby/vim-ruby'
-Plug 'vim-scripts/Specky'
+Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 Plug 'w0rp/ale'
 
 " Filetypes
@@ -97,26 +86,45 @@ Plug 'elixir-lang/vim-elixir',                     { 'for': 'elixir' }
 Plug 'spiegela/vimix',                             { 'for': 'elixir' }
 Plug 'elmcast/elm-vim',                            { 'for': 'elm' }
 Plug 'fatih/vim-go',                               { 'for': 'go' }
-Plug 'ksauzz/haproxy.vim',                         { 'for': 'haproxy' }
 Plug 'othree/html5.vim',                           { 'for': 'html' }
 Plug 'plasticboy/vim-markdown',                    { 'for': 'markdown' }
-Plug 'mutewinter/nginx.vim',                       { 'for': 'nginx' }
-Plug 'jceb/vim-orgmode',                           { 'for': 'org' }
 Plug 'thoughtbot/vim-rspec',                       { 'for': 'ruby' }
-Plug 'slim-template/vim-slim',                     { 'for': 'slim' }
-Plug 'kurayama/systemd-vim-syntax',                { 'for': 'systemd' }
-Plug 'sheerun/vim-yardoc',                         { 'for': 'yard' }
 Plug 'tmux-plugins/vim-tmux',                      { 'for': 'tmux' }
+Plug 'leafgarland/typescript-vim',                 { 'for': 'typescript' }
+Plug 'ambv/black',                                 { 'for': 'python' }
 
 " javascript
-Plug 'othree/yajs.vim'
-Plug 'othree/es.next.syntax.vim'
-Plug 'othree/javascript-libraries-syntax.vim'
-Plug 'mxw/vim-jsx'
-Plug '1995eaton/vim-better-javascript-completion'
-Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
-Plug 'othree/jspc.vim'
-Plug 'moll/vim-node'
+Plug 'othree/yajs.vim', { 'for': 'javascript' }
+Plug 'othree/es.next.syntax.vim', { 'for': 'javascript' }
+Plug 'othree/javascript-libraries-syntax.vim', { 'for': 'javascript' }
+Plug 'isRuslan/vim-es6', { 'for': 'javascript' }
+" Plug 'prettier/vim-prettier', { 'for': 'javascript', 'do': 'yarn install' }
+Plug 'moll/vim-node', { 'for': 'javascript' }
+
+" if has('nvim')
+"   Plug 'ncm2/ncm2'
+"   Plug 'roxma/nvim-yarp'
+"   Plug 'ncm2/ncm2-bufword'
+"   Plug 'ncm2/ncm2-path'
+"   Plug 'ncm2/ncm2-ultisnips'
+"   " Plug 'ncm2/ncm2-gtags'
+"   Plug 'ncm2/ncm2-jedi'
+"   Plug 'ncm2/ncm2-racer'
+"   Plug 'ncm2/ncm2-vim'
+"   Plug 'ncm2/ncm2-tern'
+"   Plug 'ncm2/ncm2-syntax' | Plug 'Shougo/neco-syntax'
+"
+"   autocmd BufEnter * call ncm2#enable_for_buffer()
+"   inoremap <c-c> <ESC>
+"   inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+"   inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+"   " inoremap <expr> <CR> pumvisible() ? "\<C-n>" : "\<CR>"
+"   inoremap <silent> <expr> <CR> ((pumvisible() && empty(v:completed_item)) ?  "\<c-y>\<cr>" : (!empty(v:completed_item) ? ncm2_ultisnips#expand_or("", 'n') : "\<CR>" ))
+"   " inoremap <expr> <Tab> pumvisible() ? "\<C-n>\<C-n>\<Tab>" : "\<Tab>"
+"   " inoremap <expr> <CR> pumvisible() ? "\<C-n>\<C-n> " : "\<CR>"
+" else
+  Plug 'maralla/completor.vim', { 'do': 'make js' }
+" endif
 
 if v:version >= 702
   Plug 'vim-airline/vim-airline'
@@ -129,23 +137,9 @@ if has('python3')
   Plug 'honza/vim-snippets'
 endif
 
-if executable('ctags')
-  Plug 'ludovicchabant/vim-gutentags'
-endif
-
-let g:use_neocomplete = 0
-
-if has('nvim')
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-  Plug 'Shougo/deoplete-rct', { 'do': ':UpdateRemotePlugins' }
-" elseif v:version >= 703 && has('lua')
-"   let g:use_neocomplete = 1
-"   Plug 'Shougo/neocomplete.vim'
-" elseif v:version >= 704 && has('python')
-"   Plug 'Valloric/YouCompleteMe', { 'do': './install.py --system-libclang --clang-completer --racer-completer --tern-completer' }
-else
-  Plug 'maralla/completor.vim', { 'do': 'make js' }
-endif
+" if executable('ctags')
+"   Plug 'ludovicchabant/vim-gutentags'
+" endif
 
 call plug#end()
 runtime! macros/matchit.vim
@@ -155,6 +149,7 @@ set background=dark
 set backspace=indent,eol,start
 set backup
 set binary
+set completeopt=menu,menuone,preview,noinsert
 set cursorline
 set display+=lastline
 set noexrc
@@ -165,6 +160,7 @@ set nofoldenable
 set foldmethod=marker
 set foldopen+=jump
 set formatoptions=rq
+set guioptions+=P
 set nohidden
 set history=1000
 set hlsearch
@@ -191,6 +187,7 @@ set scrolljump=5
 set scrolloff=1
 set secure
 set shiftwidth=2
+set shortmess+=c
 set noshowcmd
 set showmatch
 set noshowmode
@@ -284,22 +281,28 @@ nmap <leader>+ <Plug>AirlineSelectNextTab
 " ale
 let g:ale_change_sign_column_color = 0
 let g:ale_lint_delay = 50
+let g:ale_lint_on_enter = 1
 let g:ale_lint_on_insert_leave = 1
+let g:ale_lint_on_text_changed = 'never'
 let g:ale_sign_column_always = 1
 let g:ale_sign_error = 'E'
 let g:ale_sign_warning = 'W'
 let g:ale_emit_conflict_warnings = 1
-let g:ale_javascript_eslint_use_global = 1
+let g:ale_javascript_eslint_use_global = 0
 let g:ale_javascript_flow_use_global = 0
 let g:ale_javascript_standard_use_global = 0
 let g:ale_javascript_xo_use_global = 0
 let g:ale_ruby_rubocop_options = '-EDS'
+let g:ale_fixers = {
+  \ 'javascript': ['eslint'],
+\ }
+let g:ale_pattern_options = {
+  \ '\.min\.js$': {'ale_linters': [], 'ale_fixers': []},
+  \ '\.min\.css$': {'ale_linters': [], 'ale_fixers': []},
+\}
+nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+nmap <silent> <C-j> <Plug>(ale_next_wrap)
 
-
-" autoformat
-let g:autoformat_autoindent = 0
-let g:autoformat_retab = 1
-let g:autoformat_remove_trailing_spaces = 1
 
 " better-javascript-completion
 let g:vimjs#casesensistive = 0
@@ -315,6 +318,38 @@ let g:bufferline_modified            = '+'
 let g:bufferline_rotate              = 0
 let g:bufferline_show_bufnr          = 1
 let g:bufferline_solo_highlight      = 1
+
+
+" completor
+" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+" inoremap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
+
+" function! Tab_Or_Complete() abort
+"   " If completor is already open the `tab` cycles through suggested completions.
+"   if pumvisible()
+"     return "\<C-N>"
+"   " If completor is not open and we are in the middle of typing a word then
+"   " `tab` opens completor menu.
+"   elseif col('.')>1 && strpart( getline('.'), col('.')-2, 3 ) =~ '^\w'
+"     return "\<C-R>=completor#do('complete')\<CR>"
+"   else
+"     " If we aren't typing a word and we press `tab` simply do the normal `tab`
+"     " action.
+"     return "\<Tab>"
+"   endif
+" endfunction
+"
+" " Use `tab` key to select completions.  Default is arrow keys.
+" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+" inoremap <expr> <Tab> Tab_Or_Complete()
+
+" Use tab to trigger auto completion.  Default suggests completions as you type.
+let g:completor_auto_trigger = 1
+let g:completor_filesize_limit = 10240
+" let g:completor_def_split = 'split'
+
 
 
 " fzf
@@ -378,7 +413,7 @@ let g:gutentags_ctags_exclude = ['node_modules']
 
 
 " javascript-libraries-syntax
-let g:used_javascript_libs = 'jquery,react'
+let g:used_javascript_libs = 'jquery,angularjs,jasmine,d3'
 
 
 " nerdtree
@@ -386,35 +421,12 @@ nmap <leader>n :NERDTreeToggle<CR>
 vmap <leader>n :NERDTreeToggle<CR>
 
 
-" neocomplete
-if g:use_neocomplete
-  let g:acp_enableAtStartup = 1
-  let g:neocomplete#disable_auto_complete = 0
-  let g:neocomplete#enable_at_startup = 1
-  let g:neocomplete#enable_auto_select = 0
-  let g:neocomplete#enable_smart_case = 1
-  let g:neocomplete#sources#syntax#min_keyword_length = 2
-  if !exists('g:neocomplete#sources#omni#input_patterns')
-    let g:neocomplete#sources#omni#input_patterns = {}
-  endif
-  inoremap <expr><C-g> neocomplete#undo_completion()
-  inoremap <expr><C-l> neocomplete#complete_common_string()
-  inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
-  inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-  inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-  inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-  function! s:my_cr_function()
-    return pumvisible() ? "\<C-y>" : "\<CR>"
-  endfunction
-endif
-
-
 " rspec
-let g:rspec_command = 'Dispatch rspec {spec}'
-map <Leader>t :call RunCurrentSpecFile()<CR>
-map <Leader>s :call RunNearestSpec()<CR>
-map <Leader>l :call RunLastSpec()<CR>
-map <Leader>a :call RunAllSpecs()<CR>
+" let g:rspec_command = 'Dispatch rspec {spec}'
+" map <Leader>t :call RunCurrentSpecFile()<CR>
+" map <Leader>s :call RunNearestSpec()<CR>
+" map <Leader>l :call RunLastSpec()<CR>
+" map <Leader>a :call RunAllSpecs()<CR>
 
 
 " ruby
@@ -425,20 +437,6 @@ let g:ruby_spellcheck_strings = 1
 let g:rubycomplete_buffer_loading = 1
 let g:rubycomplete_rails = 1
 let g:rubycomplete_load_gemfile = 1
-
-
-" rufo
-let g:rufo_auto_formatting = 0
-
-
-" " Specky
-" let g:speckyBannerKey        = '<leader>sb'
-" let g:speckyQuoteSwitcherKey = "<leader>s'"
-" let g:speckyRunRdocKey       = '<leader>sr'
-" let g:speckySpecSwitcherKey  = '<leader>sx'
-" let g:speckyRunSpecKey       = '<leader>ss'
-" let g:speckyRunRdocCmd       = 'fri -L -f plain'
-" let g:speckyWindowType       = 2
 
 
 " splitjoin.vim
@@ -486,7 +484,6 @@ vmap <leader>u :UndotreeToggle<CR>
 
 
 " vroom
-let g:vroom_cucumber_path = '__run=cucumber ; bundle show spinach >& /dev/null && __run=spinach ; bundle exec $__run'
 let g:vroom_map_keys = 1
 let g:vroom_use_colors = 1
 let g:vroom_use_spring = 0
@@ -508,6 +505,18 @@ augroup GitCommits
   autocmd FileType gitcommit nested setlocal nospell
 augroup END
 
+" augroup Javascript
+"   autocmd FileType javascript setlocal tabstop=4 softtabstop=4 shiftwidth=4
+" augroup END
+
+augroup Python
+  autocmd FileType python setlocal tabstop=4 softtabstop=4 shiftwidth=4 textwidth=79 expandtab autoindent
+  autocmd FileType python nnoremap <LocalLeader>= :0,$!yapf<CR>
+augroup END
+
+augroup Groovy
+  au BufNewFile,BufRead Jenkinsfile setf groovy
+augroup END
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Just for TMUX
 if v:version > 704
@@ -585,14 +594,17 @@ nmap <silent> <leader>z :call ShutUp()<CR>
 
 syntax on
 filetype plugin indent on
-set omnifunc=syntaxcomplete#Complete
+" set omnifunc=syntaxcomplete#Complete
+
 
 let g:base16colorspace = 256
 let g:base16_shell_path =  SafeDirectory('~/.config/base16-shell/scripts')
 
-if isdirectory(expand(g:vimhome . '/plugged/base16-vim')) && !empty($BASE16_THEME)
-  colorscheme $BASE16_THEME
-  " hi LineNr ctermfg=236 ctermbg=234
+if isdirectory(expand(g:vimhome . '/plugged/base16-vim'))
+  if filereadable(expand('~/.vimrc_background'))
+    execute 'source ' . expand('~/.vimrc_background')
+  endif
+  hi LineNr ctermfg=236 ctermbg=234
   hi Error ctermfg=11 ctermbg=none guifg='#ffff00' guibg='#000000'
 endif
 

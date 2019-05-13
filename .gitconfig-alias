@@ -1,48 +1,23 @@
 [alias]
   aa = add --all
-  amend = commit --amend
-  authors = !git log --format="%aN"
   b = branch
   c = commit
-  ci = commit
-  com = commit
+  ca = commit --all
   co = checkout
-  current-branch= !git branch | grep '*' | cut -d ' ' -f 2
   dc = diff --cached
   dh1 = diff HEAD~1
   di = diff
-  div = divergence
-  ds = diff --stat=160,120
-  edit-branch-commits = !git rebase -i `git outgoing master | tail -1 | xargs git log --format="%P" -1`
-  email-domains = !git log --format="%aE" | awk -F'@' '{print $2}'
-  emails = !git log --format="%aE"
   f = fetch
   fa = fetch --all --tags --prune
-  ff = merge --ff-only
-  gn = goodness
-  gnc = goodness --cached
-  h = !git head
-  head = !git l -1
-  hp = "!show_git_head"
   l = "!pretty_git_log"
   la = !git l --all
-  lms = !git local-master-sync-check
   ls = ls-files
   merged = branch --merged
-  noff = merge --no-ff
-  pom = push origin master
   pu = push -u
-  pullff = pull --ff-only
   r = !git l -30
   ra = !git r --all
-  ranked-authors = !git authors | sort | uniq -c | sort -n
-  ranked-email-domains = !git email-domains | sort | uniq -c | sort -n
   s = !git fetch && git status
-  snapshot = !git stash save "snapshot: $(date)" && git stash apply "stash@{0}"
-  ss = local-to-remote-status
   st = status
   unadd = reset HEAD
-  unique-authors = !git authors | sort -u
-  unique-email-domains = !git email-domains | sort -u
 
 ; vim: ft=gitconfig sw=2 ts=2 et

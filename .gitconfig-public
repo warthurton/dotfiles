@@ -1,0 +1,31 @@
+; vim: ft=gitconfig sw=2 ts=2 et
+
+[advice]
+  statusHints = false
+[branch]
+  autoSetupRebase = always
+[commit]
+  gpgsign = true
+[color]
+  ui = true
+[core]
+  editor = vim
+[diff]
+  algorithm = patience
+  mnemonicprefix = true
+  renames = true
+[diff-so-fancy]
+  first-run = false
+[merge]
+  ff = only
+[mergetool]
+  keepBackup = true
+  prompt = false
+[prompt]
+  showinfo = true
+[pull]
+  rebase = true
+[push]
+  default = tracking
+[rerere]
+  enabled = true

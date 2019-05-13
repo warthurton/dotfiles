@@ -1,3 +1,5 @@
+; vim: ft=gitconfig sw=2 ts=2 et
+
 [user]
 	name = warthurton
 	email = warthurton@arthurton.com
@@ -52,6 +54,10 @@
   clean = git media clean %f
   smudge = git media smudge %f
 [include]
-  path = ~/.gitconfig-alias
+  path = .gitconfig-public
+  path = .gitconfig-alias
+[includeIf "gitdir:~/.git-pub-dotfiles"]
+  path = .gitconfig-dotfiles
+[includeIf "gitdir:~/.git-prv-dotfiles"]
+  path = .gitconfig-dotfiles
 
-; vim: ft=gitconfig sw=2 ts=2 et
