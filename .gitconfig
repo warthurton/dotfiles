@@ -1,11 +1,10 @@
 [user]
-  name = chorn
-  email = chorn@chorn.com
-  signingKey = chorn
+	name = warthurton
+	email = warthurton@arthurton.com
 [branch]
   autoSetupRebase = always
 [commit]
-  gpgsign = true
+  gpgsign = false
 [core]
   editor = vim
   pager = less -r
@@ -30,10 +29,10 @@
 [rerere]
   enabled = true
 [mergetool "Kaleidoscope"]
-  cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
   trustexitcode = true
 [merge]
-  tool = Kaleidoscope
+	tool = Kaleidoscope
   defaultToUpstream = true
 [difftool "Kaleidoscope"]
   cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"

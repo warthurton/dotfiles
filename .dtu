@@ -1,11 +1,9 @@
 # This is a comment
 
 brew:
-  sidaf/pentest       # This is also a comment
   caskroom/fonts
   caskroom/drivers
   habitat-sh/habitat
-
 brewed:
   arping
   asciiquarium
@@ -24,6 +22,7 @@ brewed:
   docker-clean
   docker-completion
   docker-compose-completion
+  docker-machine-parallels
   emojify
   exercism
   fasd
@@ -45,7 +44,6 @@ brewed:
   graphviz
   hab
   hadolint
-  heroku
   html2text
   htop
   hub
@@ -73,7 +71,6 @@ brewed:
   openssl
   osxutils
   p7zip
-  phantomjs
   pidof
   pv
   python
