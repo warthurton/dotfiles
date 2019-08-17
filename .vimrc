@@ -66,7 +66,6 @@ Plug 'junegunn/vim-slash'
 
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'airblade/vim-gitgutter'
-Plug 'albfan/ag.vim'
 Plug 'chriskempson/base16-vim'
 Plug 'godlygeek/tabular'
 Plug 'majutsushi/tagbar'
@@ -92,39 +91,19 @@ Plug 'thoughtbot/vim-rspec',                       { 'for': 'ruby' }
 Plug 'tmux-plugins/vim-tmux',                      { 'for': 'tmux' }
 Plug 'leafgarland/typescript-vim',                 { 'for': 'typescript' }
 Plug 'ambv/black',                                 { 'for': 'python' }
+Plug 'rust-lang/rust.vim',                         { 'for': 'rust' }
+Plug 'racer-rust/vim-racer',                       { 'for': 'rust' }
 
 " javascript
 Plug 'othree/yajs.vim', { 'for': 'javascript' }
 Plug 'othree/es.next.syntax.vim', { 'for': 'javascript' }
 Plug 'othree/javascript-libraries-syntax.vim', { 'for': 'javascript' }
 Plug 'isRuslan/vim-es6', { 'for': 'javascript' }
-" Plug 'prettier/vim-prettier', { 'for': 'javascript', 'do': 'yarn install' }
+Plug 'prettier/vim-prettier', { 'for': 'javascript', 'do': 'yarn install' }
 Plug 'moll/vim-node', { 'for': 'javascript' }
 
-" if has('nvim')
-"   Plug 'ncm2/ncm2'
-"   Plug 'roxma/nvim-yarp'
-"   Plug 'ncm2/ncm2-bufword'
-"   Plug 'ncm2/ncm2-path'
-"   Plug 'ncm2/ncm2-ultisnips'
-"   " Plug 'ncm2/ncm2-gtags'
-"   Plug 'ncm2/ncm2-jedi'
-"   Plug 'ncm2/ncm2-racer'
-"   Plug 'ncm2/ncm2-vim'
-"   Plug 'ncm2/ncm2-tern'
-"   Plug 'ncm2/ncm2-syntax' | Plug 'Shougo/neco-syntax'
-"
-"   autocmd BufEnter * call ncm2#enable_for_buffer()
-"   inoremap <c-c> <ESC>
-"   inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-"   inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-"   " inoremap <expr> <CR> pumvisible() ? "\<C-n>" : "\<CR>"
-"   inoremap <silent> <expr> <CR> ((pumvisible() && empty(v:completed_item)) ?  "\<c-y>\<cr>" : (!empty(v:completed_item) ? ncm2_ultisnips#expand_or("", 'n') : "\<CR>" ))
-"   " inoremap <expr> <Tab> pumvisible() ? "\<C-n>\<C-n>\<Tab>" : "\<Tab>"
-"   " inoremap <expr> <CR> pumvisible() ? "\<C-n>\<C-n> " : "\<CR>"
-" else
-  Plug 'maralla/completor.vim', { 'do': 'make js' }
-" endif
+Plug 'neoclide/coc.nvim', { 'branch': 'release' }
+" Plug 'maralla/completor.vim', { 'do': 'make js' }
 
 if v:version >= 702
   Plug 'vim-airline/vim-airline'
@@ -149,6 +128,7 @@ set background=dark
 set backspace=indent,eol,start
 set backup
 set binary
+set cmdheight=2
 set completeopt=menu,menuone,preview,noinsert
 set cursorline
 set display+=lastline
@@ -190,6 +170,7 @@ set shiftwidth=2
 set shortmess+=c
 set noshowcmd
 set showmatch
+set signcolumn=yes
 set noshowmode
 set showtabline=1
 set smartcase
@@ -207,6 +188,7 @@ set t_vb=
 set t_Co=256
 set ttimeout
 set ttimeoutlen=50
+set updatetime=300
 set winaltkeys=no
 set wildignore+=tags,*/.cache/*,*/tmp/*,*/.git/*,*/.svn/*,*.log,*.so,*.swp,*.zip,*.gz,*.bz2,*.bmp,*.ppt,.DS_Store
 set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe,*.dll
@@ -320,6 +302,114 @@ let g:bufferline_show_bufnr          = 1
 let g:bufferline_solo_highlight      = 1
 
 
+" coc
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> to trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
+
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
+" Coc only does snippet and additional edit on confirm.
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+" Use `[c` and `]c` to navigate diagnostics
+nmap <silent> [c <Plug>(coc-diagnostic-prev)
+nmap <silent> ]c <Plug>(coc-diagnostic-next)
+
+" Remap keys for gotos
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" Highlight symbol under cursor on CursorHold
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Remap for rename current word
+nmap <leader>rn <Plug>(coc-rename)
+
+" Remap for format selected region
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+
+" Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
+xmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>a  <Plug>(coc-codeaction-selected)
+
+" Remap for do codeAction of current line
+nmap <leader>ac  <Plug>(coc-codeaction)
+" Fix autofix problem of current line
+nmap <leader>qf  <Plug>(coc-fix-current)
+
+" Use `:Format` to format current buffer
+command! -nargs=0 Format :call CocAction('format')
+
+" Use `:Fold` to fold current buffer
+command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+
+
+" Add diagnostic info for https://github.com/itchyny/lightline.vim
+let g:lightline = {
+      \ 'colorscheme': 'wombat',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'cocstatus', 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'cocstatus': 'coc#status'
+      \ },
+      \ }
+
+" Using CocList
+" Show all diagnostics
+nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
+" Manage extensions
+nnoremap <silent> <space>e  :<C-u>CocList extensions<cr>
+" Show commands
+nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
+" Find symbol of current document
+nnoremap <silent> <space>o  :<C-u>CocList outline<cr>
+" Search workspace symbols
+nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
+" Do default action for next item.
+nnoremap <silent> <space>j  :<C-u>CocNext<CR>
+" Do default action for previous item.
+nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
+" Resume latest coc list
+nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
+
+
+
+
+
 " completor
 " inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 " inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
@@ -346,8 +436,8 @@ let g:bufferline_solo_highlight      = 1
 " inoremap <expr> <Tab> Tab_Or_Complete()
 
 " Use tab to trigger auto completion.  Default suggests completions as you type.
-let g:completor_auto_trigger = 1
-let g:completor_filesize_limit = 10240
+" let g:completor_auto_trigger = 1
+" let g:completor_filesize_limit = 10240
 " let g:completor_def_split = 'split'
 
 
@@ -439,6 +529,13 @@ let g:rubycomplete_rails = 1
 let g:rubycomplete_load_gemfile = 1
 
 
+" rust
+set hidden
+let g:racer_cmd = "/Users/chorn/.cargo/bin/racer"
+let g:racer_experimental_completer = 1
+let g:racer_insert_paren = 1
+
+
 " splitjoin.vim
 nmap <leader>sj :SplitjoinJoin<cr>
 nmap <leader>ss :SplitjoinSplit<cr>
@@ -512,6 +609,10 @@ augroup END
 augroup Python
   autocmd FileType python setlocal tabstop=4 softtabstop=4 shiftwidth=4 textwidth=79 expandtab autoindent
   autocmd FileType python nnoremap <LocalLeader>= :0,$!yapf<CR>
+augroup END
+
+augroup Rust
+  autocmd FileType rust setlocal tabstop=2 softtabstop=2 shiftwidth=2 textwidth=79 expandtab autoindent
 augroup END
 
 augroup Groovy
