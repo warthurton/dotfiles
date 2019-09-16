@@ -76,10 +76,7 @@ npm:
   neovim
 
 cargo:
-  parallel
   racer
-  ripgrep
-  svgbob_cli
   xsv
 
 git:
