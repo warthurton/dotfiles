@@ -10,6 +10,7 @@ done
 typeset -g -a _preferred_languages=(ruby node python2 python3)
 
 alias -g M='| $PAGER'
+(( $+commands[bat] )) && alias -g B='| bat'
 bindkey -e
 bindkey -m 2>/dev/null
 
