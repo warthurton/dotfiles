@@ -30,7 +30,7 @@ _clean_path() {
 # --------------------------------------------------------------------------
 # This adds systems paths, my list of sane paths, private/work paths in my preferred order.
 
-find /etc/paths /etc/paths.d -type f -print0 2>/dev/null | xargs -0 cat | while read dir ; do
+find /etc/paths /etc/paths.d -type f -print0 2>/dev/null | xargs -0 cat | while read -r dir ; do
   _safe_add_to_path "${dir}"
 done
 
@@ -43,6 +43,7 @@ for dir in \
   /{usr,opt}/{bin,sbin} \
   /{usr,opt,Apps}/{local,X11,opt}/{bin,sbin} \
   /{usr,opt}/local/heroku/bin \
+  /usr/local/share/dotnet \
   $HOME/.asdf/{bin,shims} \
   $HOME/.go/bin \
   $HOME/.cargo/bin \
@@ -51,7 +52,7 @@ do
   _safe_add_to_path "$dir"
 done
 # --------------------------------------------------------------------------
-for _version_manager in rbenv nodenv ; do
+for _version_manager in rbenv nodenv pyenv ; do
   _safe_add_to_path "$HOME/.${_version_manager}/bin"
   _safe_add_to_path "$HOME/.${_version_manager}/shims"
 
