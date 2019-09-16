@@ -23,13 +23,24 @@ if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
   function simple_launchctl() {
     find ~/Library/LaunchAgents -name '*.plist' -name '*'"$2"'*' -ok launchctl "$1" -w {} \;
   }
-
   function flushdns() {
     dscacheutil -flushcache
     sudo killall -HUP mDNSResponder
   }
   function rebuild_launch_services {
     /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
+  }
+  function keychain-environment-variable() {
+    security find-generic-password -w -a "${USER}" -D ENV -s "${1}"
+  }
+  function set-keychain-environment-variable() {
+    [[ -z "$1" ]] && return 1
+
+    read -s "?Enter Value for ${1}: " secret
+
+    [[ -z "$secret" ]] && return 1
+
+    security add-generic-password -U -a "${USER}" -D ENV -s "${1}" -w "${secret}"
   }
 
 # Linux ---------------------------------------------------------------------
@@ -59,24 +70,11 @@ alias ll="l -A"
 alias la="ls -A"
 alias live_ip='dig +short myip.opendns.com @resolver1.opendns.com || curl -f4L http://ifconfig.me'
 alias to_csv='soffice --convert-to csv --headless'
-alias dc=docker-compose
 # ---------------------------------------------------------------------------
-cassette_to_json() {
-  ruby -rjson -ryaml -e "puts JSON.parse(YAML.load(File.read '$1')['http_interactions'].first['response']['body']['string']).to_json" | jq '.' > "${1/yml/json}"
-}
-
 predate() {
   while read -r line ; do
     printf '%(%F %T)T %s\n' -1 "$line"
   done
-}
-
-total() {
-  tr '\n' '+' | sed -e 's/^/(/' -e 's/\+$/\)/'  | bc -q
-}
-
-downloaded_in() {
-  for f in "$@" ; do stat -r "$f" | awk '{print ($11 - $12) " seconds"}' ; done
 }
 
 ps_owners() {
