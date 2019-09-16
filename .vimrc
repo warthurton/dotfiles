@@ -76,6 +76,7 @@ Plug 'scrooloose/nerdtree'
 Plug 'tomtom/tcomment_vim'
 Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 Plug 'w0rp/ale'
+Plug 'editorconfig/editorconfig-vim'
 
 " Filetypes
 Plug 'kchmck/vim-coffee-script',                   { 'for': 'coffee' }
@@ -92,6 +93,7 @@ Plug 'thoughtbot/vim-rspec',                       { 'for': 'ruby' }
 Plug 'tmux-plugins/vim-tmux',                      { 'for': 'tmux' }
 Plug 'leafgarland/typescript-vim',                 { 'for': 'typescript' }
 Plug 'ambv/black',                                 { 'for': 'python' }
+Plug 'martinda/Jenkinsfile-vim-syntax'
 
 " javascript
 Plug 'othree/yajs.vim', { 'for': 'javascript' }
@@ -101,30 +103,8 @@ Plug 'isRuslan/vim-es6', { 'for': 'javascript' }
 " Plug 'prettier/vim-prettier', { 'for': 'javascript', 'do': 'yarn install' }
 Plug 'moll/vim-node', { 'for': 'javascript' }
 
-" if has('nvim')
-"   Plug 'ncm2/ncm2'
-"   Plug 'roxma/nvim-yarp'
-"   Plug 'ncm2/ncm2-bufword'
-"   Plug 'ncm2/ncm2-path'
-"   Plug 'ncm2/ncm2-ultisnips'
-"   " Plug 'ncm2/ncm2-gtags'
-"   Plug 'ncm2/ncm2-jedi'
-"   Plug 'ncm2/ncm2-racer'
-"   Plug 'ncm2/ncm2-vim'
-"   Plug 'ncm2/ncm2-tern'
-"   Plug 'ncm2/ncm2-syntax' | Plug 'Shougo/neco-syntax'
-"
-"   autocmd BufEnter * call ncm2#enable_for_buffer()
-"   inoremap <c-c> <ESC>
-"   inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-"   inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-"   " inoremap <expr> <CR> pumvisible() ? "\<C-n>" : "\<CR>"
-"   inoremap <silent> <expr> <CR> ((pumvisible() && empty(v:completed_item)) ?  "\<c-y>\<cr>" : (!empty(v:completed_item) ? ncm2_ultisnips#expand_or("", 'n') : "\<CR>" ))
-"   " inoremap <expr> <Tab> pumvisible() ? "\<C-n>\<C-n>\<Tab>" : "\<Tab>"
-"   " inoremap <expr> <CR> pumvisible() ? "\<C-n>\<C-n> " : "\<CR>"
-" else
-  Plug 'maralla/completor.vim', { 'do': 'make js' }
-" endif
+" Plug 'maralla/completor.vim', { 'do': 'make js' }
+Plug 'neoclide/coc.nvim', { 'branch' : 'release' }
 
 if v:version >= 702
   Plug 'vim-airline/vim-airline'
@@ -136,10 +116,6 @@ if has('python3')
   Plug 'SirVer/ultisnips'
   Plug 'honza/vim-snippets'
 endif
-
-" if executable('ctags')
-"   Plug 'ludovicchabant/vim-gutentags'
-" endif
 
 call plug#end()
 runtime! macros/matchit.vim
@@ -164,6 +140,7 @@ set guioptions+=P
 set nohidden
 set history=1000
 set hlsearch
+
 set ignorecase
 set incsearch
 set laststatus=2
@@ -321,34 +298,8 @@ let g:bufferline_solo_highlight      = 1
 
 
 " completor
-" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-" inoremap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
-
-" function! Tab_Or_Complete() abort
-"   " If completor is already open the `tab` cycles through suggested completions.
-"   if pumvisible()
-"     return "\<C-N>"
-"   " If completor is not open and we are in the middle of typing a word then
-"   " `tab` opens completor menu.
-"   elseif col('.')>1 && strpart( getline('.'), col('.')-2, 3 ) =~ '^\w'
-"     return "\<C-R>=completor#do('complete')\<CR>"
-"   else
-"     " If we aren't typing a word and we press `tab` simply do the normal `tab`
-"     " action.
-"     return "\<Tab>"
-"   endif
-" endfunction
-"
-" " Use `tab` key to select completions.  Default is arrow keys.
-" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-" inoremap <expr> <Tab> Tab_Or_Complete()
-
-" Use tab to trigger auto completion.  Default suggests completions as you type.
 let g:completor_auto_trigger = 1
 let g:completor_filesize_limit = 10240
-" let g:completor_def_split = 'split'
 
 
 
@@ -419,14 +370,6 @@ let g:used_javascript_libs = 'jquery,angularjs,jasmine,d3'
 " nerdtree
 nmap <leader>n :NERDTreeToggle<CR>
 vmap <leader>n :NERDTreeToggle<CR>
-
-
-" rspec
-" let g:rspec_command = 'Dispatch rspec {spec}'
-" map <Leader>t :call RunCurrentSpecFile()<CR>
-" map <Leader>s :call RunNearestSpec()<CR>
-" map <Leader>l :call RunLastSpec()<CR>
-" map <Leader>a :call RunAllSpecs()<CR>
 
 
 " ruby
@@ -514,9 +457,10 @@ augroup Python
   autocmd FileType python nnoremap <LocalLeader>= :0,$!yapf<CR>
 augroup END
 
-augroup Groovy
-  au BufNewFile,BufRead Jenkinsfile setf groovy
+augroup ContentShellScript
+  au! BufRead,BufNewFile,BufEnter */src/content/*.sh setlocal noexpandtab
 augroup END
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Just for TMUX
 if v:version > 704
@@ -594,8 +538,6 @@ nmap <silent> <leader>z :call ShutUp()<CR>
 
 syntax on
 filetype plugin indent on
-" set omnifunc=syntaxcomplete#Complete
-
 
 let g:base16colorspace = 256
 let g:base16_shell_path =  SafeDirectory('~/.config/base16-shell/scripts')
