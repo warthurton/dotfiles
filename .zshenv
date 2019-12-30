@@ -2,7 +2,6 @@
 typeset -g HISTFILE="$HOME/.zsh_history"
 typeset -g SAVEHIST=99999999999
 typeset -g WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
-# skip_global_compinit=1
 typeset -g PROMPT='%f%b%k%u%s%n@%m %~ %(!.#.$)%f%b%k%u%s '
 typeset -g RPROMPT=''
 #-----------------------------------------------------------------------------
@@ -30,6 +29,7 @@ setopt \
   clobber \
   combining_chars \
   complete_in_word \
+  complete_aliases \
   emacs \
   extended_glob \
   hash_list_all \
