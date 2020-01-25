@@ -27,5 +27,7 @@
   rebase = true
 [push]
   default = tracking
+[rebase]
+  autoSquash = true
 [rerere]
   enabled = true

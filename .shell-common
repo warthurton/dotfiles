@@ -20,23 +20,28 @@ if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
   alias start="simple_launchctl load"
   alias stop="simple_launchctl unload"
 
-  function simple_launchctl() {
+  simple_launchctl() {
     find ~/Library/LaunchAgents -name '*.plist' -name '*'"$2"'*' -ok launchctl "$1" -w {} \;
   }
-  function flushdns() {
+
+  flushdns() {
     dscacheutil -flushcache
     sudo killall -HUP mDNSResponder
   }
-  function rebuild_launch_services {
+  alias dnsflush="flushdns"
+
+  rebuild_launch_services() {
     /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
   }
-  function keychain-environment-variable() {
+
+  keychain-environment-variable() {
     security find-generic-password -w -a "${USER}" -D ENV -s "${1}"
   }
-  function set-keychain-environment-variable() {
+
+  set-keychain-environment-variable() {
     [[ -z "$1" ]] && return 1
 
-    read -s "?Enter Value for ${1}: " secret
+    read -r -s "?Enter Value for ${1}: " secret
 
     [[ -z "$secret" ]] && return 1
 
@@ -84,6 +89,7 @@ ps_owners() {
   local _pid="${1:-$$}"
 
   [[ $_pid -eq 0 ]] && return
+  command -v ps >&/dev/null || return
 
   read -r _uid _user _ppid _command < <(ps -o uid=,user=,ppid=,command= -p "$_pid")
 
@@ -118,6 +124,10 @@ am_i_someone_else() {
   fi
 }
 
+zero_width_space () {
+  echo -n '\u200D'
+}
+
 # Ruby ---------------------------------------------------------------------
 alias be="bundle exec"
 
@@ -130,13 +140,13 @@ httpd() {
 # Git ---------------------------------------------------------------------
 
 if [[ -d "$HOME/.git-pub-dotfiles" ]] ; then
-  function pubgit() {
+  pubgit() {
     git --git-dir="$HOME/.git-pub-dotfiles" --work-tree="$HOME" "$@"
   }
 fi
 
 if [[ -d "$HOME/.git-prv-dotfiles" ]] ; then
-  function prvgit() {
+  prvgit() {
     git --git-dir="$HOME/.git-prv-dotfiles" --work-tree="$HOME" "$@"
   }
 fi

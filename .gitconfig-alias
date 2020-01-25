@@ -9,15 +9,19 @@
   di = diff
   f = fetch
   fa = fetch --all --tags --prune
-  l = "!pretty_git_log"
+  l = !pretty_git_log
   la = !git l --all
   ls = ls-files
+  mff = merge --ff-only
   merged = branch --merged
+  borph = !git branch --format '%(refname:short) %(upstream:track)' | grep '\\[gone\\]' | cut -f 1 -d ' '
+  borphd = !git borph | xargs git branch
   pu = push -u
   r = !git l -30
   ra = !git r --all
   s = !git fetch && git status
   st = status
   unadd = reset HEAD
+  wip = commit -m 'fixup! wip'
 
 ; vim: ft=gitconfig sw=2 ts=2 et

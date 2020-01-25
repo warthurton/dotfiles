@@ -41,21 +41,67 @@ endif
 
 call plug#begin(SafeDirectory(g:vimhome . '/plugged'))
 
-" tpope
-Plug 'tpope/vim-bundler', { 'for': 'ruby' }
+if executable('git')
+  Plug 'tpope/vim-fugitive'
+  Plug 'airblade/vim-gitgutter'
+endif
+
+if executable('go')
+  Plug 'fatih/vim-go', { 'for': 'go' }
+endif
+
+if executable('node')
+  Plug 'othree/yajs.vim', { 'for': 'javascript' }
+  Plug 'othree/es.next.syntax.vim', { 'for': 'javascript' }
+  Plug 'othree/javascript-libraries-syntax.vim', { 'for': 'javascript' }
+  Plug 'isRuslan/vim-es6', { 'for': 'javascript' }
+  Plug 'prettier/vim-prettier', { 'do': 'npm i', 'branch': 'release/1.x', 'for': [
+      \ 'javascript',
+      \ 'typescript',
+      \ 'css',
+      \ 'less',
+      \ 'scss',
+      \ 'json',
+      \ 'graphql',
+      \ 'markdown',
+      \ 'vue',
+      \ 'lua',
+      \ 'python',
+      \ 'ruby',
+      \ 'html',
+      \ 'swift' ] }
+  Plug 'moll/vim-node', { 'for': 'javascript' }
+  Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
+endif
+
+
+if executable('rails')
+  Plug 'tpope/vim-haml', { 'for': 'haml' }
+  Plug 'tpope/vim-rails', { 'for': 'ruby' }
+  Plug 'tpope/vim-rhubarb'
+  Plug 'thoughtbot/vim-rspec', { 'for': 'ruby' }
+endif
+
+if executable('ruby')
+  Plug 'tpope/vim-bundler', { 'for': 'ruby' }
+  Plug 'tpope/vim-endwise', { 'for': 'ruby' }
+  Plug 'tpope/vim-rake', { 'for': 'ruby' }
+  Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
+endif
+
+if executable('rustc')
+  Plug 'rust-lang/rust.vim', { 'for': 'rust' }
+  Plug 'racer-rust/vim-racer', { 'for': 'rust' }
+endif
+
+if has('nvim')
+  Plug 'norcalli/nvim-colorizer.lua'
+endif
+
 Plug 'tpope/vim-characterize'
-Plug 'tpope/vim-dispatch'
-Plug 'tpope/vim-endwise', { 'for': 'ruby' }
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-haml', { 'for': 'haml' }
-Plug 'tpope/vim-rails', { 'for': 'ruby' }
-Plug 'tpope/vim-rake', { 'for': 'ruby' }
-Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-vinegar'
-
-" junegunn
 Plug 'junegunn/fzf', { 'dir': '~/.config/fzf', 'do': './install --no-update-rc --key-bindings --completion' }
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/gv.vim'
@@ -63,19 +109,16 @@ Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'junegunn/vim-easy-align'
 Plug 'junegunn/vim-emoji'
 Plug 'junegunn/vim-slash'
-
+Plug 'mhinz/vim-signify'
 Plug 'AndrewRadev/splitjoin.vim'
-Plug 'airblade/vim-gitgutter'
 Plug 'chriskempson/base16-vim'
 Plug 'godlygeek/tabular'
-Plug 'majutsushi/tagbar'
 Plug 'mbbill/undotree'
-Plug 'mhinz/vim-signify'
 Plug 'scrooloose/nerdtree'
 Plug 'tomtom/tcomment_vim'
-Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 Plug 'w0rp/ale'
 Plug 'editorconfig/editorconfig-vim'
+Plug 'majutsushi/tagbar'
 
 " Filetypes
 Plug 'kchmck/vim-coffee-script',                   { 'for': 'coffee' }
@@ -84,39 +127,28 @@ Plug 'JulesWang/css.vim',                          { 'for': [ 'css', 'sass', 'sc
 Plug 'chrisbra/csv.vim',                           { 'for': 'csv' }
 Plug 'elixir-lang/vim-elixir',                     { 'for': 'elixir' }
 Plug 'spiegela/vimix',                             { 'for': 'elixir' }
-Plug 'elmcast/elm-vim',                            { 'for': 'elm' }
-Plug 'fatih/vim-go',                               { 'for': 'go' }
 Plug 'othree/html5.vim',                           { 'for': 'html' }
 Plug 'plasticboy/vim-markdown',                    { 'for': 'markdown' }
-Plug 'thoughtbot/vim-rspec',                       { 'for': 'ruby' }
 Plug 'tmux-plugins/vim-tmux',                      { 'for': 'tmux' }
-Plug 'leafgarland/typescript-vim',                 { 'for': 'typescript' }
 Plug 'ambv/black',                                 { 'for': 'python' }
-Plug 'rust-lang/rust.vim',                         { 'for': 'rust' }
-Plug 'racer-rust/vim-racer',                       { 'for': 'rust' }
 Plug 'martinda/Jenkinsfile-vim-syntax'
 
-" javascript
-Plug 'othree/yajs.vim', { 'for': 'javascript' }
-Plug 'othree/es.next.syntax.vim', { 'for': 'javascript' }
-Plug 'othree/javascript-libraries-syntax.vim', { 'for': 'javascript' }
-Plug 'isRuslan/vim-es6', { 'for': 'javascript' }
-Plug 'prettier/vim-prettier', { 'for': 'javascript', 'do': 'yarn install' }
-Plug 'moll/vim-node', { 'for': 'javascript' }
-
-" Plug 'maralla/completor.vim', { 'do': 'make js' }
-Plug 'neoclide/coc.nvim', { 'branch' : 'release' }
+if executable('node') && ! has('nvim')
+  Plug 'neoclide/coc.nvim', { 'branch' : 'release' }
+else
+  Plug 'maralla/completor.vim', { 'do': 'make js' }
+endif
 
 if v:version >= 702
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
-  Plug 'ryanoasis/vim-devicons'
+  " Plug 'ryanoasis/vim-devicons'
 endif
 
-if has('python3')
-  Plug 'SirVer/ultisnips'
-  Plug 'honza/vim-snippets'
-endif
+" if has('python3')
+"   Plug 'SirVer/ultisnips'
+"   Plug 'honza/vim-snippets'
+" endif
 
 call plug#end()
 runtime! macros/matchit.vim
@@ -302,109 +334,110 @@ let g:bufferline_solo_highlight      = 1
 
 
 " coc
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+if executable('node') && ! has('nvim')
+  inoremap <silent><expr> <TAB>
+        \ pumvisible() ? "\<C-n>" :
+        \ <SID>check_back_space() ? "\<TAB>" :
+        \ coc#refresh()
+  inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
+  function! s:check_back_space() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~# '\s'
+  endfunction
 
-" Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
+  " Use <c-space> to trigger completion.
+  inoremap <silent><expr> <c-space> coc#refresh()
 
-" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
-" Coc only does snippet and additional edit on confirm.
-inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+  " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
+  " Coc only does snippet and additional edit on confirm.
+  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
-" Use `[c` and `]c` to navigate diagnostics
-nmap <silent> [c <Plug>(coc-diagnostic-prev)
-nmap <silent> ]c <Plug>(coc-diagnostic-next)
+  " Use `[c` and `]c` to navigate diagnostics
+  nmap <silent> [c <Plug>(coc-diagnostic-prev)
+  nmap <silent> ]c <Plug>(coc-diagnostic-next)
 
-" Remap keys for gotos
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
+  " Remap keys for gotos
+  nmap <silent> gd <Plug>(coc-definition)
+  nmap <silent> gy <Plug>(coc-type-definition)
+  nmap <silent> gi <Plug>(coc-implementation)
+  nmap <silent> gr <Plug>(coc-references)
 
-" Use K to show documentation in preview window
-nnoremap <silent> K :call <SID>show_documentation()<CR>
+  " Use K to show documentation in preview window
+  nnoremap <silent> K :call <SID>show_documentation()<CR>
 
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
+  function! s:show_documentation()
+    if (index(['vim','help'], &filetype) >= 0)
+      execute 'h '.expand('<cword>')
+    else
+      call CocAction('doHover')
+    endif
+  endfunction
 
-" Highlight symbol under cursor on CursorHold
-autocmd CursorHold * silent call CocActionAsync('highlight')
+  " Highlight symbol under cursor on CursorHold
+  autocmd CursorHold * silent call CocActionAsync('highlight')
 
-" Remap for rename current word
-nmap <leader>rn <Plug>(coc-rename)
+  " Remap for rename current word
+  nmap <leader>rn <Plug>(coc-rename)
 
-" Remap for format selected region
-xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
+  " Remap for format selected region
+  xmap <leader>f  <Plug>(coc-format-selected)
+  nmap <leader>f  <Plug>(coc-format-selected)
 
-augroup mygroup
-  autocmd!
-  " Setup formatexpr specified filetype(s).
-  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-  " Update signature help on jump placeholder
-  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-augroup end
+  augroup mygroup
+    autocmd!
+    " Setup formatexpr specified filetype(s).
+    autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+    " Update signature help on jump placeholder
+    autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+  augroup end
 
-" Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
-xmap <leader>a  <Plug>(coc-codeaction-selected)
-nmap <leader>a  <Plug>(coc-codeaction-selected)
+  " Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
+  xmap <leader>a  <Plug>(coc-codeaction-selected)
+  nmap <leader>a  <Plug>(coc-codeaction-selected)
 
-" Remap for do codeAction of current line
-nmap <leader>ac  <Plug>(coc-codeaction)
-" Fix autofix problem of current line
-nmap <leader>qf  <Plug>(coc-fix-current)
+  " Remap for do codeAction of current line
+  nmap <leader>ac  <Plug>(coc-codeaction)
+  " Fix autofix problem of current line
+  nmap <leader>qf  <Plug>(coc-fix-current)
 
-" Use `:Format` to format current buffer
-command! -nargs=0 Format :call CocAction('format')
+  " Use `:Format` to format current buffer
+  command! -nargs=0 Format :call CocAction('format')
 
-" Use `:Fold` to fold current buffer
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+  " Use `:Fold` to fold current buffer
+  command! -nargs=? Fold :call     CocAction('fold', <f-args>)
 
 
-" Add diagnostic info for https://github.com/itchyny/lightline.vim
-let g:lightline = {
-      \ 'colorscheme': 'wombat',
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'cocstatus', 'readonly', 'filename', 'modified' ] ]
-      \ },
-      \ 'component_function': {
-      \   'cocstatus': 'coc#status'
-      \ },
-      \ }
+  " Add diagnostic info for https://github.com/itchyny/lightline.vim
+  let g:lightline = {
+        \ 'colorscheme': 'wombat',
+        \ 'active': {
+        \   'left': [ [ 'mode', 'paste' ],
+        \             [ 'cocstatus', 'readonly', 'filename', 'modified' ] ]
+        \ },
+        \ 'component_function': {
+        \   'cocstatus': 'coc#status'
+        \ },
+        \ }
 
-" Using CocList
-" Show all diagnostics
-nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
-" Manage extensions
-nnoremap <silent> <space>e  :<C-u>CocList extensions<cr>
-" Show commands
-nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
-" Find symbol of current document
-nnoremap <silent> <space>o  :<C-u>CocList outline<cr>
-" Search workspace symbols
-nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
-" Do default action for next item.
-nnoremap <silent> <space>j  :<C-u>CocNext<CR>
-" Do default action for previous item.
-nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
-" Resume latest coc list
-nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
-
+  " Using CocList
+  " Show all diagnostics
+  nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
+  " Manage extensions
+  nnoremap <silent> <space>e  :<C-u>CocList extensions<cr>
+  " Show commands
+  nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
+  " Find symbol of current document
+  nnoremap <silent> <space>o  :<C-u>CocList outline<cr>
+  " Search workspace symbols
+  nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
+  " Do default action for next item.
+  nnoremap <silent> <space>j  :<C-u>CocNext<CR>
+  " Do default action for previous item.
+  nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
+  " Resume latest coc list
+  nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
+endif
 
 " completor
 let g:completor_auto_trigger = 1
@@ -589,30 +622,22 @@ augroup RememberLastPosition
 augroup END
 
 augroup GitCommits
-  autocmd FileType gitcommit nested setlocal nospell
+  autocmd FileType gitcommit nested setlocal spell
 augroup END
-
-" augroup Javascript
-"   autocmd FileType javascript setlocal tabstop=4 softtabstop=4 shiftwidth=4
-" augroup END
 
 augroup Python
   autocmd FileType python setlocal tabstop=4 softtabstop=4 shiftwidth=4 textwidth=79 expandtab autoindent
   autocmd FileType python nnoremap <LocalLeader>= :0,$!yapf<CR>
 augroup END
 
-<<<<<<< HEAD
 augroup ContentShellScript
   au! BufRead,BufNewFile,BufEnter */src/content/*.sh setlocal noexpandtab
-=======
+augroup END
+
 augroup Rust
   autocmd FileType rust setlocal tabstop=2 softtabstop=2 shiftwidth=2 textwidth=79 expandtab autoindent
 augroup END
 
-augroup Groovy
-  au BufNewFile,BufRead Jenkinsfile setf groovy
->>>>>>> e5492c9832a71c0817ab37912120f0f3188a640c
-augroup END
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Just for TMUX

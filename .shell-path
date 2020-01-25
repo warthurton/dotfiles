@@ -1,78 +1,95 @@
 # --------------------------------------------------------------------------
-_safe_add_to_path() {
+_is_dir() {
   local _dir="$1"
-  PATH="${PATH#$_dir:}"
-  PATH="${PATH/:$_dir/}"
-  [[ -d "$_dir" ]] && PATH="${_dir}:$PATH"
-  export PATH
+
+  [[ -n "$_dir" ]] || return 1
+  [[ -d "$_dir" ]] || return 1
+
+  return 0
+}
+# --------------------------------------------------------------------------
+_is_in_path() {
+  local _dir="$1"
+  local _path="$2"
+
+  [[ -z "${_dir}"  ]] && return 1
+  [[ -z "${_path}"  ]] && return 1
+  [[ "^${_dir}$" =~ ${_path} ]] && return 0
+  [[ "^${_dir}:" =~ ${_path} ]] && return 0
+  [[ ":${_dir}$" =~ ${_path} ]] && return 0
+  [[ ":${_dir}:" =~ ${_path} ]] && return 0
+
+  return 1
+}
+# --------------------------------------------------------------------------
+_add_to_path() {
+  local _dir="$1"
+  local _path="$2"
+
+  if ! _is_dir "${_dir}" ; then
+    echo "${_path}"
+    return
+  fi
+
+  if _is_in_path "${_dir}" "${_path}" ; then
+    echo "${_path}"
+    return
+  fi
+
+  _path="${_path}:${_dir}"
+  _path="${_path%%:}"
+  _path="${_path##:}"
+
+  echo "${_path}"
 }
 # --------------------------------------------------------------------------
 _clean_path() {
-  local -a _found=()
+  local _path="$1"
+
+  _new="/bin"
 
   while read -d: -r _dir ; do
-    if [[ -d "$_dir" ]] ; then
-      local _dupe=0
+    _new="$(_add_to_path "${_dir}" "${_new}")"
+  done < <(echo "$_path")
 
-      for _check in ${_found[@]} ; do
-        [[ "$_check" == "$_dir" ]] && _dupe=1
-      done
-
-      [[ "$_dupe" -eq 1 ]] && continue
-
-      _found+=("$_dir")
-    fi
-  done < <(echo "$PATH")
-
-
-  echo "$(IFS=:; echo "${_found[*]}")"
+  echo "${_new}"
 }
 # --------------------------------------------------------------------------
-# This adds systems paths, my list of sane paths, private/work paths in my preferred order.
-
-find /etc/paths /etc/paths.d -type f -print0 2>/dev/null | xargs -0 cat | while read -r dir ; do
-  _safe_add_to_path "${dir}"
-done
-
-for dir in \
+declare _newpath=""
+# --------------------------------------------------------------------------
+for _dir in \
+  $HOME/bin \
+  $HOME/{.go,.cargo,.rbenv,.pyenv,.nodenv,.asdf}/{bin,shims} \
   /Applications/VMware\ Fusion.app/Contents/Library \
   /Applications/VirtualBox.app/Contents/MacOS \
   /Applications/Postgres.app/Contents/Versions/latest/bin \
-  /usr/local/opt/openssl/bin \
-  /{bin,sbin} \
-  /{usr,opt}/{bin,sbin} \
-  /{usr,opt,Apps}/{local,X11,opt}/{bin,sbin} \
   /{usr,opt}/local/heroku/bin \
   /usr/local/share/dotnet \
-  $HOME/.asdf/{bin,shims} \
-  $HOME/.go/bin \
-  $HOME/.cargo/bin \
-  $HOME/bin
+  /{usr,opt,Apps}/{local,X11,opt}/{bin,sbin} \
+  /usr/local/opt/openssl/bin \
+  /{opt,usr}/{bin,sbin,libexec} \
+  /{bin,sbin}
 do
-  _safe_add_to_path "$dir"
+  _newpath="$(_add_to_path "${_dir}" "${_newpath}")"
 done
+
+while read -r _pathfile ; do
+  while read -r _dir ; do
+    _newpath="$(_add_to_path "${_dir}" "${_newpath}")"
+  done < <(cat "$_pathfile")
+done < <(find /etc/paths /etc/paths.d -type f  2>/dev/null)
+
+# --------------------------------------------------------------------------
+export PATH="${_newpath}"
 # --------------------------------------------------------------------------
 for _version_manager in rbenv nodenv pyenv ; do
-  _safe_add_to_path "$HOME/.${_version_manager}/bin"
-  _safe_add_to_path "$HOME/.${_version_manager}/shims"
-
-  declare -f "${_version_manager}" >& /dev/null && continue
-
-  _cmd="$(command -v "${_version_manager}")"
-
-  [[ -z "$_cmd" ]] && continue
-
-  eval "export __${_version_manager}=${_cmd}"
+  command -v "${_version_manager}" >& /dev/null && eval "$("${_version_manager}" init -)"
 done
 # --------------------------------------------------------------------------
 if command -v fnm >&/dev/null ; then
   eval "$(fnm env --multi)"
-elif [[ -s "$HOME/.nvm" ]] ; then
-  export NVM_DIR="$HOME/.nvm"
-  [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
 fi
 # --------------------------------------------------------------------------
-# This will clean up any duplicate path entries created by sloppy dependencies
-export PATH=$(_clean_path)
+export PATH="${_newpath}"
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:

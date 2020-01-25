@@ -35,6 +35,7 @@ brewed:
   gnu-sed
   gnu-tar
   gnu-time
+  hyperfine
   jq
   less
   mosh
@@ -48,7 +49,6 @@ brewed:
   openssh
   openssl
   p7zip
-  phantomjs
   pidof
   pv
   python2
@@ -70,7 +70,6 @@ pip:
   neovim
   proselint
   vim-vint
-  virtualenv
 
 npm:
   neovim
