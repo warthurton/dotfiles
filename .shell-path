@@ -86,10 +86,10 @@ for _version_manager in rbenv nodenv pyenv ; do
   command -v "${_version_manager}" >& /dev/null && eval "$("${_version_manager}" init -)"
 done
 # --------------------------------------------------------------------------
+export PATH="${_newpath}"
+# --------------------------------------------------------------------------
 if command -v fnm >&/dev/null ; then
   eval "$(fnm env --multi)"
 fi
-# --------------------------------------------------------------------------
-export PATH="${_newpath}"
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:
