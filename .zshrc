@@ -8,7 +8,7 @@ do
   [[ -f "$s" ]] && source "$s"
 done
 #-----------------------------------------------------------------------------
-typeset -g -a _preferred_languages=(ruby rust)
+typeset -g -a _preferred_languages=(ruby rust node)
 
 alias -g M='| $PAGER'
 (( $+commands[bat] )) && alias -g B='| bat'
@@ -111,5 +111,16 @@ unsetopt \
   inc_append_history_time
 #-----------------------------------------------------------------------------
 unset 'FAST_HIGHLIGHT[chroma-whatis]' 'FAST_HIGHLIGHT[chroma-man]'
+#-----------------------------------------------------------------------------
+_preserve_my_history() {
+  [[ -d "$HOME/.git-prv-dotfiles" ]] || return
+  git --git-dir="$HOME/.git-prv-dotfiles" --work-tree="$HOME" commit -am "$(date)"
+}
+
+autoload -Uz add-zsh-hook
+add-zsh-hook zshexit _preserve_my_history
+#-----------------------------------------------------------------------------
+
+
 #-----------------------------------------------------------------------------
 # vim: set syntax=zsh ft=zsh sw=2 ts=2 expandtab:

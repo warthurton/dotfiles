@@ -1,8 +1,8 @@
 # This is a comment
 
 brew:
-  caskroom/drivers
-  caskroom/fonts
+  homebrew/cask-drivers
+  homebrew/cask-fonts
 
 brewed:
   arping
@@ -58,6 +58,7 @@ brewed:
   ssh-copy-id
   the_silver_searcher
   tmux
+  up
   wget
   xz
   zsh

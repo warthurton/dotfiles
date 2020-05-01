@@ -74,7 +74,6 @@ if executable('node')
   Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
 endif
 
-
 if executable('rails')
   Plug 'tpope/vim-haml', { 'for': 'haml' }
   Plug 'tpope/vim-rails', { 'for': 'ruby' }
@@ -94,31 +93,29 @@ if executable('rustc')
   Plug 'racer-rust/vim-racer', { 'for': 'rust' }
 endif
 
-if has('nvim')
-  Plug 'norcalli/nvim-colorizer.lua'
-endif
+" if has('nvim')
+"   Plug 'norcalli/nvim-colorizer.lua'
+" endif
 
-Plug 'tpope/vim-characterize'
-Plug 'tpope/vim-speeddating'
+" Plug 'tpope/vim-characterize'
+" Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
-Plug 'tpope/vim-vinegar'
+" Plug 'tpope/vim-vinegar'
 Plug 'junegunn/fzf', { 'dir': '~/.config/fzf', 'do': './install --no-update-rc --key-bindings --completion' }
 Plug 'junegunn/fzf.vim'
-Plug 'junegunn/gv.vim'
-Plug 'junegunn/rainbow_parentheses.vim'
+" Plug 'junegunn/gv.vim'
+" Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'junegunn/vim-easy-align'
-Plug 'junegunn/vim-emoji'
-Plug 'junegunn/vim-slash'
-Plug 'mhinz/vim-signify'
+" Plug 'junegunn/vim-emoji'
+" Plug 'junegunn/vim-slash'
+" Plug 'mhinz/vim-signify'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'chriskempson/base16-vim'
-Plug 'godlygeek/tabular'
 Plug 'mbbill/undotree'
 Plug 'scrooloose/nerdtree'
 Plug 'tomtom/tcomment_vim'
 Plug 'w0rp/ale'
 Plug 'editorconfig/editorconfig-vim'
-Plug 'majutsushi/tagbar'
 
 " Filetypes
 Plug 'kchmck/vim-coffee-script',                   { 'for': 'coffee' }
@@ -132,8 +129,9 @@ Plug 'plasticboy/vim-markdown',                    { 'for': 'markdown' }
 Plug 'tmux-plugins/vim-tmux',                      { 'for': 'tmux' }
 Plug 'ambv/black',                                 { 'for': 'python' }
 Plug 'martinda/Jenkinsfile-vim-syntax'
+Plug 'neoclide/jsonc.vim'
 
-if executable('node') && ! has('nvim')
+if executable('node')
   Plug 'neoclide/coc.nvim', { 'branch' : 'release' }
 else
   Plug 'maralla/completor.vim', { 'do': 'make js' }
@@ -142,13 +140,13 @@ endif
 if v:version >= 702
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
-  " Plug 'ryanoasis/vim-devicons'
+  Plug 'ryanoasis/vim-devicons'
 endif
 
-" if has('python3')
-"   Plug 'SirVer/ultisnips'
-"   Plug 'honza/vim-snippets'
-" endif
+if has('python3')
+  Plug 'SirVer/ultisnips'
+  Plug 'honza/vim-snippets'
+endif
 
 call plug#end()
 runtime! macros/matchit.vim
@@ -334,7 +332,7 @@ let g:bufferline_solo_highlight      = 1
 
 
 " coc
-if executable('node') && ! has('nvim')
+if executable('node')
   inoremap <silent><expr> <TAB>
         \ pumvisible() ? "\<C-n>" :
         \ <SID>check_back_space() ? "\<TAB>" :
@@ -525,14 +523,6 @@ let g:gitgutter_max_signs = 10000
 let g:gitgutter_realtime  = -1
 
 
-" gutentags
-if executable('ripper-tags')
-  let g:gutentags_ctags_executable_ruby = 'ripper-tags --ignore-unsupported-options'
-endif
-let g:gutentags_cache_dir = g:cachedir
-let g:gutentags_ctags_exclude = ['node_modules']
-
-
 " javascript-libraries-syntax
 let g:used_javascript_libs = 'jquery,angularjs,jasmine,d3'
 
@@ -554,7 +544,6 @@ let g:rubycomplete_load_gemfile = 1
 
 " rust
 set hidden
-" let g:racer_cmd = "/Users/chorn/.cargo/bin/racer"
 let g:racer_experimental_completer = 1
 let g:racer_insert_paren = 1
 

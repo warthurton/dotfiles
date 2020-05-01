@@ -1,5 +1,6 @@
 [alias]
   aa = add --all
+  aap = add --all --patch
   b = branch
   c = commit
   ca = commit --all
@@ -15,13 +16,14 @@
   mff = merge --ff-only
   merged = branch --merged
   borph = !git branch --format '%(refname:short) %(upstream:track)' | grep '\\[gone\\]' | cut -f 1 -d ' '
-  borphd = !git borph | xargs git branch
+  borphd = !git borph | xargs git branch -d
   pu = push -u
   r = !git l -30
   ra = !git r --all
   s = !git fetch && git status
   st = status
+  tagged = !git log --no-walk --tags --decorate=full
   unadd = reset HEAD
-  wip = commit -m 'fixup! wip'
-
+  wip = "!f() { git add --all && git commit -m \"✏ $*\"; }; f"
+  wipp = "!f() { git commit -m \"✏ $*\"; }; f"
 ; vim: ft=gitconfig sw=2 ts=2 et
