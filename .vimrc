@@ -103,6 +103,8 @@ Plug 'tpope/vim-surround'
 " Plug 'tpope/vim-vinegar'
 Plug 'junegunn/fzf', { 'dir': '~/.config/fzf', 'do': './install --no-update-rc --key-bindings --completion' }
 Plug 'junegunn/fzf.vim'
+
+
 " Plug 'junegunn/gv.vim'
 " Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'junegunn/vim-easy-align'
@@ -114,7 +116,8 @@ Plug 'chriskempson/base16-vim'
 Plug 'mbbill/undotree'
 Plug 'scrooloose/nerdtree'
 Plug 'tomtom/tcomment_vim'
-Plug 'w0rp/ale'
+" Plug 'w0rp/ale'
+Plug 'dense-analysis/ale'
 Plug 'editorconfig/editorconfig-vim'
 
 " Filetypes
@@ -306,6 +309,7 @@ let g:ale_javascript_xo_use_global = 0
 let g:ale_ruby_rubocop_options = '-EDS'
 let g:ale_fixers = {
   \ 'javascript': ['eslint'],
+  \ 'typescript': ['eslint'],
 \ }
 let g:ale_pattern_options = {
   \ '\.min\.js$': {'ale_linters': [], 'ale_fixers': []},
@@ -484,20 +488,26 @@ if has('nvim')
     autocmd! User FzfStatusLine call <SID>fzf_statusline()
   augroup END
 endif
-" Likewise, Files command with preview window
-command! -bang -nargs=? -complete=dir Files
-      \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
+
+let g:fzf_preview_window = 'right:60%'
+let g:fzf_buffers_jump = 1
+let g:fzf_commits_log_options = '--graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr"'
+let g:fzf_tags_command = 'ctags -R'
+let g:fzf_layout = { 'down': '~75%' }
+let g:fzf_commands_expect = 'alt-enter,ctrl-x'
+
+" command! -bang -nargs=? -complete=dir Files
+"     \ call fzf#vim#files(<q-args>, {'options': ['--info=inline']}, <bang>0)
+
 let g:fzf_action = {
       \ 'ctrl-t': 'tab split',
       \ 'ctrl-x': 'split',
       \ 'ctrl-v': 'vsplit' }
-let g:fzf_layout = { 'down': '~50%' }
-let g:fzf_tags_command = 'ctags -R'
-let g:fzf_buffers_jump = 1
-" Mapping selecting mappings
-nmap <leader><tab> <plug>(fzf-maps-n)
-xmap <leader><tab> <plug>(fzf-maps-x)
-omap <leader><tab> <plug>(fzf-maps-o)
+
+" " Mapping selecting mappings
+" nmap <leader><tab> <plug>(fzf-maps-n)
+" xmap <leader><tab> <plug>(fzf-maps-x)
+" omap <leader><tab> <plug>(fzf-maps-o)
 " nnoremap <silent> <expr> <Leader><Leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
 " nnoremap <silent> <Leader>C        :Colors<CR>
 " nnoremap <silent> <Leader><Enter>  :Buffers<CR>
@@ -507,7 +517,7 @@ omap <leader><tab> <plug>(fzf-maps-o)
 " nnoremap <silent> <Leader>`        :Marks<CR>
 " Advanced customization using autoload functions
 inoremap <expr> <c-x><c-k> fzf#vim#complete#word({'left': '15%'})
-" Insert mode completion
+" " Insert mode completion
 imap <c-x><c-k> <plug>(fzf-complete-word)
 imap <c-x><c-f> <plug>(fzf-complete-path)
 imap <c-x><c-j> <plug>(fzf-complete-file-ag)

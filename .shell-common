@@ -161,6 +161,12 @@ alias gpl='git pull'
 [[ -z "$PS1" ]] && return
 [[ "${XPC_SERVICE_NAME:0:13}" == "com.jetbrains" ]] && return  # RubyyMine etc...
 #-----------------------------------------------------------------------------
+if [[ -s "$HOME/.config/base16-shell" ]] ; then
+  export BASE16_SHELL="$HOME/.config/base16-shell"
+  export BASE16_THEME="base16-twilight"
+  eval "$("$BASE16_SHELL"/profile_helper.sh)"
+fi
+
 [[ -s "$HOME/.base16_theme" ]] && source "$HOME/.base16_theme"
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:
