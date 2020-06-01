@@ -58,11 +58,6 @@ elif [[ "${OSTYPE:0:5}" = "linux" ]] ; then
   alias ubuntu_add_key='sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80'
 fi
 # ---------------------------------------------------------------------------
-if command -v ag >/dev/null 2>/dev/null ; then
-  alias ag="ag --pager=less --color-match='1;36'"
-  alias ag_next='git $(git diff --name-only master..HEAD . | sed -e "s/^/ --ignore=/")'
-fi
-# ---------------------------------------------------------------------------
 if command -v nvim >/dev/null 2>/dev/null ; then
   alias vim=nvim
   alias v=nvim
@@ -137,8 +132,13 @@ httpd() {
   command -v open >/dev/null 2>/dev/null && (sleep 1 && open "http://127.0.0.1:$port" &)
   python -m SimpleHTTPServer "$port"
 }
-# Git ---------------------------------------------------------------------
 
+# node ---------------------------------------------------------------------
+if command -v npx >/dev/null 2>/dev/null ; then
+  alias npx='npx --no-install'
+fi
+
+# Git ---------------------------------------------------------------------
 if [[ -d "$HOME/.git-pub-dotfiles" ]] ; then
   pubgit() {
     git --git-dir="$HOME/.git-pub-dotfiles" --work-tree="$HOME" "$@"

@@ -20,10 +20,11 @@
   pu = push -u
   r = !git l -30
   ra = !git r --all
+  root = rev-parse --show-toplevel
   s = !git fetch && git status
   st = status
   tagged = !git log --no-walk --tags --decorate=full
   unadd = reset HEAD
-  wip = "!f() { git add --all && git commit -m \"✏ $*\"; }; f"
-  wipp = "!f() { git commit -m \"✏ $*\"; }; f"
+  wip = "!f() { git add --all && git commit -nm \"✏ $*\"; }; f"
+  wipp = "!f() { git commit -nm \"✏ $*\"; }; f"
 ; vim: ft=gitconfig sw=2 ts=2 et

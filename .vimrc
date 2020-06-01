@@ -116,7 +116,6 @@ Plug 'chriskempson/base16-vim'
 Plug 'mbbill/undotree'
 Plug 'scrooloose/nerdtree'
 Plug 'tomtom/tcomment_vim'
-" Plug 'w0rp/ale'
 Plug 'dense-analysis/ale'
 Plug 'editorconfig/editorconfig-vim'
 
@@ -637,6 +636,9 @@ augroup Rust
   autocmd FileType rust setlocal tabstop=2 softtabstop=2 shiftwidth=2 textwidth=79 expandtab autoindent
 augroup END
 
+augroup JSON
+  autocmd FileType json syntax match Comment +\/\/.\+$+
+augroup END
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Just for TMUX

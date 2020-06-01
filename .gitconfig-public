@@ -6,6 +6,7 @@
   autoSetupRebase = always
 [commit]
   gpgsign = true
+  verbose = true
 [color]
   ui = true
 [core]

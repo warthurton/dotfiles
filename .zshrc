@@ -8,7 +8,7 @@ do
   [[ -f "$s" ]] && source "$s"
 done
 #-----------------------------------------------------------------------------
-typeset -g -a _preferred_languages=(ruby rust node)
+typeset -g -a _preferred_languages=(node python)
 
 alias -g M='| $PAGER'
 (( $+commands[bat] )) && alias -g B='| bat'
@@ -47,8 +47,6 @@ typeset -g HISTFILE="$HOME/.zsh_history"
 typeset -g SAVEHIST=99999999
 typeset -g HISTSIZE=99999999
 typeset -g WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
-# typeset -g PROMPT='%f%b%k%u%s%n@%m %~ %(!.#.$)%f%b%k%u%s '
-# typeset -g RPROMPT=''
 typeset -g ZSH_AUTOSUGGEST_USE_ASYNC=1
 #-----------------------------------------------------------------------------
 setopt \
@@ -119,8 +117,5 @@ _preserve_my_history() {
 
 autoload -Uz add-zsh-hook
 add-zsh-hook zshexit _preserve_my_history
-#-----------------------------------------------------------------------------
-
-
 #-----------------------------------------------------------------------------
 # vim: set syntax=zsh ft=zsh sw=2 ts=2 expandtab:

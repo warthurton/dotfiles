@@ -58,6 +58,7 @@ _clean_path() {
 declare _newpath=""
 # --------------------------------------------------------------------------
 for _dir in \
+  $HOME/tbin \
   $HOME/bin \
   $HOME/{.go,.cargo,.rbenv,.pyenv,.nodenv,.asdf}/{bin,shims} \
   /Applications/VMware\ Fusion.app/Contents/Library \
