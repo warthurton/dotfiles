@@ -55,21 +55,21 @@ if executable('node')
   Plug 'othree/es.next.syntax.vim', { 'for': 'javascript' }
   Plug 'othree/javascript-libraries-syntax.vim', { 'for': 'javascript' }
   Plug 'isRuslan/vim-es6', { 'for': 'javascript' }
-  Plug 'prettier/vim-prettier', { 'do': 'npm i', 'branch': 'release/1.x', 'for': [
-      \ 'javascript',
-      \ 'typescript',
-      \ 'css',
-      \ 'less',
-      \ 'scss',
-      \ 'json',
-      \ 'graphql',
-      \ 'markdown',
-      \ 'vue',
-      \ 'lua',
-      \ 'python',
-      \ 'ruby',
-      \ 'html',
-      \ 'swift' ] }
+  " Plug 'prettier/vim-prettier', { 'do': 'npm i', 'branch': 'release/1.x', 'for': [
+  "     \ 'javascript',
+  "     \ 'typescript',
+  "     \ 'css',
+  "     \ 'less',
+  "     \ 'scss',
+  "     \ 'json',
+  "     \ 'graphql',
+  "     \ 'markdown',
+  "     \ 'vue',
+  "     \ 'lua',
+  "     \ 'python',
+  "     \ 'ruby',
+  "     \ 'html',
+  "     \ 'swift' ] }
   Plug 'moll/vim-node', { 'for': 'javascript' }
   Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
 endif
