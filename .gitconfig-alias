@@ -23,6 +23,7 @@
   root = rev-parse --show-toplevel
   s = !git fetch && git status
   st = status
+  tags = log --tags --simplify-by-decoration --pretty='format:%ci %d'
   tagged = !git log --no-walk --tags --decorate=full
   unadd = reset HEAD
   wip = "!f() { git add --all && git commit -nm \"✏ $*\"; }; f"
