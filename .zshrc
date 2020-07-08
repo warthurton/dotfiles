@@ -8,7 +8,7 @@ do
   [[ -f "$s" ]] && source "$s"
 done
 #-----------------------------------------------------------------------------
-typeset -g -a _preferred_languages=(node python)
+typeset -g -a _preferred_languages=(node python go)
 
 alias -g M='| $PAGER'
 (( $+commands[bat] )) && alias -g B='| bat'

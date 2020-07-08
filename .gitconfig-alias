@@ -1,31 +1,59 @@
 [alias]
   aa = add --all
   aap = add --all --patch
-  b = branch
+  amend = commit --amend
+  b = "!. ~/.githelpers && pretty_git_branch"
+  # b = branch
+  borph = !git branch --format '%(refname:short) %(upstream:track)' | grep '\\[gone\\]' | cut -f 1 -d ' '
+  borphd = !git borph | xargs git branch -d
+  bs = "!. ~/.githelpers && pretty_git_branch_sorted"
   c = commit
   ca = commit --all
   co = checkout
-  dc = diff --cached
+  cp = cherry-pick
+  dc = diff --find-copies-harder --cached
   dh1 = diff HEAD~1
-  di = diff
+  di = diff --find-copies-harder
+  div = divergence
+  ds = diff --stat=160,120
   f = fetch
   fa = fetch --all --tags --prune
-  l = !pretty_git_log
+  ff = merge --ff-only
+  h = !git head
+  head = !git r -1
+  hp = "!. ~/.githelpers && show_git_head"
+  l = "!. ~/.githelpers && pretty_git_log"
   la = !git l --all
   ls = ls-files
-  mff = merge --ff-only
   merged = branch --merged
-  borph = !git branch --format '%(refname:short) %(upstream:track)' | grep '\\[gone\\]' | cut -f 1 -d ' '
-  borphd = !git borph | xargs git branch -d
+  mff = merge --ff-only
+  noff = merge --no-ff
+  pf = push --force-with-lease
+  pom = push origin master
   pu = push -u
-  r = !git l -30
+  r = !GIT_NO_PAGER=1 git l -30
   ra = !git r --all
   root = rev-parse --show-toplevel
-  s = !git fetch && git status
+  s = show --show-signature
+  ski = !git stash --keep-index
   st = status
-  tags = log --tags --simplify-by-decoration --pretty='format:%ci %d'
   tagged = !git log --no-walk --tags --decorate=full
+  # tags = log --tags --simplify-by-decoration --pretty='format:%as %h %d %ce %s'
+  tags = log --tags --simplify-by-decoration --pretty='format:%C(always,green)(%ar)%C(always,reset) %C(always,yellow)%h%C(always,reset) %d %C(always,blue)<%an>%C(always,reset) %s'
   unadd = reset HEAD
   wip = "!f() { git add --all && git commit -nm \"✏ $*\"; }; f"
   wipp = "!f() { git commit -nm \"✏ $*\"; }; f"
+  # Goodness (summary of diff lines added/removed/total)
+  gn = goodness
+  gnc = goodness --cached
+  # Fancy logging.
+  #   h = head
+  #   hp = head with patch
+  #   r = recent commits, only current branch
+  #   ra = recent commits, all reachable refs
+  #   l = all commits, only current branch
+  #   la = all commits, all reachable refs
+  #   b = all branches
+  #   bs = all branches, sorted by last commit date
+
 ; vim: ft=gitconfig sw=2 ts=2 et
