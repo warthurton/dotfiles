@@ -42,6 +42,25 @@ for s in \
 do
   [[ -f "$s" ]] && source "$s"
 done
+
+#-----------------------------------------------------------------------------
+join-lines() {
+  local item
+  while read item; do
+    echo -n "${(q)item} "
+  done
+}
+
+bind-git-helper() {
+  local c
+  for c in $@; do
+    eval "fzf-g$c-widget() { local result=\$(g$c | join-lines); zle reset-prompt; LBUFFER+=\$result }"
+    eval "zle -N fzf-g$c-widget"
+    eval "bindkey '^g^$c' fzf-g$c-widget"
+  done
+}
+bind-git-helper f b t r h
+unset -f bind-git-helper
 #-----------------------------------------------------------------------------
 typeset -g HISTFILE="$HOME/.zsh_history"
 typeset -g SAVEHIST=99999999
@@ -112,7 +131,7 @@ unset 'FAST_HIGHLIGHT[chroma-whatis]' 'FAST_HIGHLIGHT[chroma-man]'
 #-----------------------------------------------------------------------------
 _preserve_my_history() {
   [[ -d "$HOME/.git-prv-dotfiles" ]] || return
-  git --git-dir="$HOME/.git-prv-dotfiles" --work-tree="$HOME" commit -am "$(date)"
+  git --git-dir="$HOME/.git-prv-dotfiles" --work-tree="$HOME" commit --no-gpg-sign -am "$(date)"
 }
 
 autoload -Uz add-zsh-hook

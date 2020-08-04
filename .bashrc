@@ -26,6 +26,13 @@ fi
 for s in "$HOME/.fzf.bash"  "${HOME}/.iterm2_shell_integration.bash" ; do
   [[ -s "$s" ]] && source "$s"
 done
+
+# bind '"\er": redraw-current-line'
+# bind '"\C-g\C-f": "$(gf)\e\C-e\er"'
+# bind '"\C-g\C-b": "$(gb)\e\C-e\er"'
+# bind '"\C-g\C-t": "$(gt)\e\C-e\er"'
+# bind '"\C-g\C-h": "$(gh)\e\C-e\er"'
+# bind '"\C-g\C-r": "$(gr)\e\C-e\er"'
 # --------------------------------------------------------------------------
 export PS1='\t \u@\h \w \$ '
 # --------------------------------------------------------------------------
