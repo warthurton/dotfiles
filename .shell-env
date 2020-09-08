@@ -49,6 +49,16 @@ fi
 # --------------------------------------------------------------------------
 # gpg-agent, only for linux, on OS X use gpgtools instead
 
-[[ "${OSTYPE:0:5}" = "linux" ]] && command -v gpgconf >/dev/null 2>/dev/null && gpgconf --launch gpg-agent
+if [[ "${OSTYPE:0:5}" = "linux" ]] ; then
+  command -v gpgconf >&/dev/null && gpgconf --launch gpg-agent
+
+  command -v ssh-agent >&/dev/null || return
+
+  if [[ -n "${SSH_AGENT_PID}" ]] ; then
+    \ps -q "${SSH_AGENT_PID}" >&/dev/null && return
+  fi
+
+  eval "$(ssh-agent)" >&/dev/null
+fi
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:
