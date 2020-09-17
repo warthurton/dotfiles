@@ -2,6 +2,7 @@
   aa = add --all
   aap = add --all --patch
   amend = commit --amend
+  ammend = commit --amend
   b = "!. ~/.githelpers && pretty_git_branch"
   # b = branch
   borph = !git branch --format '%(refname:short) %(upstream:track)' | grep '\\[gone\\]' | cut -f 1 -d ' '

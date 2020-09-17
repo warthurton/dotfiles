@@ -1,6 +1,7 @@
 #-----------------------------------------------------------------------------
 zstyle ':completion:*' rehash true
 zstyle ':completion:*' menu select
+# zmodload zsh/zprof
 #-----------------------------------------------------------------------------
 for s in \
   ~/.shell-common
@@ -8,14 +9,17 @@ do
   [[ -f "$s" ]] && source "$s"
 done
 #-----------------------------------------------------------------------------
-typeset -g -a _preferred_languages=(node python go)
-
 alias -g M='| $PAGER'
 (( $+commands[bat] )) && alias -g B='| bat'
 bindkey -e
 bindkey -m 2>/dev/null
 
-autoload -Uz compinit && compinit -D
+autoload -Uz compinit && compinit
+# autoload -U +X bashcompinit && bashcompinit
+
+# if [[ -x /usr/local/bin/vault ]] ; then
+#   complete -o nospace -C /usr/local/bin/vault vault
+# fi
 #-----------------------------------------------------------------------------
 autoload -Uz zcalc
 __calc() {
@@ -31,6 +35,7 @@ if (( $+commands[fasd] )) ; then
   eval "$(fasd --init auto)"
 fi
 #-----------------------------------------------------------------------------
+typeset -g -a _preferred_languages=(node python go)
 autoload -U promptinit
 promptinit
 prompt chorn
@@ -120,21 +125,23 @@ setopt \
   hist_no_store \
   hist_reduce_blanks \
   hist_verify \
+  inc_append_history \
   share_history
 
 unsetopt \
   hist_ignore_all_dups \
-  inc_append_history \
   inc_append_history_time
 #-----------------------------------------------------------------------------
 unset 'FAST_HIGHLIGHT[chroma-whatis]' 'FAST_HIGHLIGHT[chroma-man]'
 #-----------------------------------------------------------------------------
 _preserve_my_history() {
   [[ -d "$HOME/.git-prv-dotfiles" ]] || return
-  git --git-dir="$HOME/.git-prv-dotfiles" --work-tree="$HOME" commit --no-gpg-sign -am "$(date)"
+  git --git-dir="$HOME/.git-prv-dotfiles" --work-tree="$HOME" commit --no-gpg-sign -am "$(date)" >&/dev/null &!
 }
 
+typeset -g PERIOD=600
 autoload -Uz add-zsh-hook
-add-zsh-hook zshexit _preserve_my_history
+add-zsh-hook periodic _preserve_my_history
 #-----------------------------------------------------------------------------
 # vim: set syntax=zsh ft=zsh sw=2 ts=2 expandtab:
+

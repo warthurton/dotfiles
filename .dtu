@@ -36,6 +36,7 @@ brewed:
   fdupes
   figlet
   gem-completion
+  gh
   git
   git-extras
   git-hooks

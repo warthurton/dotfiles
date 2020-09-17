@@ -138,3 +138,4 @@ if command -v git >/dev/null 2>/dev/null ; then
 fi
 #--------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:
+

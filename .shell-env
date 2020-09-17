@@ -15,7 +15,7 @@ export FZF_DEFAULT_COMMAND=''
 export FZF_DEFAULT_OPTS='--info=inline --ansi --tabstop=2 --multi --preview-window=right'
 
 if command -v rg >&/dev/null ; then
-  export FZF_DEFAULT_COMMAND="rg --files --no-ignore --hidden --follow ${RIPGREP_DEFAULT_GLOB}"
+  export FZF_DEFAULT_COMMAND="rg --files --no-ignore --hidden --follow"
 fi
 
 if command -v diff-so-fancy >&/dev/null ; then
