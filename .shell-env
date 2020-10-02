@@ -1,4 +1,5 @@
 # --------------------------------------------------------------------------
+# shellcheck shell=bash
 umask 022
 
 export BROWSER=open

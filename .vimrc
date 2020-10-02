@@ -306,6 +306,8 @@ let g:ale_javascript_flow_use_global = 0
 let g:ale_javascript_standard_use_global = 0
 let g:ale_javascript_xo_use_global = 0
 let g:ale_ruby_rubocop_options = '-EDS'
+let g:ale_sh_shellcheck_dialect = 'bash'
+
 let g:ale_fixers = {
   \ 'javascript': ['eslint'],
   \ 'typescript': ['eslint'],

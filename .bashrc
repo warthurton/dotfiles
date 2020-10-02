@@ -86,6 +86,7 @@ color() {
 }
 # Prompt---------------------------------------------------------------------
 _ps1_time_color() {
+  # shellcheck disable=SC2181
   if [[ $? -eq 0 ]] ; then
     color 4
   else
@@ -138,4 +139,3 @@ if command -v git >/dev/null 2>/dev/null ; then
 fi
 #--------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:
-
