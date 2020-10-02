@@ -1,19 +1,11 @@
 # --------------------------------------------------------------------------
-# _is_dir() {
-#   local _dir="$1"
-#
-#   [[ -n "$_dir" ]] || return 1
-#   [[ -d "$_dir" ]] || return 1
-#
-#   return 0
-# }
-# --------------------------------------------------------------------------
 _is_in_path() {
   local _dir="$1"
   local _path="$2"
 
-  [[ -z "${_dir}"  ]] && return 1
   [[ -z "${_path}"  ]] && return 1
+  [[ -z "${_dir}"  ]] && return 0
+  [[ -d "${_dir}"  ]] || return 0
   [[ "^${_dir}$" =~ ${_path} ]] && return 0
   [[ "^${_dir}:" =~ ${_path} ]] && return 0
   [[ ":${_dir}$" =~ ${_path} ]] && return 0
@@ -26,11 +18,6 @@ _add_to_path() {
   local _dir="$1"
   local _path="$2"
 
-  # if ! _is_dir "${_dir}" ; then
-  #   echo "${_path}"
-  #   return
-  # fi
-
   if _is_in_path "${_dir}" "${_path}" ; then
     echo "${_path}"
     return
@@ -42,18 +29,6 @@ _add_to_path() {
 
   echo "${_path}"
 }
-# --------------------------------------------------------------------------
-# _clean_path() {
-#   local _path="$1"
-#
-#   _new="/bin"
-#
-#   while read -d: -r _dir ; do
-#     _new="$(_add_to_path "${_dir}" "${_new}")"
-#   done < <(echo "$_path")
-#
-#   echo "${_new}"
-# }
 # --------------------------------------------------------------------------
 declare _newpath=""
 # --------------------------------------------------------------------------
@@ -80,18 +55,17 @@ do
   _newpath="$(_add_to_path "${_dir}" "${_newpath}")"
 done
 
-# while read -r _dir ; do
-#   _newpath="$(_add_to_path "${_dir}" "${_newpath}")"
-# done < <(find /etc/paths /etc/paths.d -type f -print0 | xargs -0 cat 2>/dev/null)
+while read -r _dir ; do
+  _newpath="$(_add_to_path "${_dir}" "${_newpath}")"
+done < <(find /etc/paths /etc/paths.d -type f -print0 | xargs -0 cat 2>/dev/null)
 
-# --------------------------------------------------------------------------
 export PATH="${_newpath}"
 # --------------------------------------------------------------------------
 # for _version_manager in rbenv pyenv ; do
 #   command -v "${_version_manager}" >& /dev/null && eval "$("${_version_manager}" init -)"
 # done
 # --------------------------------------------------------------------------
-export PATH="${_newpath}"
+# export PATH="${_newpath}"
 # --------------------------------------------------------------------------
 # [[ -s /usr/local/Cellar/nvm/0.35.3/nvm.sh ]] && source /usr/local/Cellar/nvm/0.35.3/nvm.sh --no-use
 
