@@ -14,8 +14,14 @@ line:style:bold
 !*.min.js
 
 --glob
-!.git/*
+!.git/**
 
 --glob
-!tpan2/*
+!tpan2/**
+
+--glob
+!*.yml
+
+--glob
+!dist/
 

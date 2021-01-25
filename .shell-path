@@ -61,16 +61,12 @@ done < <(find /etc/paths /etc/paths.d -type f -print0 | xargs -0 cat 2>/dev/null
 
 export PATH="${_newpath}"
 # --------------------------------------------------------------------------
-# for _version_manager in rbenv pyenv ; do
-#   command -v "${_version_manager}" >& /dev/null && eval "$("${_version_manager}" init -)"
-# done
+for _version_manager in rbenv pyenv ; do
+  command -v "${_version_manager}" >& /dev/null && eval "$("${_version_manager}" init -)"
+done
 # --------------------------------------------------------------------------
-# export PATH="${_newpath}"
-# --------------------------------------------------------------------------
-# [[ -s /usr/local/Cellar/nvm/0.35.3/nvm.sh ]] && source /usr/local/Cellar/nvm/0.35.3/nvm.sh --no-use
-
-# if command -v fnm >&/dev/null ; then
-#   eval "$(fnm env --multi)"
-# fi
+if command -v fnm >&/dev/null ; then
+  eval "$(fnm env)"
+fi
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:

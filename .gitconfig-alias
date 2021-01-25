@@ -4,15 +4,23 @@
   amend = commit --amend
   ammend = commit --amend
   b = "!. ~/.githelpers && pretty_git_branch"
-  # b = branch
+  b = branch -v
+  bD = branch -D
+  bd = branch -d
   borph = !git branch --format '%(refname:short) %(upstream:track)' | grep '\\[gone\\]' | cut -f 1 -d ' '
   borphd = !git borph | xargs git branch -d
   borphdd = !git borph | xargs git branch -D
+  br = branch
   bs = "!. ~/.githelpers && pretty_git_branch_sorted"
   c = commit
   ca = commit --all
+  ci = commit
+  cim = commit -m
+  cima = commit -am
+  clr = rm -r --cached
   co = checkout
-  cp = cherry-pick
+  cp = cherry-pick -x
+  d = diff -w
   dc = diff --find-copies-harder --cached
   dh1 = diff HEAD~1
   di = diff --find-copies-harder
@@ -21,33 +29,41 @@
   f = fetch
   fa = fetch --all --tags --prune
   ff = merge --ff-only
+  gn = goodness
+  gnc = goodness --cached
   h = !git head
   head = !git r -1
   hp = "!. ~/.githelpers && show_git_head"
   l = "!. ~/.githelpers && pretty_git_log"
   la = !git l --all
+  lg = log --graph --date=relative --pretty=tformat:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%an %ad)%Creset' -20
   ls = ls-files
   merged = branch --merged
   mff = merge --ff-only
+  nb = checkout -b
   noff = merge --no-ff
+  oups = commit --amend --no-edit
   pf = push --force-with-lease
   pom = push origin master
   pu = push -u
+  pushfl = push --force-with-lease
   r = !GIT_NO_PAGER=1 git l -30
   ra = !git r --all
+  rh = reset --hard
   root = rev-parse --show-toplevel
   s = show --show-signature
   ski = !git stash --keep-index
-  st = status
+  st = status -sb
+  t = tag -l
   tagged = !git log --no-walk --tags --decorate=full
-  # tags = log --tags --simplify-by-decoration --pretty='format:%as %h %d %ce %s'
   tags = log --tags --simplify-by-decoration --pretty='format:%C(always,green)(%ar)%C(always,reset) %C(always,yellow)%h%C(always,reset) %d %C(always,blue)<%an>%C(always,reset) %s'
   unadd = reset HEAD
+  uncommit = reset --soft HEAD^
+  unstage = reset HEAD
+  watb = worktree add --track -b
   wip = "!f() { git add --all && git commit -nm \"✏ $*\"; }; f"
   wipp = "!f() { git commit -nm \"✏ $*\"; }; f"
-  # Goodness (summary of diff lines added/removed/total)
-  gn = goodness
-  gnc = goodness --cached
+
   # Fancy logging.
   #   h = head
   #   hp = head with patch
