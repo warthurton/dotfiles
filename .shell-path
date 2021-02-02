@@ -57,7 +57,7 @@ done
 
 while read -r _dir ; do
   _newpath="$(_add_to_path "${_dir}" "${_newpath}")"
-done < <(find /etc/paths /etc/paths.d -type f -print0 | xargs -0 cat 2>/dev/null)
+done < <(find /etc/paths /etc/paths.d -type f -print0 2>/dev/null | xargs -0 cat 2>/dev/null)
 
 export PATH="${_newpath}"
 # --------------------------------------------------------------------------
