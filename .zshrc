@@ -114,6 +114,9 @@ unsetopt \
   notify
 
 # History
+unsetopt \
+  inc_append_history
+
 setopt \
   append_history \
   bang_hist \
@@ -125,14 +128,13 @@ setopt \
   hist_no_store \
   hist_reduce_blanks \
   hist_verify \
-  inc_append_history \
   share_history
 
 unsetopt \
   hist_ignore_all_dups \
   inc_append_history_time
 #-----------------------------------------------------------------------------
-unset 'FAST_HIGHLIGHT[chroma-whatis]' 'FAST_HIGHLIGHT[chroma-man]'
+unset 'FAST_HIGHLIGHT[chroma-whatis]' 'FAST_HIGHLIGHT[chroma-man]' 'FAST_HIGHLIGHT[chroma-make]'
 #-----------------------------------------------------------------------------
 _preserve_my_history() {
   [[ -d "$HOME/.git-prv-dotfiles" ]] || return

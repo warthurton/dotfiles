@@ -32,10 +32,11 @@ _add_to_path() {
 # --------------------------------------------------------------------------
 declare _newpath=""
 # --------------------------------------------------------------------------
+  # $HOME/{.go,.cargo,.rbenv,.pyenv,.nodenv,.asdf}/{bin,shims} \
 for _dir in \
   $HOME/tbin \
   $HOME/bin \
-  $HOME/{.go,.cargo,.rbenv,.pyenv,.nodenv,.asdf}/{bin,shims} \
+  $HOME/{.go,.cargo,.rbenv,.pyenv,.nodenv,.goenv}/{bin,shims} \
   /Applications/VMware\ Fusion.app/Contents/Library \
   /Applications/VMware\ Fusion.app/Contents/Public \
   /Applications/VirtualBox.app/Contents/MacOS \
@@ -61,12 +62,12 @@ done < <(find /etc/paths /etc/paths.d -type f -print0 2>/dev/null | xargs -0 cat
 
 export PATH="${_newpath}"
 # --------------------------------------------------------------------------
-for _version_manager in rbenv pyenv ; do
+for _version_manager in rbenv pyenv goenv ; do
   command -v "${_version_manager}" >& /dev/null && eval "$("${_version_manager}" init -)"
 done
 # --------------------------------------------------------------------------
 if command -v fnm >&/dev/null ; then
-  eval "$(fnm env)"
+  eval "$(fnm env --use-on-cd)"
 fi
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:

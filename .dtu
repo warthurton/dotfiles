@@ -60,7 +60,6 @@ brewed:
   p7zip
   pidof
   pv
-  python2
   rsync
   socat
   sqlite
@@ -80,6 +79,7 @@ pip:
   neovim
   proselint
   vim-vint
+  visidata
 
 npm:
   neovim
