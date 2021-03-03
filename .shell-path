@@ -32,11 +32,10 @@ _add_to_path() {
 # --------------------------------------------------------------------------
 declare _newpath=""
 # --------------------------------------------------------------------------
-  # $HOME/{.go,.cargo,.rbenv,.pyenv,.nodenv,.asdf}/{bin,shims} \
 for _dir in \
   $HOME/tbin \
   $HOME/bin \
-  $HOME/{.go,.cargo,.rbenv,.pyenv,.nodenv,.goenv}/{bin,shims} \
+  $HOME/{.go,.cargo,.goenv,.rbenv,.pyenv,.nodenv,.asdf}/{bin,shims} \
   /Applications/VMware\ Fusion.app/Contents/Library \
   /Applications/VMware\ Fusion.app/Contents/Public \
   /Applications/VirtualBox.app/Contents/MacOS \
