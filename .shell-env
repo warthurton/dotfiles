@@ -49,10 +49,8 @@ if [[ -d "/usr/syno" ]] ; then
 fi
 
 # --------------------------------------------------------------------------
-# gpg-agent, only for linux, on OS X use gpgtools instead
-
 if [[ "${OSTYPE:0:5}" = "linux" ]] ; then
-  command -v gpgconf >&/dev/null && gpgconf --launch gpg-agent
+  export GPG_TTY=$(tty)
 
   command -v ssh-agent >&/dev/null || return
 

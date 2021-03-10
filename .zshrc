@@ -35,7 +35,7 @@ if (( $+commands[fasd] )) ; then
   eval "$(fasd --init auto)"
 fi
 #-----------------------------------------------------------------------------
-typeset -g -a _preferred_languages=(node python go)
+typeset -g -a _preferred_languages=(ruby node python)
 autoload -U promptinit
 promptinit
 prompt chorn
@@ -59,8 +59,8 @@ join-lines() {
 bind-git-helper() {
   local c
   for c in $@; do
-    eval "fzf-g$c-widget() { local result=\$(g$c | join-lines); zle reset-prompt; LBUFFER+=\$result }"
-    eval "zle -N fzf-g$c-widget"
+    eval "fzf-g$c-widget() { local result=\$(g$c | join-lines); zle && zle reset-prompt; LBUFFER+=\$result }"
+    eval "zle && zle -N fzf-g$c-widget"
     eval "bindkey '^g^$c' fzf-g$c-widget"
   done
 }
