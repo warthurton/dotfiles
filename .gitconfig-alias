@@ -49,6 +49,7 @@
   pushfl = push --force-with-lease
   r = !GIT_NO_PAGER=1 git l -30
   ra = !git r --all
+  resign = commit --amend --no-edit -Schorn
   rh = reset --hard
   root = rev-parse --show-toplevel
   s = show --show-signature
