@@ -25,3 +25,6 @@ line:style:bold
 --glob
 !dist/
 
+--glob
+!node_modules/
+
