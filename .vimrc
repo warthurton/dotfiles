@@ -12,7 +12,7 @@ endfunction
 if has('nvim')
   let g:vimhome = SafeDirectory('~/.config/nvim')
   set shada='100,<1000,s1000,:1000
-  set clipboard=unnamedplus
+  set clipboard+=unnamedplus
 else
   let g:vimhome = SafeDirectory('~/.vim')
   set clipboard+=autoselect
@@ -642,6 +642,10 @@ augroup JSON
   autocmd FileType json syntax match Comment +\/\/.\+$+
 augroup END
 
+augroup ContentShellScript
+  au! BufRead,BufNewFile,BufEnter */src/content/*/*.sh setlocal noexpandtab
+augroup END
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Just for TMUX
 if v:version > 704
@@ -738,6 +742,7 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has('gui_running')
   set guifont=Sauce\ Code\ Pro\ Nerd\ Font\ Complete:h15
+  set guioptions+=a
   set guioptions-=m  "remove menu bar
   set guioptions-=T  "remove toolbar
   set guioptions-=L  "remove toolbar
