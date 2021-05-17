@@ -1,103 +1,11 @@
 # This is a comment
 
-brew:
-  homebrew/cask
-  homebrew/cask-drivers
-  homebrew/cask-fonts
-  homebrew/cask-versions
-  homebrew/core
-  homebrew/services
-  nickolasburr/pfa
-  rcoh/angle-grinder
-  schniz/tap
-  sidaf/pentest
-
-brewed:
-  arping
-  asciiquarium
-  bash
-  bash-completion
-  bat
-  bundler-completion
-  checkbashisms
-  cmake
-  coreutils
-  cscope
-  csv-fix
-  csvkit
-  ctags
-  curl
-  direnv
-  docker-clean
-  docker-completion
-  docker-compose-completion
-  fasd
-  fd
-  fdupes
-  figlet
-  gem-completion
-  gh
-  git
-  git-extras
-  git-hooks
-  git-lfs
-  gnu-sed
-  gnu-tar
-  gnu-time
-  hyperfine
-  jq
-  less
-  mosh
-  mtr
-  neovim
-  nmap
-  nnn
-  no-more-secrets
-  noti
-  open-completion
-  openssh
-  openssl
-  p7zip
-  pidof
-  pv
-  rsync
-  socat
-  sqlite
-  ssh-copy-id
-  the_silver_searcher
-  tmux
-  up
-  wget
-  xz
-  zsh
-
-gem:
-  neovim
-
 pip:
   doge
-  neovim
   proselint
-  vim-vint
   visidata
-
-npm:
-  neovim
-
-cargo:
-  racer
-  xsv
 
 git:
   $HOME/.config
   $HOME/src
-
-go:
-  github.com/sugyan/ttygif
-  github.com/eliukblau/pixterm
-  github.com/ericchiang/pup
-  github.com/olivere/iterm2-imagetools/cmd/imgcat
-  github.com/olivere/iterm2-imagetools/cmd/imgls
-  github.com/schachmat/wego
-  github.com/rs/jplot
 
