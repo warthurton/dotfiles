@@ -44,9 +44,7 @@ for _dir in \
   /Applications/Wireshark.app/Contents/MacOS \
   /usr/local/vfuse/bin \
   $HOME/.dotnet/tools/Library/Apple/usr/bin \
-  /{usr,opt}/local/heroku/bin \
-  /usr/local/share/dotnet \
-  /{usr,opt,Apps}/{local,X11,opt}/{bin,sbin} \
+  /{usr,opt,Apps}/{local,X11,opt,homebrew}/{bin,sbin} \
   /usr/local/opt/openssl/bin \
   /{opt,usr}/{bin,sbin,libexec} \
   /{bin,sbin} \
