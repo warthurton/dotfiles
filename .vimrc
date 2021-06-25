@@ -15,6 +15,7 @@ if has('nvim')
   set clipboard+=unnamedplus
 else
   let g:vimhome = SafeDirectory('~/.vim')
+  set clipboard+=unnamedplus
   set clipboard+=autoselect
 endif
 
@@ -90,7 +91,7 @@ Plug 'tpope/vim-haml',                         { 'for': 'haml' }
 Plug 'tpope/vim-rails',                        { 'for': 'ruby' }
 Plug 'tpope/vim-rake',                         { 'for': 'ruby' }
 Plug 'vim-ruby/vim-ruby',                      { 'for': 'ruby' }
-
+Plug 'vito-c/jq.vim',                          { 'for': 'jq' }
 
 call plug#end()
 runtime! macros/matchit.vim

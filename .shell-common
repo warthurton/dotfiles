@@ -39,6 +39,14 @@ if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
     security add-generic-password -U -a "${USER}" -D ENV -s "${1}" -w "${secret}"
   }
 
+  myapps() {
+    find /Applications -type d -uid $(id -u) -maxdepth 1 | sed -e 's,/Applications/,,' -e 's/\.app//' | tr 'A-Z' 'a-z' | tr ' ' '-' | sort
+  }
+
+  not_casked() {
+    myapps | while read -r _cask ; do brew list --cask "$_cask" >&/dev/null || echo "$_cask is not casked" ; done
+  }
+
 # Linux ---------------------------------------------------------------------
 elif [[ "${OSTYPE:0:5}" = "linux" ]] ; then
   command -v tty >&/dev/null && export GPG_TTY=$(tty)
@@ -49,10 +57,10 @@ elif [[ "${OSTYPE:0:5}" = "linux" ]] ; then
   alias ubuntu_add_key='sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80'
 fi
 # ---------------------------------------------------------------------------
-if command -v nvim >/dev/null 2>/dev/null ; then
-  alias vim=nvim
-  alias v=nvim
-fi
+#if command -v nvim >/dev/null 2>/dev/null ; then
+#  alias vim=nvim
+#  alias v=nvim
+#fi
 # ---------------------------------------------------------------------------
 alias be="bundle exec"
 alias list_to_regex="sed -e 's/[^0-9]//g' | tr '\n' '|' | sed -e 's/^/(/' -e 's/\|$/)/'"

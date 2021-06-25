@@ -35,7 +35,7 @@ if (( $+commands[fasd] )) ; then
   eval "$(fasd --init auto)"
 fi
 #-----------------------------------------------------------------------------
-typeset -g -a _preferred_languages=(ruby node python)
+typeset -g -a _preferred_languages=(ruby node python go)
 autoload -U promptinit
 promptinit
 prompt chorn
@@ -70,7 +70,7 @@ unset -f bind-git-helper
 typeset -g HISTFILE="$HOME/.zsh_history"
 typeset -g SAVEHIST=99999999
 typeset -g HISTSIZE=99999999
-typeset -g WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
+typeset -g WORDCHARS='*?_.~&;!#$%'
 typeset -g ZSH_AUTOSUGGEST_USE_ASYNC=1
 #-----------------------------------------------------------------------------
 setopt \
@@ -141,9 +141,13 @@ _preserve_my_history() {
   git --git-dir="$HOME/.git-prv-dotfiles" --work-tree="$HOME" commit --no-gpg-sign -am "$(date)" >&/dev/null &!
 }
 
-typeset -g PERIOD=600
+typeset -g PERIOD=60
 autoload -Uz add-zsh-hook
 add-zsh-hook periodic _preserve_my_history
 #-----------------------------------------------------------------------------
+source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
+source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
+#-----------------------------------------------------------------------------
+
 # vim: set syntax=zsh ft=zsh sw=2 ts=2 expandtab:
 
