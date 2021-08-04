@@ -57,10 +57,11 @@ elif [[ "${OSTYPE:0:5}" = "linux" ]] ; then
   alias ubuntu_add_key='sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80'
 fi
 # ---------------------------------------------------------------------------
-#if command -v nvim >/dev/null 2>/dev/null ; then
-#  alias vim=nvim
-#  alias v=nvim
-#fi
+if command -v nvim >/dev/null 2>/dev/null ; then
+ alias vim=nvim
+ alias v=nvim
+ alias n=nvim
+fi
 # ---------------------------------------------------------------------------
 alias be="bundle exec"
 alias list_to_regex="sed -e 's/[^0-9]//g' | tr '\n' '|' | sed -e 's/^/(/' -e 's/\|$/)/'"
@@ -153,7 +154,7 @@ alias gst='git status'
 alias gco='git checkout'
 alias gps='git push'
 alias gpl='git pull'
-
+alias r='cd "$(git root)"'
 # fzf ------------------------------------------------------------------------
 is_in_git_repo() {
   git rev-parse HEAD > /dev/null 2>&1
