@@ -60,4 +60,6 @@
   path = .gitconfig-dotfiles
 [includeIf "gitdir:~/.git-prv-dotfiles"]
   path = .gitconfig-dotfiles
-
+[init]
+	defaultBranch = main
+; vim: ft=gitconfig sw=2 ts=2 et
