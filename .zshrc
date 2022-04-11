@@ -1,25 +1,43 @@
 #-----------------------------------------------------------------------------
 zstyle ':completion:*' rehash true
 zstyle ':completion:*' menu select
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path ~/.cache/zsh
 # zmodload zsh/zprof
 #-----------------------------------------------------------------------------
 for s in \
-  ~/.shell-common
+  ~/.shell-common \
+  ~/.fzf.zsh
 do
   [[ -f "$s" ]] && source "$s"
 done
+
+#-----------------------------------------------------------------------------
+source $HOME/.config/zsh/zplug/init.zsh
+
+zplug "mafredri/zsh-async", use:"async.zsh"
+zplug "wookayin/fzf-fasd"
+zplug "chriskempson/base16-shell"
+zplug "zsh-users/zsh-autosuggestions", defer:2
+zplug "zsh-users/zsh-completions", defer:2
+zplug "zsh-users/zsh-syntax-highlighting", defer:2
+
+zplug check || zplug install
+zplug load
+
+#-----------------------------------------------------------------------------
+if [[ -s "$HOME/.asdf/asdf.sh" ]]; then
+  fpath=(${ASDF_DIR}/completions $fpath)
+fi
 #-----------------------------------------------------------------------------
 alias -g M='| $PAGER'
+alias -g J='| jq -rC \. | $PAGER -R'
 (( $+commands[bat] )) && alias -g B='| bat'
 bindkey -e
 bindkey -m 2>/dev/null
 
 autoload -Uz compinit && compinit
-# autoload -U +X bashcompinit && bashcompinit
-
-# if [[ -x /usr/local/bin/vault ]] ; then
-#   complete -o nospace -C /usr/local/bin/vault vault
-# fi
+autoload -U +X bashcompinit && bashcompinit
 #-----------------------------------------------------------------------------
 autoload -Uz zcalc
 __calc() {
@@ -40,14 +58,12 @@ autoload -U promptinit
 promptinit
 prompt chorn
 #-----------------------------------------------------------------------------
-for s in \
-  ~/.config/zsh/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh \
-  ~/.config/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh \
-  ~/.fzf.zsh
-do
-  [[ -f "$s" ]] && source "$s"
-done
-
+# for s in \
+#   ~/.config/zsh/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh \
+#   ~/.config/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+# do
+#   [[ -f "$s" ]] && source "$s"
+# done
 #-----------------------------------------------------------------------------
 join-lines() {
   local item
@@ -67,11 +83,23 @@ bind-git-helper() {
 bind-git-helper f b t r h
 unset -f bind-git-helper
 #-----------------------------------------------------------------------------
-typeset -g HISTFILE="$HOME/.zsh_history"
 typeset -g SAVEHIST=99999999
 typeset -g HISTSIZE=99999999
 typeset -g WORDCHARS='*?_.~&;!#$%'
 typeset -g ZSH_AUTOSUGGEST_USE_ASYNC=1
+#-----------------------------------------------------------------------------
+typeset -g HISTFILE="$HOME/.zsh_history"
+
+[[ -d "$HOME/.history" ]] || mkdir "$HOME/.history" >&/dev/null
+
+# if [[ -n "$ITERM_SESSION_ID" ]] ; then
+#   typeset -g HISTFILE="$HOME/.history/${ITERM_SESSION_ID}.history"
+# elif [[ -n "$TERM_SESSION_ID" ]] ; then
+#   typeset -g HISTFILE="$HOME/.history/${TERM_SESSION_ID}.history"
+# else
+#   typeset -g HISTFILE="$HOME/.zsh_history"
+# fi
+
 #-----------------------------------------------------------------------------
 setopt \
   always_to_end \
@@ -115,7 +143,10 @@ unsetopt \
 
 # History
 unsetopt \
-  inc_append_history
+  hist_find_no_dups \
+  hist_verify \
+  hist_ignore_space \
+  share_history
 
 setopt \
   append_history \
@@ -123,12 +154,9 @@ setopt \
   extended_history \
   hist_allow_clobber \
   hist_fcntl_lock \
-  hist_find_no_dups \
-  hist_ignore_space \
   hist_no_store \
   hist_reduce_blanks \
-  hist_verify \
-  share_history
+  inc_append_history
 
 unsetopt \
   hist_ignore_all_dups \
@@ -145,9 +173,32 @@ typeset -g PERIOD=60
 autoload -Uz add-zsh-hook
 add-zsh-hook periodic _preserve_my_history
 #-----------------------------------------------------------------------------
-source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
-source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
-#-----------------------------------------------------------------------------
 
+# # CTRL-R - Paste the selected command from history into the command line
+chorn-history-widget() {
+  local selected num
+
+  setopt localoptions noglobsubst noposixbuiltins pipefail no_aliases 2> /dev/null
+
+  # selected=( $(fc -rl 1 | perl -ne 'print if !$seen{(/^\s*[0-9]+\**\s+(.*)/, $1)}++' | fzf) )
+  selected=( $(fc -rl 1 \
+    | fzf --height 80% --info=inline --ansi --tabstop=2 --no-multi -n2..,.. --tiebreak=index --bind=ctrl-r:toggle-sort,ctrl-z:ignore --query="${LBUFFER}") )
+
+  local ret=$?
+
+  if [[ -n "$selected" ]]; then
+    num=$selected[1]
+
+    [[ -n "$num" ]] && zle vi-fetch-history -n $num
+
+  fi
+  zle reset-prompt
+  return $ret
+}
+
+zle     -N   chorn-history-widget
+bindkey '^R' chorn-history-widget
+
+#-----------------------------------------------------------------------------
 # vim: set syntax=zsh ft=zsh sw=2 ts=2 expandtab:
 

@@ -3,9 +3,9 @@ _is_in_path() {
   local _dir="$1"
   local _path="$2"
 
-  [[ -z "${_path}"  ]] && return 1
-  [[ -z "${_dir}"  ]] && return 0
-  [[ -d "${_dir}"  ]] || return 0
+  [[ -z "${_path}" ]] && return 1
+  [[ -z "${_dir}" ]] && return 0
+  [[ -d "${_dir}" ]] || return 0
   [[ "^${_dir}$" =~ ${_path} ]] && return 0
   [[ "^${_dir}:" =~ ${_path} ]] && return 0
   [[ ":${_dir}$" =~ ${_path} ]] && return 0
@@ -18,7 +18,7 @@ _add_to_path() {
   local _dir="$1"
   local _path="$2"
 
-  if _is_in_path "${_dir}" "${_path}" ; then
+  if _is_in_path "${_dir}" "${_path}"; then
     echo "${_path}"
     return
   fi
@@ -35,7 +35,9 @@ declare _newpath=""
 for _dir in \
   $HOME/tbin \
   $HOME/bin \
-  $HOME/{.go,.cargo,.goenv,.rbenv,.pyenv,.nodenv,.asdf}/{bin,shims} \
+  $HOME/{.cargo,.goenv,.rbenv,.pyenv}/{bin,shims} \
+  $HOME/.go/bin \
+  /usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin \
   /Applications/VMware\ Fusion.app/Contents/Library \
   /Applications/VMware\ Fusion.app/Contents/Public \
   /Applications/VirtualBox.app/Contents/MacOS \
@@ -48,23 +50,26 @@ for _dir in \
   /usr/local/opt/openssl/bin \
   /{opt,usr}/{bin,sbin,libexec} \
   /{bin,sbin} \
-  /Library/Frameworks/Mono.framework/Versions/Current/Commands
-do
+  /Library/Frameworks/Mono.framework/Versions/Current/Commands; do
   _newpath="$(_add_to_path "${_dir}" "${_newpath}")"
 done
 
-while read -r _dir ; do
+while read -r _dir; do
   _newpath="$(_add_to_path "${_dir}" "${_newpath}")"
-done < <(find /etc/paths /etc/paths.d -type f -print0 2>/dev/null | xargs -0 cat 2>/dev/null)
+done < <(find /etc/paths /etc/paths.d -type f -print0 2> /dev/null | xargs -0 cat 2> /dev/null)
 
 export PATH="${_newpath}"
 # --------------------------------------------------------------------------
-for _version_manager in rbenv pyenv goenv ; do
-  command -v "${_version_manager}" >& /dev/null && eval "$("${_version_manager}" init -)"
+for _version_manager in rbenv pyenv goenv; do
+  command -v "${_version_manager}" >&/dev/null && eval "$("${_version_manager}" init -)"
 done
 # --------------------------------------------------------------------------
-if command -v fnm >&/dev/null ; then
+if command -v fnm >&/dev/null; then
   eval "$(fnm env --use-on-cd)"
 fi
+# --------------------------------------------------------------------------
+# if [[ -s "$HOME/.asdf/asdf.sh" ]]; then
+#   source "$HOME/.asdf/asdf.sh"
+# fi
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:

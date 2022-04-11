@@ -43,7 +43,7 @@ endif
 call plug#begin(SafeDirectory(g:vimhome . '/plugged'))
 
 Plug 'AndrewRadev/splitjoin.vim'
-Plug 'airblade/vim-gitgutter'
+" Plug 'airblade/vim-gitgutter'
 Plug 'chriskempson/base16-vim'
 Plug 'dense-analysis/ale'
 Plug 'editorconfig/editorconfig-vim'
@@ -60,13 +60,13 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'wellle/context.vim'
+" Plug 'wellle/context.vim'
 
 " Filetypes
 Plug 'JulesWang/css.vim',                      { 'for': [ 'css', 'sass', 'scss' ] }
-Plug 'ambv/black',                             { 'for': 'python' }
-Plug 'chrisbra/csv.vim',                       { 'for': 'csv' }
-Plug 'elixir-lang/vim-elixir',                 { 'for': 'elixir' }
+" Plug 'ambv/black',                             { 'for': 'python' }
+" Plug 'chrisbra/csv.vim',                       { 'for': 'csv' }
+" Plug 'elixir-lang/vim-elixir',                 { 'for': 'elixir' }
 Plug 'fatih/vim-go',                           { 'for': 'go' }
 Plug 'isRuslan/vim-es6',                       { 'for': 'javascript' }
 Plug 'kchmck/vim-coffee-script',               { 'for': 'coffee' }
@@ -79,19 +79,19 @@ Plug 'othree/html5.vim',                       { 'for': 'html' }
 Plug 'othree/javascript-libraries-syntax.vim', { 'for': 'javascript' }
 Plug 'othree/yajs.vim',                        { 'for': 'javascript' }
 Plug 'plasticboy/vim-markdown',                { 'for': 'markdown' }
-Plug 'racer-rust/vim-racer',                   { 'for': 'rust' }
-Plug 'rhysd/vim-crystal',                      { 'for': 'crystal' }
-Plug 'rust-lang/rust.vim',                     { 'for': 'rust' }
-Plug 'spiegela/vimix',                         { 'for': 'elixir' }
-Plug 'thoughtbot/vim-rspec',                   { 'for': 'ruby' }
-Plug 'tmux-plugins/vim-tmux',                  { 'for': 'tmux' }
-Plug 'tpope/vim-bundler',                      { 'for': 'ruby' }
-Plug 'tpope/vim-endwise',                      { 'for': 'ruby' }
-Plug 'tpope/vim-haml',                         { 'for': 'haml' }
+" Plug 'racer-rust/vim-racer',                   { 'for': 'rust' }
+" Plug 'rhysd/vim-crystal',                      { 'for': 'crystal' }
+" Plug 'rust-lang/rust.vim',                     { 'for': 'rust' }
+" Plug 'spiegela/vimix',                         { 'for': 'elixir' }
+" Plug 'thoughtbot/vim-rspec',                   { 'for': 'ruby' }
+" Plug 'tmux-plugins/vim-tmux',                  { 'for': 'tmux' }
+" Plug 'tpope/vim-bundler',                      { 'for': 'ruby' }
+" Plug 'tpope/vim-endwise',                      { 'for': 'ruby' }
+" Plug 'tpope/vim-haml',                         { 'for': 'haml' }
 Plug 'tpope/vim-rails',                        { 'for': 'ruby' }
-Plug 'tpope/vim-rake',                         { 'for': 'ruby' }
+" Plug 'tpope/vim-rake',                         { 'for': 'ruby' }
 Plug 'vim-ruby/vim-ruby',                      { 'for': 'ruby' }
-Plug 'vito-c/jq.vim',                          { 'for': 'jq' }
+" Plug 'vito-c/jq.vim',                          { 'for': 'jq' }
 
 call plug#end()
 runtime! macros/matchit.vim
@@ -146,12 +146,12 @@ set shortmess+=c " Hide completion messages
 set noshowcmd
 set showmatch
 set sidescrolloff=5
-if has('nvim-0.5.0') || has('patch-8.1.1564')
-  " Recently vim can merge signcolumn and number column into one
-  set signcolumn=number
-else
-  set signcolumn=yes
-endif
+" if has('nvim-0.5.0') || has('patch-8.1.1564')
+"   " Recently vim can merge signcolumn and number column into one
+"   set signcolumn=number
+" else
+"   set signcolumn=yes
+" endif
 set noshowmode
 set showtabline=1
 set smartcase
@@ -240,6 +240,7 @@ nmap <leader>+ <Plug>AirlineSelectNextTab
 
 " ale
 let g:ale_change_sign_column_color = 0
+let g:ale_floating_preview = 1
 let g:ale_lint_delay = 50
 let g:ale_lint_on_enter = 1
 let g:ale_lint_on_insert_leave = 1
@@ -254,15 +255,17 @@ let g:ale_javascript_standard_use_global = 0
 let g:ale_javascript_xo_use_global = 0
 let g:ale_ruby_rubocop_options = '-EDS'
 let g:ale_sh_shellcheck_dialect = 'bash'
-
+let g:ale_sh_shfmt_options = '-i 2 -bn -ci -sr'
+let g:ale_fix_on_save = 1
 let g:ale_fixers = {
   \ 'javascript': ['eslint'],
+  \ 'sh': ['shfmt'],
   \ 'typescript': ['eslint'],
 \ }
-let g:ale_pattern_options = {
-  \ '\.min\.js$': {'ale_linters': [], 'ale_fixers': []},
-  \ '\.min\.css$': {'ale_linters': [], 'ale_fixers': []},
-\}
+" let g:ale_pattern_options = {
+"   \ '\.min\.js$': {'ale_linters': [], 'ale_fixers': []},
+"   \ '\.min\.css$': {'ale_linters': [], 'ale_fixers': []},
+" \}
 nmap <silent> <C-k> <Plug>(ale_previous_wrap)
 nmap <silent> <C-j> <Plug>(ale_next_wrap)
 

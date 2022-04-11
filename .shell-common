@@ -4,7 +4,7 @@
 [[ -s "$HOME/.shell-prv" ]] && source "$HOME/.shell-prv"
 
 # OS X ---------------------------------------------------------------------
-if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
+if [[ "${OSTYPE:0:6}" = "darwin" ]]; then
   alias ls="/bin/ls -FG"
   alias l="ls -lO"
   alias p="ps -Af"
@@ -40,15 +40,15 @@ if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
   }
 
   myapps() {
-    find /Applications -type d -uid $(id -u) -maxdepth 1 | sed -e 's,/Applications/,,' -e 's/\.app//' | tr 'A-Z' 'a-z' | tr ' ' '-' | sort
+    find /Applications -type d -uid "$(id -u)" -maxdepth 1 | sed -e 's,/Applications/,,' -e 's/\.app//' | tr 'A-Z' 'a-z' | tr ' ' '-' | sort
   }
 
   not_casked() {
-    myapps | while read -r _cask ; do brew list --cask "$_cask" >&/dev/null || echo "$_cask is not casked" ; done
+    myapps | while read -r _cask; do brew list --cask "$_cask" >&/dev/null || echo "$_cask is not casked"; done
   }
 
 # Linux ---------------------------------------------------------------------
-elif [[ "${OSTYPE:0:5}" = "linux" ]] ; then
+elif [[ "${OSTYPE:0:5}" = "linux" ]]; then
   command -v tty >&/dev/null && export GPG_TTY=$(tty)
 
   alias ls="/bin/ls --color=auto -F"
@@ -57,11 +57,11 @@ elif [[ "${OSTYPE:0:5}" = "linux" ]] ; then
   alias ubuntu_add_key='sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80'
 fi
 # ---------------------------------------------------------------------------
-if command -v nvim >/dev/null 2>/dev/null ; then
- alias vim=nvim
- alias v=nvim
- alias n=nvim
-fi
+# if command -v nvim > /dev/null 2> /dev/null; then
+#   alias vim=nvim
+#   alias v=nvim
+#   alias n=nvim
+# fi
 # ---------------------------------------------------------------------------
 alias be="bundle exec"
 alias list_to_regex="sed -e 's/[^0-9]//g' | tr '\n' '|' | sed -e 's/^/(/' -e 's/\|$/)/'"
@@ -73,7 +73,7 @@ alias live_ip='dig +short myip.opendns.com @resolver1.opendns.com || curl -f4L h
 alias to_csv='soffice --convert-to csv --headless'
 # ---------------------------------------------------------------------------
 predate() {
-  while read -r line ; do
+  while read -r line; do
     printf '%(%F %T)T %s\n' -1 "$line"
   done
 }
@@ -104,46 +104,46 @@ am_i_someone_else() {
   local -a _owners
   local -A _counts
 
-  while read -r _pid _user _uid _ppid _command ; do
-    if [[ -z "${_counts[$_user]}" ]] ; then
+  while read -r _pid _user _uid _ppid _command; do
+    if [[ -z "${_counts[$_user]}" ]]; then
       _owners+=("$_user")
       _counts[$_user]=1
     else
-      (( _counts[$_user]++ ))
+      ((_counts[$_user]++))
     fi
   done < <(ps_owners)
 
-  if [[ "${#_owners[@]}" -le 2 && "${_owners[-1]}" == "root" ]] ; then
+  if [[ "${#_owners[@]}" -le 2 && "${_owners[-1]}" == "root" ]]; then
     return 1
   else
     return 0
   fi
 }
 
-zero_width_space () {
+zero_width_space() {
   echo -n '\u200D'
 }
 
 httpd() {
   port="${1:-8000}"
 
-  command -v open >& /dev/null && (sleep 1 && open "http://127.0.0.1:$port" &)
+  command -v open >&/dev/null && (sleep 1 && open "http://127.0.0.1:$port" &)
   python -m SimpleHTTPServer "$port"
 }
 
 # node ---------------------------------------------------------------------
-if command -v npx >&/dev/null ; then
+if command -v npx >&/dev/null; then
   alias npx='npx --no-install'
 fi
 
 # Git ---------------------------------------------------------------------
-if [[ -d "$HOME/.git-pub-dotfiles" ]] ; then
+if [[ -d "$HOME/.git-pub-dotfiles" ]]; then
   pubgit() {
     git --git-dir="$HOME/.git-pub-dotfiles" --work-tree="$HOME" "$@"
   }
 fi
 
-if [[ -d "$HOME/.git-prv-dotfiles" ]] ; then
+if [[ -d "$HOME/.git-prv-dotfiles" ]]; then
   prvgit() {
     git --git-dir="$HOME/.git-prv-dotfiles" --work-tree="$HOME" "$@"
   }
@@ -166,62 +166,62 @@ fzf-down() {
 
 _gf() {
   is_in_git_repo || return
-  git -c color.status=always status --short |
-  fzf-down -m --ansi --nth 2..,.. \
-    --preview '(git diff --color=always -- {-1} | sed 1,4d; cat {-1}) | head -500' |
-  cut -c4- | sed 's/.* -> //'
+  git -c color.status=always status --short \
+    | fzf-down -m --ansi --nth 2..,.. \
+      --preview '(git diff --color=always -- {-1} | sed 1,4d; cat {-1}) | head -500' \
+    | cut -c4- | sed 's/.* -> //'
 }
 
 _gb() {
   is_in_git_repo || return
-  git branch -a --color=always |
-    grep -v '/HEAD\s' |
-    sort |
-    fzf-down --ansi \
+  git branch -a --color=always \
+    | grep -v '/HEAD\s' \
+    | sort \
+    | fzf-down --ansi \
       --multi \
       --tac \
       --preview-window right:70% \
-      --preview 'git log --oneline --graph --date=short --color=always --pretty="format:%C(auto)%cd %h%d %s" $(sed s/^..// <<< {} | cut -d" " -f1) | head -'$LINES |
-    sed 's/^..//' |
-    cut -d' ' -f1 |
-    sed 's#^remotes/##'
+      --preview 'git log --oneline --graph --date=short --color=always --pretty="format:%C(auto)%cd %h%d %s" $(sed s/^..// <<< {} | cut -d" " -f1) | head -'$LINES \
+    | sed 's/^..//' \
+    | cut -d' ' -f1 \
+    | sed 's#^remotes/##'
 }
 
 _gt() {
   is_in_git_repo || return
-  git tag --sort -version:refname |
-  fzf-down --multi --preview-window right:70% \
-    --preview 'git show --color=always {} | head -'$LINES
+  git tag --sort -version:refname \
+    | fzf-down --multi --preview-window right:70% \
+      --preview 'git show --color=always {} | head -'$LINES
 }
 
 _gh() {
   is_in_git_repo || return
-  git log --date=short --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)" --graph --color=always |
-  fzf-down --ansi --no-sort --reverse --multi --bind 'ctrl-s:toggle-sort' \
-    --header 'Press CTRL-S to toggle sort' \
-    --preview 'grep -o "[a-f0-9]\{7,\}" <<< {} | xargs git show --color=always | head -'$LINES |
-  grep -o "[a-f0-9]\{7,\}"
+  git log --date=short --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)" --graph --color=always \
+    | fzf-down --ansi --no-sort --reverse --multi --bind 'ctrl-s:toggle-sort' \
+      --header 'Press CTRL-S to toggle sort' \
+      --preview 'grep -o "[a-f0-9]\{7,\}" <<< {} | xargs git show --color=always | head -'$LINES \
+    | grep -o "[a-f0-9]\{7,\}"
 }
 
 _gr() {
   is_in_git_repo || return
-  git remote -v | awk '{print $1 "\t" $2}' | uniq |
-  fzf-down --tac \
-    --preview 'git log --oneline --graph --date=short --pretty="format:%C(auto)%cd %h%d %s" {1} | head -200' |
-  cut -d$'\t' -f1
+  git remote -v | awk '{print $1 "\t" $2}' | uniq \
+    | fzf-down --tac \
+      --preview 'git log --oneline --graph --date=short --pretty="format:%C(auto)%cd %h%d %s" {1} | head -200' \
+    | cut -d$'\t' -f1
 }
 
 #-----------------------------------------------------------------------------
 [[ -z "$PS1" ]] && return
-[[ "${XPC_SERVICE_NAME:0:13}" == "com.jetbrains" ]] && return  # RubyyMine etc...
+[[ "${XPC_SERVICE_NAME:0:13}" == "com.jetbrains" ]] && return # RubyyMine etc...
 #-----------------------------------------------------------------------------
-if [[ -s "$HOME/.config/base16-shell" ]] ; then
-  export BASE16_SHELL="$HOME/.config/base16-shell"
-  export BASE16_THEME="base16-twilight"
-  eval "$("$BASE16_SHELL"/profile_helper.sh)"
-fi
-
-[[ -s "$HOME/.base16_theme" ]] && source "$HOME/.base16_theme"
+# if [[ -s "$HOME/.config/base16-shell" ]]; then
+#   export BASE16_SHELL="$HOME/.config/base16-shell"
+#   export BASE16_THEME="base16-twilight"
+#   eval "$("$BASE16_SHELL"/profile_helper.sh)"
+# fi
+#
+# [[ -s "$HOME/.base16_theme" ]] && source "$HOME/.base16_theme"
 
 # --------------------------------------------------------------------------
 # vim: set syntax=sh ft=sh sw=2 ts=2 expandtab:
